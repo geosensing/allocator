@@ -35,7 +35,7 @@ that underlie these functions:
 
 2. **Haversine Distance:** use option ``-d haversine``. 
 
-3. **OSRM Distance:** use option ``-d osrm``. Neither haversine nor euclidean take account of the actual road network or the traffic. To use actual travel time, use `Open Source Routing Machine API <http://project-osrm.org/docs/v5.7.0/api/?language=Python#table-service>`__ A maximum number of 100 points can be passed to the function if we use public server. However, we can setting up own private OSRM server with ``--max-table-size`` to specific the maximum number of points.
+3. **OSRM Distance:** use option ``-d osrm``. Neither Haversine nor Euclidean distance take account of the actual road network or the traffic. To use actual travel time, use `Open Source Routing Machine API <http://project-osrm.org/docs/v5.7.0/api/?language=Python#table-service>`__ A maximum number of 100 points can be passed to the function if we use the public server. However, you can set up your own private OSRM server with ``--max-table-size`` to specific the maximum number of points.
 
 4. **Google Distance Matrix API:**. use option ``-d google``. This option available in ``sort_by_distane`` and ``cluster_kahip`` only due to Google Distance Matrix API has very usage limits. Please look at the limitations `here. <https://developers.google.com/maps/documentation/distance-matrix/usage-limits>`__
 
@@ -92,7 +92,7 @@ Functions
 Documentation
 -------------
 
-Documentation available at https://allocator.readthedocs.io/en/latest/
+Documentation available at: https://allocator.readthedocs.io/en/latest/
 
 Authors
 -------
