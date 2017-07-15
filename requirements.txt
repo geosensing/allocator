@@ -12,3 +12,4 @@ haversine
 folium
 sphinx
 sphinx_rtd_theme
+sklearn
