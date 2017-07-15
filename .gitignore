@@ -1,0 +1,12 @@
+.*
+!.gitignore
+!.gitattributes
+!.travis.yml
+*.pyc
+*.log
+/allocator/kahip/
+venv
+docs/build
+dist
+*.egg-info
+build
