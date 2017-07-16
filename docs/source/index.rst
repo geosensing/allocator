@@ -41,7 +41,6 @@ Additional Stuff
 .. toctree::
    :maxdepth: 2
 
-   mst
    kahip-vs-kmeans
 
 Indices and tables
