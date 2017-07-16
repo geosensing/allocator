@@ -3,11 +3,13 @@ Cluster Locations Using KahIP
 
 **Requirements**
 
-`KaHIP Python Wrapper <https://github.com/suriyan/KaHIP/tree/master/misc/python>`__. There is pre-built binary (Wheel) for Python 2.7 Linux x86_64:
+`KaHIP Python Wrapper <https://pypi.python.org/pypi/kahipwrapper>`__. There is pre-built binary (Wheel) package for Linux x86_64:
 
 ::
 
-    pip install -U https://github.com/suriyan/KaHIP/raw/master/misc/python/dist/kahipwrapper-0.1.1-cp27-cp27mu-linux_x86_64.whl
+    pip install -U kahipwrapper
+
+
 
 Unfortunately, code for KaHIP with Buffoon is not public due to a pending US software patent.
 
