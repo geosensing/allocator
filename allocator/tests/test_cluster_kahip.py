@@ -27,9 +27,7 @@ class TestClusterKaHIP(unittest.TestCase):
         pass
 
     def test_cluster_kahip(self):
-        print ROADS
         with capture(main, ['-n', '5', ROADS]) as output:
-            print output
             self.assertRegexpMatches(output, r'Done$')
 
 
