@@ -76,7 +76,7 @@ def main(argv=sys.argv[1:]):
     parser.add_argument('--api-key', default=None,
                         help='Google Map API Key')
 
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
 
     print(args)
 
@@ -220,6 +220,7 @@ def main(argv=sys.argv[1:]):
             fig.savefig(args.save_plot)
 
     odf.to_csv(args.output, index=False)
+    print("Done")
 
 if __name__ == "__main__":
     sys.exit(main())

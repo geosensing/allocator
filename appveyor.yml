@@ -2,6 +2,8 @@ build: false
 
 environment:
   matrix:
+    - PYTHON_VERSION: 2.7
+      MINICONDA: C:\Miniconda27-x64
     - PYTHON_VERSION: 3.5
       MINICONDA: C:\Miniconda35-x64
 
@@ -21,4 +23,3 @@ install:
 test_script:
   - nosetests
 #---------------------------------#
-

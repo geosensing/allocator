@@ -135,6 +135,7 @@ def main(argv=sys.argv[1:]):
     else:
         # save output to file
         df.to_csv(args.output, index=False)
+    print("Done")
 
 
 if __name__ == "__main__":
