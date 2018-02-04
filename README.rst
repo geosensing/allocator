@@ -39,6 +39,10 @@ that underlie these functions:
 
 4. **Google Distance Matrix API:**. use option ``-d google``. This option available in ``sort_by_distane`` and ``cluster_kahip`` only due to Google Distance Matrix API has very usage limits. Please look at the limitations `here. <https://developers.google.com/maps/documentation/distance-matrix/usage-limits>`__
 
+Downloads
+----------
+As of February 3rd, 2018, the package had been downloaded nearly 1,700 times (see the `saved BigQuery <https://bigquery.cloud.google.com/savedquery/267723140544:91e63eb83be8482caf1b38da8f62229f>`__).
+
 Related Package
 ^^^^^^^^^^^^^^^
 To sample locations randomly on the streets, check out `geo_sampling <https://github.com/soodoku/geo_sampling>`__.
