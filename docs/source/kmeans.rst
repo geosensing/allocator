@@ -35,7 +35,7 @@ The function takes a CSV of data collection locations and clusters locations int
       -n N_WORKERS, --n_workers N_WORKERS
                             Number of workers
       -m MAX_ITER, --max_iter MAX_ITER
-                            Maximum iteration
+                            Maximum number of iterations
       -d {euclidean,haversine,osrm}, --distance-func {euclidean,haversine,osrm}
                             Distance function for distance matrix
       -c CENTROIDS, --centroids CENTROIDS
