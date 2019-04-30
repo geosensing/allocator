@@ -7,6 +7,8 @@ allocator: Optimally Allocate Geographically Distributed Tasks
     :target: https://pypi.python.org/pypi/allocator
 .. image:: https://ci.appveyor.com/api/projects/status/m2oxean5ona6p2m6?svg=true
     :target: https://ci.appveyor.com/project/geosensing/allocator
+.. image:: https://pepy.tech/badge/allocator
+    :target: https://pepy.tech/project/allocator
 
 How can we efficiently collect data from geographically distributed locations? If the data 
 collection is being crowd-sourced, then we may want to exploit the fact that workers
