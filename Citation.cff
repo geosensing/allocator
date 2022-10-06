@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Sood"
+  given-names: "Gaurav"
+- family-names: "Laohaprapanon"
+  given-names: "Suriyan"
+title: "allocator: Optimally Allocate Geographically Distributed Tasks"
+version: 0.1.0
+date-released: 2017-07-15
+url: "https://github.com/geosensing/allocator/"
