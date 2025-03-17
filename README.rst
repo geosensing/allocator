@@ -1,12 +1,8 @@
 allocator: Optimally Allocate Geographically Distributed Tasks
 ==============================================================
 
-.. image:: https://travis-ci.org/geosensing/allocator.svg?branch=master
-    :target: https://travis-ci.org/geosensing/allocator
 .. image:: https://img.shields.io/pypi/v/allocator.svg
     :target: https://pypi.python.org/pypi/allocator
-.. image:: https://ci.appveyor.com/api/projects/status/m2oxean5ona6p2m6?svg=true
-    :target: https://ci.appveyor.com/project/geosensing/allocator
 .. image:: https://pepy.tech/badge/allocator
     :target: https://pepy.tech/project/allocator
 
