@@ -64,7 +64,7 @@ def main(argv=sys.argv[1:]):
 
     output = []
     for i, l in enumerate(sorted(df.assigned_points.unique())):
-        print(("Search TSP path for #{:d}...".format(l)))
+        print("Search TSP path for #{:d}...".format(l))
         A = df.loc[df.assigned_points == l, ['start_long', 'start_lat']].as_matrix()
         mapping = df.loc[df.assigned_points == l,
                          'segment_id'].reset_index(drop=True).to_dict()
@@ -113,7 +113,7 @@ def main(argv=sys.argv[1:]):
             if args.save_plot:
                 fn, fe = os.path.splitext(args.save_plot)
                 fname = "{:s}-{:d}{:s}".format(fn, l, fe)
-                print(("Plotting to file '{:s}'".format(fname)))
+                print("Plotting to file '{:s}'".format(fname))
                 fig.savefig(fname)
             plt.close()
 
@@ -128,7 +128,7 @@ def main(argv=sys.argv[1:]):
         output.append([l, cost, N, ';'.join([str(p) for p in new_path])])
 
     # save output to file
-    print(("Save the output file to '{:s}'".format(args.output)))
+    print("Save the output file to '{:s}'".format(args.output))
     odf = pd.DataFrame(output, columns=['worker_id', 'cost', 'n',
                                         'path_order'])
     odf.to_csv(args.output, index=False)

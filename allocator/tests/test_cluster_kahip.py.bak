@@ -28,7 +28,7 @@ class TestClusterKaHIP(unittest.TestCase):
 
     def test_cluster_kahip(self):
         with capture(main, ['-n', '5', ROADS]) as output:
-            self.assertRegex(output, r'Done$')
+            self.assertRegexpMatches(output, r'Done$')
 
 
 if __name__ == '__main__':

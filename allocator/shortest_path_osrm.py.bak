@@ -49,10 +49,10 @@ def osrm_trip(coords, osrm_base_url=None):
                 tour.append(w['waypoint_index'])
         else:
             data = r.json()
-            print(("OSRM ERROR code={0!s}, message={0!s}"
-                  .format(data['code'], data['message'])))
+            print("OSRM ERROR code={0!s}, message={0!s}"
+                  .format(data['code'], data['message']))
     except Exception as e:
-        print(("ERROR: {0!s}".format(e)))
+        print("ERROR: {0!s}".format(e))
     return points, cost, duration, tour
 
 
@@ -101,8 +101,8 @@ def main(argv=sys.argv[1:]):
         else:
             N = len(coords)
 
-        print(('TSP: {:d}, Cost: {:d}, Duration: {:0.1f}, N: {:d}'
-              .format(l, cost, duration, N)))
+        print('TSP: {:d}, Cost: {:d}, Duration: {:0.1f}, N: {:d}'
+              .format(l, cost, duration, N))
 
         total_distance += cost
         total_duration += duration
@@ -150,14 +150,14 @@ def main(argv=sys.argv[1:]):
 
             fn, fe = os.path.splitext(args.save_map)
             fname = "{:s}-{:d}{:s}".format(fn, l, fe)
-            print(("Save map HTML to file '{:s}'".format(fname)))
+            print("Save map HTML to file '{:s}'".format(fname))
             map_osm.save(fname)
 
-    print(("Total distance: {0:.1f}, duration: {1:.1f}".format(total_distance,
-                                                              total_duration)))
+    print("Total distance: {0:.1f}, duration: {1:.1f}".format(total_distance,
+                                                              total_duration))
 
     # save output to file
-    print(("Save the output file to '{:s}'".format(args.output)))
+    print("Save the output file to '{:s}'".format(args.output))
     odf = pd.DataFrame(output, columns=['worker_id', 'distance', 'duration', 'n',
                                         'path_order'])
     odf.to_csv(args.output, index=False)

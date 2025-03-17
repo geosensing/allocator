@@ -1,21 +1,10 @@
-"""
-
-A setuptools based setup module.
-See:
-https://packaging.python.org/en/latest/distributing.html
-https://github.com/pypa/sampleproject
-
-"""
-
-# Always prefer setuptools over distutils
 from setuptools import setup, find_packages
 from setuptools.command.develop import develop
 from setuptools.command.install import install
 from setuptools.command.test import test as TestCommand
 
-# To use a consistent encoding
 from codecs import open
-from os import path, system
+from os import path
 
 here = path.abspath(path.dirname(__file__))
 
@@ -40,15 +29,18 @@ class PostInstallCommand(install):
 
 class Tox(TestCommand):
     user_options = [('tox-args=', 'a', "Arguments to pass to tox")]
+    
     def initialize_options(self):
         TestCommand.initialize_options(self)
         self.tox_args = None
+    
     def finalize_options(self):
         TestCommand.finalize_options(self)
         self.test_args = []
         self.test_suite = True
+    
     def run_tests(self):
-        #import here, cause outside the eggs aren't loaded
+        # import here, cause outside the eggs aren't loaded
         import tox
         import shlex
         args = self.tox_args
@@ -56,16 +48,16 @@ class Tox(TestCommand):
             args = shlex.split(self.tox_args)
         tox.cmdline(args=args)
 
+
 setup(
     name='allocator',
 
-    # Versions should comply with PEP440.  For a discussion on single-sourcing
-    # the version across setup.py and the project code, see
-    # https://packaging.python.org/en/latest/single_source_version.html
-    version='0.1.7',
+    # Versions should comply with PEP440.
+    version='0.2.0',
 
     description='Optimally Allocate Geographically Distributed Tasks',
     long_description=long_description,
+    long_description_content_type='text/x-rst',  # Added content type for PyPI
 
     # The project's main homepage.
     url='https://github.com/soodoku/allocator',
@@ -83,96 +75,91 @@ setup(
         #   3 - Alpha
         #   4 - Beta
         #   5 - Production/Stable
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',  # Updated to Beta since it's more mature now
 
         # Indicate who your project is intended for
         'Intended Audience :: Developers',
+        'Intended Audience :: Science/Research',  # Added audience
 
         # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: MIT License',
 
-        # Specify the Python versions you support here. In particular, ensure
-        # that you indicate whether you support Python 2, Python 3 or both.
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.5',
+        # Specify the Python versions you support here.
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'Topic :: Scientific/Engineering :: Information Analysis',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Utilities'
     ],
 
     # What does your project relate to?
-    keywords='routing shortest path',
+    keywords='routing shortest path geographic allocation optimization',
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
     packages=find_packages(exclude=['data', 'docs', 'tests', 'scripts']),
 
-    # Alternatively, if you want to distribute just a my_module.py, uncomment
-    # this:
-    #   py_modules=["my_module"],
-
-    # List run-time dependencies here.  These will be installed by pip when
-    # your project is installed. For an analysis of "install_requires" vs pip's
-    # requirements files see:
-    # https://packaging.python.org/en/latest/requirements.html
+    # List run-time dependencies here.
+    python_requires='>=3.6',  # Specify minimum Python version
     install_requires=[
-        'pandas>=0.19.2',
-        'numpy>=1.12.1',
-        'matplotlib>=1.5.1',
-        'utm>=0.4.0',
-        'networkx',
-        'googlemaps',
-        'polyline',
-        'haversine',
-        'folium',
-        'scipy'
+        'pandas>=1.0.0',
+        'numpy>=1.20.0',
+        'matplotlib>=3.3.0',
+        'utm>=0.7.0',
+        'networkx>=2.6.0',
+        'googlemaps>=4.0.0',
+        'polyline>=1.4.0',
+        'haversine>=2.5.0',
+        'folium>=0.12.0',
+        'scipy>=1.7.0'
     ],
 
-    # List additional groups of dependencies here (e.g. development
-    # dependencies). You can install these using the following syntax,
-    # for example:
-    # $ pip install -e .[dev,test]
+    # List additional groups of dependencies here
     extras_require={
-        'dev': ['check-manifest'],
-        'test': ['coverage'],
+        'dev': [
+            'check-manifest',
+            'flake8',
+            'black',
+            'isort',
+        ],
+        'test': [
+            'coverage',
+            'pytest',
+            'pytest-cov',
+        ],
+        'docs': [
+            'sphinx',
+            'sphinx_rtd_theme',
+        ],
     },
 
-    # If there are data files included in your packages that need to be
-    # installed, specify them here.  If using Python 2.6 or less, then these
-    # have to be included in MANIFEST.in as well.
+    # If there are data files included in your packages
     package_data={
-        'allocator': ['examples/*.csv',
-                      'examples/*.png',
-                      'examples/sort-by-distance/*.csv',
-                      'examples/sort-by-distance/*.png',
-                      'examples/kmeans/*.csv',
-                      'examples/kmeans/*.png',
-                      'examples/KaHIP/*.csv',
-                      'examples/KaHIP/*.png',
-                      'examples/TSP-buffoon/*.svg',
-                      'examples/TSP-kmeans/*.svg',
-                      'examples/TSP-ortools-kmeans/*.png',
-                      'examples/TSP-ortools-kmeans/map/*.html',
-                      'examples/TSP-ortools-buffoon/delhi/*.png',
-                      'examples/TSP-ortools-buffoon/chonburi/*.png',
-                      'examples/GM-buffoon/chonburi/*.png',
-                      'examples/GM-buffoon/delhi/*.png',
-                      'examples/OSRM-buffoon/*.html',
-                      'examples/compare-kahip-kmeans/*.csv',
-                      'tests/*.csv',
-                      ],
+        'allocator': [
+            'examples/*.csv',
+            'examples/*.png',
+            'examples/sort-by-distance/*.csv',
+            'examples/sort-by-distance/*.png',
+            'examples/kmeans/*.csv',
+            'examples/kmeans/*.png',
+            'examples/KaHIP/*.csv',
+            'examples/KaHIP/*.png',
+            'examples/TSP-buffoon/*.svg',
+            'examples/TSP-kmeans/*.svg',
+            'examples/TSP-ortools-kmeans/*.png',
+            'examples/TSP-ortools-kmeans/map/*.html',
+            'examples/TSP-ortools-buffoon/delhi/*.png',
+            'examples/TSP-ortools-buffoon/chonburi/*.png',
+            'examples/GM-buffoon/chonburi/*.png',
+            'examples/GM-buffoon/delhi/*.png',
+            'examples/OSRM-buffoon/*.html',
+            'examples/compare-kahip-kmeans/*.csv',
+            'tests/*.csv',
+        ],
     },
 
-    # Although 'package_data' is the preferred approach, in some case you may
-    # need to place data files outside of your packages. See:
-    # http://docs.python.org/3.4/distutils/setupscript.html#installing-additional-files # noqa
-    # In this case, 'ethnicolr' will be installed into '<sys.prefix>/ethnicolr'
-
-    #data_files=[('ethnicolr', ['ethnicolr/data/test.txt'])],
-
-    # To provide executable scripts, use entry points in preference to the
-    # "scripts" keyword. Entry points provide cross-platform support and allow
-    # pip to create the appropriate form of executable for the target platform.
+    # To provide executable scripts
     entry_points={
         'console_scripts': [
             'sort_by_distance=allocator.sort_by_distance:main',
@@ -190,5 +177,9 @@ setup(
         'install': PostInstallCommand,
         'test': Tox,
     },
-    tests_require=['tox'],
+    tests_require=['tox', 'pytest'],
+    project_urls={  # Added project URLs for better PyPI page
+        'Bug Reports': 'https://github.com/geosensing/allocator/issues',
+        'Source': 'https://github.com/geosensing/allocator',
+    },
 )

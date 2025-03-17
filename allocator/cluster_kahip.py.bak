@@ -133,11 +133,11 @@ def main(argv=sys.argv[1:]):
 
         buffoon_cmd = 'mpirun -n {k:d} {base:s}/optimized/buffoon metis.graph --seed {seed:d} --k {k:d} --preconfiguration=strong --max_num_threads={k:d}'.format(k=n_clusters, base=args.kahip_dir, seed=seed)
 
-        print(("Command line: '{:s}'".format(buffoon_cmd)))
+        print("Command line: '{:s}'".format(buffoon_cmd))
 
         out, err = execute(buffoon_cmd)
 
-        print(("Output: {:s}".format(out)))
+        print("Output: {:s}".format(out))
 
         ldf = pd.read_csv('tmppartition{k:d}'.format(k=n_clusters), header=None)
         ldf.columns = ['assigned_points']
@@ -196,10 +196,10 @@ def main(argv=sys.argv[1:]):
 
         fig = plt.figure(figsize=(16, 16))
         plt.ticklabel_format(useOffset=False)
-        cvalues = list(colors.cnames.values())
+        cvalues = colors.cnames.values()
 
         ax = fig.add_subplot(1, 1, 1)
-        for k, col in zip(list(range(n_clusters)), cvalues):
+        for k, col in zip(range(n_clusters), cvalues):
             my_members = odf.assigned_points == (k + 1)
             ax.plot(odf[my_members]['start_long'],
                     odf[my_members]['start_lat'], 'w', markerfacecolor=col,

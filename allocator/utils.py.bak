@@ -8,7 +8,7 @@ def isstring(s):
     if (sys.version_info[0] >= 3):
         return isinstance(s, str)
     # we use Python 2
-    return isinstance(s, str)
+    return isinstance(s, basestring)
 
 
 def column_exists(df, col):
@@ -23,8 +23,8 @@ def column_exists(df, col):
 
     """
     if col and (col not in df.columns):
-        print(("The specify column `{0!s}` not found in the input file"
-              .format(col)))
+        print("The specify column `{0!s}` not found in the input file"
+              .format(col))
         return False
     else:
         return True

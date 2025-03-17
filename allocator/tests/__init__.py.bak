@@ -1,7 +1,7 @@
 import sys
 from contextlib import contextmanager
 try:
-    from io import StringIO
+    from StringIO import StringIO
 except:
     from io import StringIO
 

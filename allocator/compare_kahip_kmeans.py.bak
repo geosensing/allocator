@@ -65,9 +65,9 @@ def main(argv=sys.argv[1:]):
 ".format(k=n_clusters, input=args.input, n_closest=args.n_closest,
          buffoon=buffoon, balance_edges=balance_edges, dfunc=args.distance_func)
 
-    print(("KaHIP command line '{:s}'".format(kahip_cmd)))
+    print("KaHIP command line '{:s}'".format(kahip_cmd))
     out, err = execute(kahip_cmd)
-    print(("Output: {:s}".format(out)))
+    print("Output: {:s}".format(out))
 
     bdf = pd.read_csv('tmpkahip{k:d}.csv'.format(k=n_clusters))
 
@@ -96,9 +96,9 @@ def main(argv=sys.argv[1:]):
 -o tmpkmean{k:d}.csv -d {dfunc:s}'.format(k=n_clusters, input=args.input,
                                           dfunc=args.distance_func)
 
-    print(("K-mean command line '{:s}'".format(kmean_cmd)))
+    print("K-mean command line '{:s}'".format(kmean_cmd))
     out, err = execute(kmean_cmd)
-    print(("Output: {:s}".format(out)))
+    print("Output: {:s}".format(out))
 
     kdf = pd.read_csv('tmpkmean{k:d}.csv'.format(k=n_clusters))
 
@@ -129,7 +129,7 @@ def main(argv=sys.argv[1:]):
     odf.to_csv(args.output, index=False)
 
     pd.set_option('display.width', 120)
-    print((odf.describe()))
+    print(odf.describe())
 
 
 if __name__ == "__main__":
