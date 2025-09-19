@@ -17,7 +17,17 @@ from . import capture
 ROADS = resource_filename(__name__, "chonburi-roads-50.csv")
 
 
+def kahip_available():
+    """Check if KaHIP dependencies are available"""
+    try:
+        import kahipwrapper
+        return True
+    except ImportError:
+        return False
+
+
 @unittest.skipIf(os.name == 'nt', 'KaHIP not available on Windows')
+@unittest.skipIf(not kahip_available(), 'KaHIP dependencies not available')
 class TestClusterKaHIP(unittest.TestCase):
 
     def setUp(self):
