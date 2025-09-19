@@ -59,8 +59,8 @@ def main(argv=sys.argv[1:]):
 
     n_clusters = len(cdf)
 
-    X = df[['start_long', 'start_lat']].as_matrix()
-    centroids = cdf[['lon', 'lat']].as_matrix()
+    X = df[['start_long', 'start_lat']].values
+    centroids = cdf[['lon', 'lat']].values
 
     # Calculate the pairwise distances.
     if args.distance_func == 'euclidean':

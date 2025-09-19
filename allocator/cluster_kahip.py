@@ -85,7 +85,7 @@ def main(argv=sys.argv[1:]):
 
     df = pd.read_csv(args.input)
 
-    X = df[['start_long', 'start_lat']].as_matrix()
+    X = df[['start_long', 'start_lat']].values
 
     if args.distance_func == 'euclidean':
         distances = euclidean_distance_matrix(X)
@@ -114,7 +114,7 @@ def main(argv=sys.argv[1:]):
         for i in s[args.n_closest:]:
             d[i] = 0
 
-    G = nx.from_numpy_matrix(distances)
+    G = nx.from_numpy_array(distances)
 
     if args.buffoon:
         # Using KaHIP with Buffoon version

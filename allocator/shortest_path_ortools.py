@@ -197,7 +197,7 @@ def main(argv=sys.argv[1:]):
     for i, l in enumerate(sorted(df.assigned_points.unique())):
         print(("Search TSP path for #{:d}...".format(l)))
         adf = df.loc[df.assigned_points == l, ['start_long', 'start_lat']]
-        A = adf.as_matrix()
+        A = adf.values
         # FIXME: OSRM distance matrix actually isn't distance but it's duration
         cost, tour = ortools_tsp(A, args)
         total_cost += cost

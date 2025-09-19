@@ -65,7 +65,7 @@ def main(argv=sys.argv[1:]):
     output = []
     for i, l in enumerate(sorted(df.assigned_points.unique())):
         print(("Search TSP path for #{:d}...".format(l)))
-        A = df.loc[df.assigned_points == l, ['start_long', 'start_lat']].as_matrix()
+        A = df.loc[df.assigned_points == l, ['start_long', 'start_lat']].values
         mapping = df.loc[df.assigned_points == l,
                          'segment_id'].reset_index(drop=True).to_dict()
         if args.distance_func == 'euclidean':

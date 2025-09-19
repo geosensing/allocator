@@ -107,7 +107,7 @@ def main(argv=sys.argv[1:]):
                     'osrm': lambda A, B:
                             closest_centroid_osrm(A, B, args)}
 
-    X = df[['start_long', 'start_lat']].as_matrix()
+    X = df[['start_long', 'start_lat']].values
 
     centroids = initialize_centroids(X, n_clusters, args.random_state)
     old_centroids = centroids

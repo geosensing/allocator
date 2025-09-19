@@ -73,7 +73,7 @@ def main(argv=sys.argv[1:]):
 
     buffoon_w = []
     for l in sorted(bdf.assigned_points.unique()):
-        X = bdf.loc[bdf.assigned_points == l, ['start_long', 'start_lat']].as_matrix()
+        X = bdf.loc[bdf.assigned_points == l, ['start_long', 'start_lat']].values
         n = len(X)
         if args.distance_func == 'euclidean':
             distances = euclidean_distance_matrix(X)
@@ -104,7 +104,7 @@ def main(argv=sys.argv[1:]):
 
     kmean_w = []
     for l in sorted(kdf.assigned_points.unique()):
-        X = kdf.loc[kdf.assigned_points == l, ['start_long', 'start_lat']].as_matrix()
+        X = kdf.loc[kdf.assigned_points == l, ['start_long', 'start_lat']].values
         n = len(X)
         if args.distance_func == 'euclidean':
             distances = euclidean_distance_matrix(X)
