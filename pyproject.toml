@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "allocator"
-version = "0.2.0"
+version = "0.3.0"
 description = "Optimally Allocate Geographically Distributed Tasks"
 readme = {file = "README.rst", content-type = "text/x-rst"}
 requires-python = ">=3.6"
