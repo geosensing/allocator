@@ -11,6 +11,9 @@ import argparse
 
 import pandas as pd
 
+from allocator import get_logger
+logger = get_logger(__name__)
+
 import requests
 import polyline
 
@@ -28,7 +31,7 @@ def osrm_trip(coords, osrm_base_url=None):
     a = ';'.join([','.join(str(c) for c in b) for b in coords])
     if osrm_base_url is None:
         if len(coords) > 100:
-            print("ERROR: Maximum locations for public OSRM server is 100")
+            logger.error("Maximum locations for public OSRM server is 100")
             return points, cost, duration, tour
         url = ('http://router.project-osrm.org/trip/v1/driving/' + a +
                '?overview=full')
@@ -49,10 +52,9 @@ def osrm_trip(coords, osrm_base_url=None):
                 tour.append(w['waypoint_index'])
         else:
             data = r.json()
-            print(("OSRM ERROR code={0!s}, message={0!s}"
-                  .format(data['code'], data['message'])))
+            logger.error(f"OSRM ERROR code={data['code']}, message={data['message']}")
     except Exception as e:
-        print(("ERROR: {0!s}".format(e)))
+        logger.error(f"ERROR: {e}")
     return points, cost, duration, tour
 
 
@@ -76,7 +78,7 @@ def main(argv=sys.argv[1:]):
 
     args = parser.parse_args(argv)
 
-    print(args)
+    logger.debug(f"Arguments: {args}")
 
     df = pd.read_csv(args.input)
 
@@ -101,8 +103,7 @@ def main(argv=sys.argv[1:]):
         else:
             N = len(coords)
 
-        print(('TSP: {:d}, Cost: {:d}, Duration: {:0.1f}, N: {:d}'
-              .format(l, cost, duration, N)))
+        logger.info(f'TSP: {l}, Cost: {cost}, Duration: {duration:.1f}, N: {N}')
 
         total_distance += cost
         total_duration += duration
@@ -150,14 +151,13 @@ def main(argv=sys.argv[1:]):
 
             fn, fe = os.path.splitext(args.save_map)
             fname = "{:s}-{:d}{:s}".format(fn, l, fe)
-            print(("Save map HTML to file '{:s}'".format(fname)))
+            logger.debug(f"Saved map HTML to file '{fname}'")
             map_osm.save(fname)
 
-    print(("Total distance: {0:.1f}, duration: {1:.1f}".format(total_distance,
-                                                              total_duration)))
+    logger.info(f"Total distance: {total_distance:.1f}, duration: {total_duration:.1f}")
 
     # save output to file
-    print(("Save the output file to '{:s}'".format(args.output)))
+    logger.info(f"Saved output file to '{args.output}'")
     odf = pd.DataFrame(output, columns=['worker_id', 'distance', 'duration', 'n',
                                         'path_order'])
     odf.to_csv(args.output, index=False)

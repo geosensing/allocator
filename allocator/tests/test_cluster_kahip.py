@@ -20,7 +20,7 @@ ROADS = resource_filename(__name__, "chonburi-roads-50.csv")
 def kahip_available():
     """Check if KaHIP dependencies are available"""
     try:
-        import kahipwrapper
+        import kahipwrapper  # noqa: F401
         return True
     except ImportError:
         return False

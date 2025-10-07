@@ -7,6 +7,9 @@ import math
 import time
 
 import numpy as np
+
+from allocator import get_logger
+logger = get_logger(__name__)
 import requests
 import googlemaps
 import utm
@@ -117,7 +120,7 @@ def osrm_distance_matrix(X, Y=None, chunksize=MAX_DISTANCE_MATRIX_SIZE,
             count += 1
             r = requests.get(url)
             if r.status_code != 200:
-                print(("OSRM Table API request error: {0:s}".format(r.text)))
+                logger.error(f"OSRM Table API request error: {r.text}")
                 break
             dm = r.json()['durations']
             arr = np.array(dm)
@@ -129,7 +132,7 @@ def osrm_distance_matrix(X, Y=None, chunksize=MAX_DISTANCE_MATRIX_SIZE,
             o = c
         else:
             o = np.concatenate((o, c), axis=0)
-    print(("Total API requests: {0:d}".format(count)))
+    logger.info(f"Total API requests: {count}")
     return o
 
 
@@ -182,8 +185,7 @@ def google_distance_matrix(X, Y=None, api_key=None, duration=True):
             try:
                 matrix = gmaps.distance_matrix(sources, destinations)
             except Exception as e:
-                print(("Google Distance Matrix API error: {0!s}"
-                      .format(e)))
+                logger.error(f"Google Distance Matrix API error: {e}")
                 return o
             time.sleep(1)
             """
@@ -218,7 +220,7 @@ def google_distance_matrix(X, Y=None, api_key=None, duration=True):
             o = c
         else:
             o = np.concatenate((o, c), axis=0)
-    print(("Total API requests: {0:d}, elements: {1:d}".format(count, nXY)))
+    logger.info(f"Total API requests: {count}, elements: {nXY}")
     return o
 
 
@@ -287,20 +289,20 @@ if __name__ == "__main__":
          (100.92367939299999, 12.9881022409)]
 
     o = osrm_distance_matrix(A, B, 10)
-    print((o.sum()))
+    logger.debug(f"Matrix sum: {o.sum()}")
     o = osrm_distance_matrix(A, B, 20)
-    print((o.sum()))
+    logger.debug(f"Matrix sum: {o.sum()}")
     o = osrm_distance_matrix(A, B, MAX_DISTANCE_MATRIX_SIZE)
-    print((o.sum()))
+    logger.debug(f"Matrix sum: {o.sum()}")
 
     api_key = os.environ.get('API_KEY', None)
     if api_key:
         o = google_distance_matrix(A, B, api_key=api_key)
-        print((o.sum()))
+        logger.debug(f"Matrix sum: {o.sum()}")
         # Test with origins over 25 elements
         o = osrm_distance_matrix(A[:30], B[:3], MAX_DISTANCE_MATRIX_SIZE)
-        print((o.sum()))
+        logger.debug(f"Matrix sum: {o.sum()}")
         o = google_distance_matrix(A[:30], B[:3], api_key=api_key)
-        print((o.sum()))
+        logger.debug(f"Matrix sum: {o.sum()}")
     else:
-        print("Please set Google API key to environment variable `API_KEY`")
+        logger.warning("Please set Google API key to environment variable `API_KEY`")

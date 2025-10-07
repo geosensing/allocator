@@ -13,6 +13,9 @@ from random import randint
 
 import pandas as pd
 
+from allocator import get_logger
+logger = get_logger(__name__)
+
 import googlemaps
 import polyline
 
@@ -40,7 +43,7 @@ def main(argv=sys.argv[1:]):
 
     args = parser.parse_args(argv)
 
-    print(args)
+    logger.debug(f"Arguments: {args}")
 
     df = pd.read_csv(args.input)
 
@@ -57,7 +60,7 @@ def main(argv=sys.argv[1:]):
 
     output = []
     for i, l in enumerate(sorted(df.assigned_points.unique())):
-        print(("Google Direction API request for #{:d}...".format(l)))
+        logger.info(f"Google Direction API request for #{l}...")
         start = None
         adf = df.loc[(df.assigned_points == l), ['start_lat', 'start_long']]
         nodes = adf.to_records(index=False).tolist()
@@ -66,7 +69,7 @@ def main(argv=sys.argv[1:]):
         tour = []
         N = len(nodes)
         if N >= 25:
-            print("WARN: The maximum allowed location is 24 including origin and destination")
+            logger.warning("The maximum allowed location is 24 including origin and destination")
         else:
             start = ', '.join([str(x) for x in nodes[0]])
             waypoints = [', '.join([str(x) for x in n]) for n in nodes[1:]]
@@ -83,8 +86,6 @@ def main(argv=sys.argv[1:]):
                     t_dist = 0
                     t_time = 0
                     for i, leg in enumerate(legs):
-                        if i == 0:
-                            sloc = leg['start_location']
                         d = leg['distance']['value']
                         t_dist += d
                         t = leg['duration']['value']
@@ -94,7 +95,7 @@ def main(argv=sys.argv[1:]):
                 t_min = int(t_time / 60 + 1)
                 tour = [0] + [(i + 1) for i in wp] + [0]
             except Exception as e:
-                print(('ERROR: {0!s}'.format(e)))
+                logger.error(f'ERROR: {e}')
         B = df.loc[df.assigned_points == l,
                    ['segment_id', 'start_lat', 'start_long']]
         B.reset_index(drop=True, inplace=True)
@@ -129,7 +130,7 @@ def main(argv=sys.argv[1:]):
             if args.save_plot:
                 fn, fe = os.path.splitext(args.save_plot)
                 fname = "{:s}-{:d}{:s}".format(fn, l, fe)
-                print(("Plotting to file '{:s}'".format(fname)))
+                logger.debug(f"Plotting to file '{fname}'")
                 fig.savefig(fname)
             plt.close()
 
@@ -145,7 +146,7 @@ def main(argv=sys.argv[1:]):
                        ';'.join([str(p) for p in new_path])])
 
     # save output to file
-    print(("Save the output file to '{:s}'".format(args.output)))
+    logger.info(f"Saved output file to '{args.output}'")
     odf = pd.DataFrame(output, columns=['worker_id', 'distance', 'duration',
                                         'n', 'path_order'])
     odf.to_csv(args.output, index=False)

@@ -10,7 +10,9 @@ import sys
 import argparse
 
 import pandas as pd
-import numpy as np
+
+from allocator import get_logger
+logger = get_logger(__name__)
 
 from random import randint
 
@@ -79,7 +81,7 @@ def ortools_tsp(A, args):
     cost = 0
     if assignment:
         # Solution cost.
-        print((assignment.ObjectiveValue()))
+        logger.info(f"Objective value: {assignment.ObjectiveValue()}")
         cost = assignment.ObjectiveValue()
         # Inspect solution.
         # Only one route here; otherwise iterate from 0 to
@@ -93,9 +95,9 @@ def ortools_tsp(A, args):
             node = assignment.Value(routing.NextVar(node))
         route += '0'
         path.append(0)
-        print(route)
+        logger.debug(f"Route: {route}")
     else:
-        print('No solution found.')
+        logger.error('No solution found.')
 
     return cost, path
 
@@ -116,8 +118,7 @@ def do_save_map(args, label, C):
         points = polyline.decode(out['routes'][0]['geometry'])
         cost = int(float(out['routes'][0]['distance'] / 1000.0))
         duration = out['routes'][0]['duration']
-        print(("Route map distance: {:.1f}, duration: {:.1f}"
-              .format(cost, duration)))
+        logger.info(f"Route map distance: {cost:.1f}, duration: {duration:.1f}")
         # FIXME: unused
         # legs = out['routes'][0]['legs']
         # waypoints = out['waypoints']
@@ -142,10 +143,10 @@ def do_save_map(args, label, C):
 
         fn, fe = os.path.splitext(args.save_map)
         fname = "{:s}-{:d}{:s}".format(fn, label, fe)
-        print(("Save map HTML to file '{:s}'".format(fname)))
+        logger.debug(f"Saved map HTML to file '{fname}'")
         map_osm.save(fname)
     except Exception as e:
-        print(("Error: Cannot save map to file ({!s})".format(e)))
+        logger.error(f"Error: Cannot save map to file ({e})")
 
 
 def main(argv=sys.argv[1:]):
@@ -179,7 +180,7 @@ def main(argv=sys.argv[1:]):
 
     args = parser.parse_args(argv)
 
-    print(args)
+    logger.debug(f"Arguments: {args}")
 
     df = pd.read_csv(args.input)
 
@@ -195,7 +196,7 @@ def main(argv=sys.argv[1:]):
     output = []
     total_cost = 0
     for i, l in enumerate(sorted(df.assigned_points.unique())):
-        print(("Search TSP path for #{:d}...".format(l)))
+        logger.info(f"Search TSP path for #{l}...")
         adf = df.loc[df.assigned_points == l, ['start_long', 'start_lat']]
         A = adf.values
         # FIXME: OSRM distance matrix actually isn't distance but it's duration
@@ -211,7 +212,7 @@ def main(argv=sys.argv[1:]):
         title = ('TSP: {:d}, Cost: {:0.1f}, N: {:d} ({:s})'
                  .format(l, cost, N, args.distance_func.title()))
 
-        print(title)
+        logger.info(title)
 
         if args.plot or args.save_plot:
             fig = plt.figure(figsize=(16, 16))
@@ -236,7 +237,7 @@ def main(argv=sys.argv[1:]):
             if args.save_plot:
                 fn, fe = os.path.splitext(args.save_plot)
                 fname = "{:s}-{:d}{:s}".format(fn, l, fe)
-                print(("Plotting to file '{:s}'".format(fname)))
+                logger.debug(f"Plotting to file '{fname}'")
                 fig.savefig(fname)
             plt.close()
 
@@ -253,10 +254,10 @@ def main(argv=sys.argv[1:]):
         new_path = path[pos:] + path[:pos]
         output.append([l, cost, N, ';'.join([str(p) for p in new_path])])
 
-    print(("Total cost: {0:.1f}".format(total_cost)))
+    logger.info(f"Total cost: {total_cost:.1f}")
 
     # save output to file
-    print(("Save the output file to '{:s}'".format(args.output)))
+    logger.info(f"Saved output file to '{args.output}'")
     odf = pd.DataFrame(output, columns=['worker_id', 'cost', 'n',
                                         'path_order'])
     odf.to_csv(args.output, index=False)

@@ -6,15 +6,12 @@ Tests for sort_by_distance.py
 
 """
 
-import os
-import shutil
 import unittest
 from pkg_resources import resource_filename
 
 CENTROIDS = resource_filename(__name__, "worker-locations.csv")
 ROADS = resource_filename(__name__, "chonburi-roads-50.csv")
 
-import pandas as pd
 from allocator.sort_by_distance import main
 from . import capture
 
