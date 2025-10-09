@@ -7,7 +7,7 @@ name = "allocator"
 version = "0.3.0"
 description = "Optimally Allocate Geographically Distributed Tasks"
 readme = {file = "README.rst", content-type = "text/x-rst"}
-requires-python = ">=3.6"
+requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
     {name = "Suriyan Laohaprapanon", email = "suriyant@gmail.com"},
