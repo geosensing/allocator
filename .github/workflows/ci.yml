@@ -22,24 +22,25 @@ jobs:
         cache-dependency-glob: "pyproject.toml"
     
     - name: Set up Python ${{ matrix.python-version }}
-      run: uv python install ${{ matrix.python-version }}
+      run: |
+        uv python install ${{ matrix.python-version }}
+        uv venv
     
     - name: Install dependencies
       run: |
-        uv pip install --system -e .
-        uv pip install --system pytest pytest-cov
+        uv pip install -e .
+        uv pip install pytest pytest-cov flake8
         
     - name: Lint with flake8
       run: |
-        uv pip install --system flake8
         # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        uv run flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        uv run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         
     - name: Test with pytest
       run: |
-        pytest --cov=allocator --cov-report=xml --cov-report=term-missing -v
+        uv run pytest --cov=allocator --cov-report=xml --cov-report=term-missing -v
         
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
