@@ -1,49 +1,38 @@
-# -*- coding: utf-8 -*-
+from __future__ import annotations
 
-import sys
-
-
-def isstring(s):
-    # if we use Python 3
-    if (sys.version_info[0] >= 3):
-        return isinstance(s, str)
-    # we use Python 2
-    return isinstance(s, str)
+import pandas as pd
 
 
-def column_exists(df, col):
+def column_exists(df: pd.DataFrame, col: str) -> bool:
     """Check the column name exists in the DataFrame.
 
     Args:
-        df (:obj:`DataFrame`): Pandas DataFrame.
-        col (str): Column name.
+        df: Pandas DataFrame.
+        col: Column name.
 
     Returns:
-        bool: True if exists, False if not exists.
-
+        True if exists, False if not exists.
     """
     if col and (col not in df.columns):
-        print(("The specify column `{0!s}` not found in the input file"
-              .format(col)))
+        print(f"The specify column `{col}` not found in the input file")
         return False
     else:
         return True
 
 
-def fixup_columns(cols):
-    """Replace index location column to name with `col` prefix
+def fixup_columns(cols: list[str | int]) -> list[str]:
+    """Replace index location column to name with `col` prefix.
 
     Args:
-        cols (list): List of original columns
+        cols: List of original columns
 
     Returns:
-        list: List of column names
-
+        List of column names
     """
     out_cols = []
     for col in cols:
         if isinstance(col, int):
-            out_cols.append('col{:d}'.format(col))
+            out_cols.append(f'col{col:d}')
         else:
             out_cols.append(col)
     return out_cols

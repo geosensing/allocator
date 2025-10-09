@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import sys
 import shlex
@@ -60,16 +59,14 @@ def main(argv=sys.argv[1:]):
     buffoon = '--buffoon' if args.buffoon else ''
     balance_edges = '--balance-edges' if args.balance_edges else ''
 
-    kahip_cmd = "python -m allocator.cluster_kahip -n {k:d} --n-closest {n_closest:d} \
-{buffoon:s} {balance_edges:s} {input:s} -o tmpkahip{k:d}.csv -d {dfunc:s} \
-".format(k=n_clusters, input=args.input, n_closest=args.n_closest,
-         buffoon=buffoon, balance_edges=balance_edges, dfunc=args.distance_func)
+    kahip_cmd = (f"python -m allocator.cluster_kahip -n {n_clusters:d} --n-closest {args.n_closest:d} "
+                 f"{buffoon} {balance_edges} {args.input} -o tmpkahip{n_clusters:d}.csv -d {args.distance_func}")
 
-    print(("KaHIP command line '{:s}'".format(kahip_cmd)))
+    print(f"KaHIP command line '{kahip_cmd}'")
     out, err = execute(kahip_cmd)
-    print(("Output: {:s}".format(out)))
+    print(f"Output: {out}")
 
-    bdf = pd.read_csv('tmpkahip{k:d}.csv'.format(k=n_clusters))
+    bdf = pd.read_csv(f'tmpkahip{n_clusters:d}.csv')
 
     buffoon_w = []
     for cluster_id in sorted(bdf.assigned_points.unique()):
@@ -92,15 +89,14 @@ def main(argv=sys.argv[1:]):
     adf = pd.DataFrame(buffoon_w, columns=['label', 'n', 'graph_weight',
                                            'mst_weight'])
 
-    kmean_cmd = 'python -m allocator.cluster_kmeans -n {k:d} {input:s} \
--o tmpkmean{k:d}.csv -d {dfunc:s}'.format(k=n_clusters, input=args.input,
-                                          dfunc=args.distance_func)
+    kmean_cmd = (f'python -m allocator.cluster_kmeans -n {n_clusters:d} {args.input} '
+                 f'-o tmpkmean{n_clusters:d}.csv -d {args.distance_func}')
 
-    print(("K-mean command line '{:s}'".format(kmean_cmd)))
+    print(f"K-mean command line '{kmean_cmd}'")
     out, err = execute(kmean_cmd)
-    print(("Output: {:s}".format(out)))
+    print(f"Output: {out}")
 
-    kdf = pd.read_csv('tmpkmean{k:d}.csv'.format(k=n_clusters))
+    kdf = pd.read_csv(f'tmpkmean{n_clusters:d}.csv')
 
     kmean_w = []
     for cluster_id in sorted(kdf.assigned_points.unique()):

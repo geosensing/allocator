@@ -13,3 +13,6 @@ dist
 build
 .DS_Store
 uv.lock
+coverage.xml
+.coverage
+sort-by-distance-output.csv

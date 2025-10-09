@@ -1,6 +1,7 @@
 """
 Distance Matrix
 """
+from __future__ import annotations
 
 import os
 import math
@@ -20,7 +21,7 @@ logger = get_logger(__name__)
 MAX_DISTANCE_MATRIX_SIZE = 100
 
 
-def pairwise_distances(X, Y=None):
+def pairwise_distances(X: np.ndarray, Y: np.ndarray | None = None) -> np.ndarray:
     """Pairwise euclidean distance calculation
     """
     if Y is None:
@@ -28,7 +29,7 @@ def pairwise_distances(X, Y=None):
     return np.sqrt(((Y - X[:, np.newaxis])**2).sum(axis=2))
 
 
-def latlon2xy(lat, lon):
+def latlon2xy(lat: float, lon: float) -> list[float]:
     """Transform lat/lon to UTM coordinate
 
     Args:
@@ -44,7 +45,7 @@ def latlon2xy(lat, lon):
     return [utm_x, utm_y]
 
 
-def xy2latlog(x, y, zone_number, zone_letter=None):
+def xy2latlog(x: float, y: float, zone_number: int, zone_letter: str | None = None) -> tuple[float, float]:
     """Transform x, y coordinate to lat/lon coordinate
 
     Args:
@@ -57,10 +58,10 @@ def xy2latlog(x, y, zone_number, zone_letter=None):
 
     """
     lat, lon = utm.to_latlon(x, y, zone_number, zone_letter)
-    return [lat, lon]
+    return (lat, lon)
 
 
-def euclidean_distance_matrix(X, Y=None):
+def euclidean_distance_matrix(X: np.ndarray, Y: np.ndarray | None = None) -> np.ndarray:
     """Euclidean distance matrix calculation
     """
     if Y is None:
@@ -71,7 +72,7 @@ def euclidean_distance_matrix(X, Y=None):
     return pairwise_distances(X, Y)
 
 
-def haversine_distance_matrix(X, Y=None):
+def haversine_distance_matrix(X: np.ndarray, Y: np.ndarray | None = None) -> np.ndarray:
     """Harversine distance matrix calculation
     """
     if Y is None:

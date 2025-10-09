@@ -1,16 +1,17 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 """
 Shortest path using Google's ortools TSP solver
 """
+from __future__ import annotations
 
 import os
 import sys
 import argparse
+from typing import Any
 from random import randint
 
 import pandas as pd
+import numpy as np
 
 from ortools.constraint_solver import pywrapcp
 # You need to import routing_enums_pb2 after pywrapcp!
@@ -24,10 +25,10 @@ from allocator.distance_matrix import (euclidean_distance_matrix,
 logger = get_logger(__name__)
 
 
-class DistanceMatrix(object):
-    """Random matrix."""
-
-    def __init__(self, A, args):
+class DistanceMatrix:
+    """Distance matrix for TSP calculations."""
+    
+    def __init__(self, A: np.ndarray, args) -> None:
         """Initialize distance matrix."""
         if args.distance_func == 'euclidean':
             distances = euclidean_distance_matrix(A)
@@ -38,7 +39,7 @@ class DistanceMatrix(object):
                                              chunksize=args.osrm_max_table_size,
                                              osrm_base_url=args.osrm_base_url)
         (nx, ny) = distances.shape
-        self.matrix = {}
+        self.matrix: dict[int, dict[int, float]] = {}
         for from_node in range(nx):
             self.matrix[from_node] = {}
             for to_node in range(ny):
@@ -48,7 +49,7 @@ class DistanceMatrix(object):
                     self.matrix[from_node][to_node] = distances[from_node,
                                                                 to_node]
 
-    def Distance(self, from_node, to_node):
+    def Distance(self, from_node: int, to_node: int) -> float:
         return self.matrix[from_node][to_node]
 
 
