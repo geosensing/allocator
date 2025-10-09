@@ -13,9 +13,9 @@ import googlemaps
 import utm
 
 from haversine import haversine
-from allocator import get_logger
+import logging
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 MAX_DISTANCE_MATRIX_SIZE = 100

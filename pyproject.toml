@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "allocator"
-version = "0.3.0"
+version = "1.0.0"
 description = "Optimally Allocate Geographically Distributed Tasks"
 readme = {file = "README.rst", content-type = "text/x-rst"}
 requires-python = ">=3.11"
@@ -39,6 +39,8 @@ dependencies = [
     "folium>=0.12.0",
     "scipy>=1.7.0",
     "scikit-learn",
+    "click>=8.0.0",
+    "rich>=13.0.0",
 ]
 
 [project.optional-dependencies]
@@ -66,14 +68,7 @@ Source = "https://github.com/geosensing/allocator"
 Documentation = "https://geosensing.github.io/allocator/"
 
 [project.scripts]
-sort_by_distance = "allocator.sort_by_distance:main"
-cluster_kmeans = "allocator.cluster_kmeans:main"
-cluster_kahip = "allocator.cluster_kahip:main"
-shortest_path_mst_tsp = "allocator.shortest_path_mst_tsp:main"
-shortest_path_ortools = "allocator.shortest_path_ortools:main"
-shortest_path_gm = "allocator.shortest_path_gm:main"
-shortest_path_osrm = "allocator.shortest_path_osrm:main"
-compare_kahip_kmeans = "allocator.compare_kahip_kmeans:main"
+allocator = "allocator.cli.main:cli"
 
 [tool.setuptools]
 packages = ["allocator"]

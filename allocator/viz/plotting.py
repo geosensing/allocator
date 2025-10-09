@@ -26,10 +26,13 @@ def plot_clusters(data: np.ndarray | pd.DataFrame, labels: np.ndarray,
     
     # Convert DataFrame to numpy array if needed
     if isinstance(data, pd.DataFrame):
-        if 'start_long' in data.columns and 'start_lat' in data.columns:
+        # Try modern column names first, then legacy
+        if 'longitude' in data.columns and 'latitude' in data.columns:
+            X = data[['longitude', 'latitude']].values
+        elif 'start_long' in data.columns and 'start_lat' in data.columns:
             X = data[['start_long', 'start_lat']].values
         else:
-            raise ValueError("DataFrame must contain 'start_long' and 'start_lat' columns")
+            raise ValueError("DataFrame must contain 'longitude', 'latitude' or 'start_long', 'start_lat' columns")
     else:
         X = data
     
