@@ -6,8 +6,10 @@
 *.log
 /allocator/kahip/
 venv
+.venv
 docs/build
 dist
 *.egg-info
 build
 .DS_Store
+uv.lock

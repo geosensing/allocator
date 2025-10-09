@@ -112,6 +112,23 @@ max-line-length = 127
 max-complexity = 10
 select = ["E9", "F63", "F7", "F82"]
 ignore = ["E203", "W503"]
+exclude = [
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    ".env",
+    "env",
+    "dist",
+    "build",
+    "*.egg-info",
+    ".tox",
+    ".coverage",
+    ".coverage.*",
+    ".cache",
+    ".mypy_cache",
+    ".pytest_cache"
+]
 
 [tool.coverage.run]
 source = ["allocator"]
