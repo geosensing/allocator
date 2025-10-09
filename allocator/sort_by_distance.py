@@ -79,7 +79,7 @@ def main(argv=sys.argv[1:]):
             sys.exit(-1)
         distances = google_distance_matrix(X, centroids,
                                            args.api_key, duration=False)
-    
+
     if distances is None:
         print("ERROR: Couldn't get distance matrix of locations")
         sys.exit(-2)
@@ -123,13 +123,13 @@ def main(argv=sys.argv[1:]):
 
     if args.by_worker:
         output = []
-        for l in sorted(df['assigned_points'].unique()):
-            colname = 'distance_{:d}'.format(l)
-            xdf = df[df.assigned_points == l][['segment_id', colname]]
+        for worker_id in sorted(df['assigned_points'].unique()):
+            colname = 'distance_{:d}'.format(worker_id)
+            xdf = df[df.assigned_points == worker_id][['segment_id', colname]]
             xdf.reset_index(drop=True, inplace=True)
             points = xdf.loc[np.argsort(xdf[colname]),
                              'segment_id'].astype(str).tolist()
-            output.append([l, ';'.join(points)])
+            output.append([worker_id, ';'.join(points)])
         odf = pd.DataFrame(output, columns=['worker_id', 'segment_ids'])
         odf.to_csv(args.output, index=False)
     else:

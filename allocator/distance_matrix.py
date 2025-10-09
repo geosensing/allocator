@@ -7,14 +7,14 @@ import math
 import time
 
 import numpy as np
-
-from allocator import get_logger
-logger = get_logger(__name__)
 import requests
 import googlemaps
 import utm
 
 from haversine import haversine
+from allocator import get_logger
+
+logger = get_logger(__name__)
 
 
 MAX_DISTANCE_MATRIX_SIZE = 100

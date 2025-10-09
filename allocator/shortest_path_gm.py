@@ -8,16 +8,15 @@ Shortest path using Google Direction API
 import os
 import sys
 import argparse
-
 from random import randint
 
 import pandas as pd
-
-from allocator import get_logger
-logger = get_logger(__name__)
-
 import googlemaps
 import polyline
+
+from allocator import get_logger
+
+logger = get_logger(__name__)
 
 
 def main(argv=sys.argv[1:]):
@@ -75,9 +74,9 @@ def main(argv=sys.argv[1:]):
             waypoints = [', '.join([str(x) for x in n]) for n in nodes[1:]]
             try:
                 routes = gmaps.directions(start,
-                                        start,
-                                        waypoints=waypoints,
-                                        optimize_waypoints=True)
+                                          start,
+                                          waypoints=waypoints,
+                                          optimize_waypoints=True)
                 for x in routes:
                     rp = x['overview_polyline']['points']
                     points = polyline.decode(rp)

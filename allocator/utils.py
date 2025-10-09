@@ -42,9 +42,8 @@ def fixup_columns(cols):
     """
     out_cols = []
     for col in cols:
-        if type(col) == int:
+        if isinstance(col, int):
             out_cols.append('col{:d}'.format(col))
         else:
             out_cols.append(col)
     return out_cols
-

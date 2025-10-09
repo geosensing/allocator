@@ -105,7 +105,7 @@ def main(argv=sys.argv[1:]):
     closest_func = {'euclidean': closest_centroid_euclidean,
                     'haversine': closest_centroid_haversine,
                     'osrm': lambda A, B:
-                            closest_centroid_osrm(A, B, args)}
+                        closest_centroid_osrm(A, B, args)}
 
     X = df[['start_long', 'start_lat']].values
 

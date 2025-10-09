@@ -10,12 +10,12 @@ import sys
 import argparse
 
 import pandas as pd
-
-from allocator import get_logger
-logger = get_logger(__name__)
-
 import requests
 import polyline
+
+from allocator import get_logger
+
+logger = get_logger(__name__)
 
 
 def osrm_trip(coords, osrm_base_url=None):

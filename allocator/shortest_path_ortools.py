@@ -8,21 +8,20 @@ Shortest path using Google's ortools TSP solver
 import os
 import sys
 import argparse
+from random import randint
 
 import pandas as pd
-
-from allocator import get_logger
-logger = get_logger(__name__)
-
-from random import randint
 
 from ortools.constraint_solver import pywrapcp
 # You need to import routing_enums_pb2 after pywrapcp!
 from ortools.constraint_solver import routing_enums_pb2
 
+from allocator import get_logger
 from allocator.distance_matrix import (euclidean_distance_matrix,
                                        haversine_distance_matrix,
                                        osrm_distance_matrix)
+
+logger = get_logger(__name__)
 
 
 class DistanceMatrix(object):

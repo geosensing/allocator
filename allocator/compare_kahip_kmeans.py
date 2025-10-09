@@ -72,8 +72,8 @@ def main(argv=sys.argv[1:]):
     bdf = pd.read_csv('tmpkahip{k:d}.csv'.format(k=n_clusters))
 
     buffoon_w = []
-    for l in sorted(bdf.assigned_points.unique()):
-        X = bdf.loc[bdf.assigned_points == l, ['start_long', 'start_lat']].values
+    for cluster_id in sorted(bdf.assigned_points.unique()):
+        X = bdf.loc[bdf.assigned_points == cluster_id, ['start_long', 'start_lat']].values
         n = len(X)
         if args.distance_func == 'euclidean':
             distances = euclidean_distance_matrix(X)
@@ -87,7 +87,7 @@ def main(argv=sys.argv[1:]):
         T = nx.minimum_spanning_tree(G)
         gw = int(G.size(weight='weight') / 1000)
         tw = int(T.size(weight='weight') / 1000)
-        buffoon_w.append([l, n, gw, tw])
+        buffoon_w.append([cluster_id, n, gw, tw])
 
     adf = pd.DataFrame(buffoon_w, columns=['label', 'n', 'graph_weight',
                                            'mst_weight'])
@@ -103,8 +103,8 @@ def main(argv=sys.argv[1:]):
     kdf = pd.read_csv('tmpkmean{k:d}.csv'.format(k=n_clusters))
 
     kmean_w = []
-    for l in sorted(kdf.assigned_points.unique()):
-        X = kdf.loc[kdf.assigned_points == l, ['start_long', 'start_lat']].values
+    for cluster_id in sorted(kdf.assigned_points.unique()):
+        X = kdf.loc[kdf.assigned_points == cluster_id, ['start_long', 'start_lat']].values
         n = len(X)
         if args.distance_func == 'euclidean':
             distances = euclidean_distance_matrix(X)
@@ -118,7 +118,7 @@ def main(argv=sys.argv[1:]):
         T = nx.minimum_spanning_tree(G)
         gw = int(G.size(weight='weight') / 1000)
         tw = int(T.size(weight='weight') / 1000)
-        kmean_w.append([l, n, gw, tw])
+        kmean_w.append([cluster_id, n, gw, tw])
 
     bdf = pd.DataFrame(kmean_w, columns=['label', 'n', 'graph_weight',
                                          'mst_weight'])

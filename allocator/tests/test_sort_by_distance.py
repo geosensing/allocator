@@ -9,11 +9,11 @@ Tests for sort_by_distance.py
 import unittest
 from pkg_resources import resource_filename
 
-CENTROIDS = resource_filename(__name__, "worker-locations.csv")
-ROADS = resource_filename(__name__, "chonburi-roads-50.csv")
-
 from allocator.sort_by_distance import main
 from . import capture
+
+CENTROIDS = resource_filename(__name__, "worker-locations.csv")
+ROADS = resource_filename(__name__, "chonburi-roads-50.csv")
 
 
 class TestSortByDistance(unittest.TestCase):
@@ -29,7 +29,7 @@ class TestSortByDistance(unittest.TestCase):
             self.assertRegex(output, r'Done$')
 
     def test_sort_by_distance_by_worker(self):
-        with capture(main, ['-c', CENTROIDS, 
+        with capture(main, ['-c', CENTROIDS,
                             '--by-worker', ROADS]) as output:
             self.assertRegex(output, r'Done$')
 
@@ -44,6 +44,7 @@ class TestSortByDistance(unittest.TestCase):
                             '-d', 'osrm',
                             ROADS]) as output:
             self.assertRegex(output, r'Done$')
+
 
 if __name__ == '__main__':
     unittest.main()

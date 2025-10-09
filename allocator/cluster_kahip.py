@@ -102,7 +102,7 @@ def main(argv=sys.argv[1:]):
             sys.exit(-1)
         distances = google_distance_matrix(X, api_key=args.api_key,
                                            duration=False)
-    
+
     if distances is None:
         print("ERROR: Couldn't get distance matrix of locations")
         sys.exit(-2)
@@ -131,7 +131,11 @@ def main(argv=sys.argv[1:]):
 
         os.putenv('LD_LIBRARY_PATH', os.path.join(args.kahip_dir, 'extern/argtable-2.10/lib'))
 
-        buffoon_cmd = 'mpirun -n {k:d} {base:s}/optimized/buffoon metis.graph --seed {seed:d} --k {k:d} --preconfiguration=strong --max_num_threads={k:d}'.format(k=n_clusters, base=args.kahip_dir, seed=seed)
+        buffoon_cmd = ('mpirun -n {k:d} {base:s}/optimized/buffoon metis.graph '
+                       '--seed {seed:d} --k {k:d} --preconfiguration=strong '
+                       '--max_num_threads={k:d}').format(k=n_clusters,
+                                                         base=args.kahip_dir,
+                                                         seed=seed)
 
         print(("Command line: '{:s}'".format(buffoon_cmd)))
 
@@ -221,6 +225,7 @@ def main(argv=sys.argv[1:]):
 
     odf.to_csv(args.output, index=False)
     print("Done")
+
 
 if __name__ == "__main__":
     sys.exit(main())
