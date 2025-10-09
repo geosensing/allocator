@@ -8,13 +8,13 @@ Tests for cluster_kahip.py
 
 import os
 import unittest
-from pkg_resources import resource_filename
+from pathlib import Path
 
 from allocator.cluster_kahip import main
 from . import capture
 
-
-ROADS = resource_filename(__name__, "chonburi-roads-50.csv")
+TEST_DIR = Path(__file__).parent
+ROADS = str(TEST_DIR / "chonburi-roads-50.csv")
 
 
 def kahip_available():

@@ -7,13 +7,14 @@ Tests for sort_by_distance.py
 """
 
 import unittest
-from pkg_resources import resource_filename
+from pathlib import Path
 
 from allocator.sort_by_distance import main
 from . import capture
 
-CENTROIDS = resource_filename(__name__, "worker-locations.csv")
-ROADS = resource_filename(__name__, "chonburi-roads-50.csv")
+TEST_DIR = Path(__file__).parent
+CENTROIDS = str(TEST_DIR / "worker-locations.csv")
+ROADS = str(TEST_DIR / "chonburi-roads-50.csv")
 
 
 class TestSortByDistance(unittest.TestCase):
