@@ -16,3 +16,7 @@ uv.lock
 coverage.xml
 .coverage
 sort-by-distance-output.csv
+cluster-kmeans-output.csv
+test-kmeans-haversine.csv
+test-kmeans-output.csv
+cluster-kmeans-centroids-output.csv

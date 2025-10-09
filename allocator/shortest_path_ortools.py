@@ -18,9 +18,7 @@ from ortools.constraint_solver import pywrapcp
 from ortools.constraint_solver import routing_enums_pb2
 
 from allocator import get_logger
-from allocator.distance_matrix import (euclidean_distance_matrix,
-                                       haversine_distance_matrix,
-                                       osrm_distance_matrix)
+from allocator.distance_matrix import get_distance_matrix
 
 logger = get_logger(__name__)
 
@@ -30,14 +28,12 @@ class DistanceMatrix:
     
     def __init__(self, A: np.ndarray, args) -> None:
         """Initialize distance matrix."""
-        if args.distance_func == 'euclidean':
-            distances = euclidean_distance_matrix(A)
-        elif args.distance_func == 'haversine':
-            distances = haversine_distance_matrix(A)
-        elif args.distance_func == 'osrm':
-            distances = osrm_distance_matrix(A,
-                                             chunksize=args.osrm_max_table_size,
-                                             osrm_base_url=args.osrm_base_url)
+        distances = get_distance_matrix(
+            A, A,
+            method=args.distance_func,
+            osrm_max_table_size=args.osrm_max_table_size,
+            osrm_base_url=args.osrm_base_url
+        )
         (nx, ny) = distances.shape
         self.matrix: dict[int, dict[int, float]] = {}
         for from_node in range(nx):

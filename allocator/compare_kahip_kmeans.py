@@ -7,11 +7,8 @@ import argparse
 from subprocess import PIPE, Popen
 
 import pandas as pd
-import networkx as nx
 
-from allocator.distance_matrix import (euclidean_distance_matrix,
-                                       haversine_distance_matrix,
-                                       osrm_distance_matrix)
+from allocator.algorithms import calculate_cluster_statistics
 
 
 def execute(cmd):
@@ -24,38 +21,44 @@ def execute(cmd):
 
 
 def main(argv=sys.argv[1:]):
-    desc = 'KaHIP and K-means clustering comparison'
+
+    desc = 'Compare KaHIP vs K-means clustering approaches'
     parser = argparse.ArgumentParser(description=desc)
 
     parser.add_argument('input', default=None,
                         help='Road segments input file')
-
-    parser.add_argument('--kahip-dir', default='./KaHIP/src',
-                        help='KaHIP directory')
-    parser.add_argument('--buffoon', action='store_true',
-                        help='Using Buffoon')
-    parser.set_defaults(buffoon=False)
-    parser.add_argument('--n-closest', default=15, type=int,
-                        help='Number of closest distances to build Graph')
-    parser.add_argument('--balance-edges', action='store_true',
-                        help='KaFFPaE with balance edges')
-    parser.set_defaults(balance_edges=False)
-
-    parser.add_argument('-n', '--n-clusters', dest='n_clusters', required=True,
-                        type=int, help='Number of clusters')
-    parser.add_argument('-o', '--output', default='output-kmean-kahip.csv',
-                        help='Output file name')
+    parser.add_argument('-n', '--n_workers', dest='n_workers', type=int, required=True,
+                        help='Number of workers')
 
     parser.add_argument('-d', '--distance-func', default='euclidean',
                         choices=['euclidean', 'haversine', 'osrm'],
                         help='Distance function for distance matrix')
 
-    args = parser.parse_args()
+    parser.add_argument('--n-closest', dest='n_closest', type=int, default=10,
+                        help='Number of closest edges')
+    parser.add_argument('--buffoon', dest='buffoon', action='store_true',
+                        help='Use buffoon strategy instead of KaFFPaE')
+    parser.set_defaults(buffoon=False)
+
+    parser.add_argument('--balance-edges', dest='balance_edges', action='store_true',
+                        help='Use balance edges on all modes')
+    parser.set_defaults(balance_edges=False)
+
+    parser.add_argument('-o', '--output', default='compare-output.csv',
+                        help='Output file name')
+
+    parser.add_argument('--osrm-base-url', dest='osrm_base_url', default=None,
+                        help='Custom OSRM service URL')
+    parser.add_argument('--osrm-max-table-size', dest='osrm_max_table_size',
+                        default=100, type=int, help='Maximum OSRM table size')
+
+    args = parser.parse_args(argv)
 
     print(args)
 
-    n_clusters = args.n_clusters
+    n_clusters = args.n_workers
 
+    # Prepare KaHIP command
     buffoon = '--buffoon' if args.buffoon else ''
     balance_edges = '--balance-edges' if args.balance_edges else ''
 
@@ -66,29 +69,19 @@ def main(argv=sys.argv[1:]):
     out, err = execute(kahip_cmd)
     print(f"Output: {out}")
 
+    # Read KaHIP results and calculate statistics
     bdf = pd.read_csv(f'tmpkahip{n_clusters:d}.csv')
+    kahip_stats = calculate_cluster_statistics(
+        bdf, 
+        bdf['assigned_points'].values - 1,  # Convert to 0-based
+        distance_method=args.distance_func,
+        osrm_base_url=args.osrm_base_url,
+        osrm_max_table_size=args.osrm_max_table_size
+    )
+    
+    adf = pd.DataFrame(kahip_stats)
 
-    buffoon_w = []
-    for cluster_id in sorted(bdf.assigned_points.unique()):
-        X = bdf.loc[bdf.assigned_points == cluster_id, ['start_long', 'start_lat']].values
-        n = len(X)
-        if args.distance_func == 'euclidean':
-            distances = euclidean_distance_matrix(X)
-        elif args.distance_func == 'haversine':
-            distances = haversine_distance_matrix(X)
-        elif args.distance_func == 'osrm':
-            distances = osrm_distance_matrix(X)
-        if distances is None:
-            break
-        G = nx.from_numpy_matrix(distances)
-        T = nx.minimum_spanning_tree(G)
-        gw = int(G.size(weight='weight') / 1000)
-        tw = int(T.size(weight='weight') / 1000)
-        buffoon_w.append([cluster_id, n, gw, tw])
-
-    adf = pd.DataFrame(buffoon_w, columns=['label', 'n', 'graph_weight',
-                                           'mst_weight'])
-
+    # Prepare K-means command
     kmean_cmd = (f'python -m allocator.cluster_kmeans -n {n_clusters:d} {args.input} '
                  f'-o tmpkmean{n_clusters:d}.csv -d {args.distance_func}')
 
@@ -96,36 +89,26 @@ def main(argv=sys.argv[1:]):
     out, err = execute(kmean_cmd)
     print(f"Output: {out}")
 
+    # Read K-means results and calculate statistics
     kdf = pd.read_csv(f'tmpkmean{n_clusters:d}.csv')
+    kmean_stats = calculate_cluster_statistics(
+        kdf,
+        kdf['assigned_points'].values - 1,  # Convert to 0-based
+        distance_method=args.distance_func,
+        osrm_base_url=args.osrm_base_url,
+        osrm_max_table_size=args.osrm_max_table_size
+    )
+    
+    bdf_kmean = pd.DataFrame(kmean_stats)
 
-    kmean_w = []
-    for cluster_id in sorted(kdf.assigned_points.unique()):
-        X = kdf.loc[kdf.assigned_points == cluster_id, ['start_long', 'start_lat']].values
-        n = len(X)
-        if args.distance_func == 'euclidean':
-            distances = euclidean_distance_matrix(X)
-        elif args.distance_func == 'haversine':
-            distances = haversine_distance_matrix(X)
-        elif args.distance_func == 'osrm':
-            distances = osrm_distance_matrix(X)
-        if distances is None:
-            break
-        G = nx.from_numpy_matrix(distances)
-        T = nx.minimum_spanning_tree(G)
-        gw = int(G.size(weight='weight') / 1000)
-        tw = int(T.size(weight='weight') / 1000)
-        kmean_w.append([cluster_id, n, gw, tw])
+    # Combine results
+    adf['method'] = 'kahip'
+    bdf_kmean['method'] = 'kmeans'
+    final_df = pd.concat([adf, bdf_kmean], ignore_index=True)
 
-    bdf = pd.DataFrame(kmean_w, columns=['label', 'n', 'graph_weight',
-                                         'mst_weight'])
-
-    odf = adf.join(bdf[['n', 'graph_weight', 'mst_weight']], lsuffix='_kahip',
-                   rsuffix='_kmeans')
-
-    odf.to_csv(args.output, index=False)
-
-    pd.set_option('display.width', 120)
-    print((odf.describe()))
+    # Save comparison results
+    final_df.to_csv(args.output, index=False)
+    print("Done")
 
 
 if __name__ == "__main__":

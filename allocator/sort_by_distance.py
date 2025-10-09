@@ -9,14 +9,11 @@ import argparse
 import pandas as pd
 import numpy as np
 
-from allocator.distance_matrix import (euclidean_distance_matrix,
-                                       haversine_distance_matrix,
-                                       osrm_distance_matrix,
-                                       google_distance_matrix)
+from allocator.algorithms import sort_by_distance_assignment
+from allocator.plotting import plot_assignments
 
 
 def main(argv=sys.argv[1:]):
-
     desc = 'Known initial centroids allocator'
     parser = argparse.ArgumentParser(description=desc)
 
@@ -51,78 +48,61 @@ def main(argv=sys.argv[1:]):
 
     print(args)
 
+    # Read input data
     df = pd.read_csv(args.input)
-
     cdf = pd.read_csv(args.centroids)
-
     n_clusters = len(cdf)
 
     X = df[['start_long', 'start_lat']].values
     centroids = cdf[['lon', 'lat']].values
 
-    # Calculate the pairwise distances.
-    if args.distance_func == 'euclidean':
-        distances = euclidean_distance_matrix(X, centroids)
-    elif args.distance_func == 'haversine':
-        distances = haversine_distance_matrix(X, centroids)
-    elif args.distance_func == 'osrm':
-        # FIXME: it's duration in OSRM
-        distances = osrm_distance_matrix(X, centroids,
-                                         chunksize=args.osrm_max_table_size,
-                                         osrm_base_url=args.osrm_base_url)
-    elif args.distance_func == 'google':
-        if args.api_key is None:
-            print("ERROR: Google Map API key is required,"
-                  " please specify by `--api-key`")
-            sys.exit(-1)
-        distances = google_distance_matrix(X, centroids,
-                                           args.api_key, duration=False)
+    # Validate API key for Google method
+    if args.distance_func == 'google' and args.api_key is None:
+        print("ERROR: Google Map API key is required, please specify by `--api-key`")
+        sys.exit(-1)
 
-    if distances is None:
-        print("ERROR: Couldn't get distance matrix of locations")
+    # Calculate assignments using centralized function
+    try:
+        labels = sort_by_distance_assignment(
+            df,
+            centroids,
+            distance_method=args.distance_func,
+            api_key=args.api_key,
+            osrm_base_url=args.osrm_base_url,
+            osrm_max_table_size=args.osrm_max_table_size,
+            duration=False  # For Google, use distance not duration
+        )
+    except Exception as e:
+        print(f"ERROR: Couldn't calculate distance matrix: {e}")
         sys.exit(-2)
 
-    colnames = ['distance_{:d}'.format(n + 1) for n in range(n_clusters)]
+    # Add results to dataframe
+    df['assigned_points'] = labels + 1  # Convert to 1-based indexing
+
+    # Create distance columns for compatibility
+    from allocator.distance_matrix import get_distance_matrix
+    distances = get_distance_matrix(
+        X, centroids,
+        method=args.distance_func,
+        api_key=args.api_key,
+        osrm_base_url=args.osrm_base_url,
+        osrm_max_table_size=args.osrm_max_table_size,
+        duration=False
+    )
+    
+    colnames = [f'distance_{n + 1}' for n in range(n_clusters)]
     dist_df = pd.DataFrame(distances, columns=colnames)
+    df = pd.concat([df, dist_df], axis=1)
 
-    # join distances
-    df = df.join(dist_df)
-
-    # calculate the `order_list_of_workers`
-    order_list_of_workers = np.argsort(distances) + 1
-    df['order_list_of_workers'] = [';'.join(w.astype(str))
-                                   for w in order_list_of_workers]
-
-    # Get minimum distance (duration) to centroids
-    known_labels = np.argmin(distances, axis=1)
-    df['assigned_points'] = known_labels + 1
-
-    # plot if need
+    # Plot if requested
     if args.plot:
-        import matplotlib.pyplot as plt
-        from matplotlib import colors
+        plot_assignments(df, title=f'Distance-based Assignment ({args.distance_func.title()})')
 
-        fig = plt.figure(figsize=(8, 8))
-        plt.ticklabel_format(useOffset=False)
-        cvals = list(colors.cnames.values())
-
-        ax = fig.add_subplot(1, 1, 1)
-        for k, col in zip(list(range(n_clusters)), cvals):
-            my_members = known_labels == k
-            cluster_center = centroids[k]
-            ax.plot(X[my_members, 0], X[my_members, 1], 'w',
-                    markerfacecolor=col, marker='.')
-            ax.plot(cluster_center[0], cluster_center[1], 'o',
-                    markerfacecolor=col, markeredgecolor='k', markersize=6)
-        ax.set_title('Allocator based on Known Initial Centroids')
-        # ax.set_xticks(())
-        # ax.set_yticks(())
-        plt.show()
-
+    # Output handling
     if args.by_worker:
         output = []
         for worker_id in sorted(df['assigned_points'].unique()):
-            colname = 'distance_{:d}'.format(worker_id)
+            colname = f'distance_{worker_id}'
             xdf = df[df.assigned_points == worker_id][['segment_id', colname]]
             xdf.reset_index(drop=True, inplace=True)
             points = xdf.loc[np.argsort(xdf[colname]),
@@ -131,8 +111,9 @@ def main(argv=sys.argv[1:]):
         odf = pd.DataFrame(output, columns=['worker_id', 'segment_ids'])
         odf.to_csv(args.output, index=False)
     else:
-        # save output to file
+        # Save standard output
         df.to_csv(args.output, index=False)
+    
     print("Done")
 
 
