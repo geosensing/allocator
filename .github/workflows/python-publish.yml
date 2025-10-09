@@ -1,7 +1,5 @@
-# This workflow will upload a Python Package using Twine when a release is created
-# For more information see: https://help.github.com/en/actions/language-and-framework-guides/using-python-with-github-actions#publishing-to-package-registries
-
-name: Publish Python Package to PyPI
+# Publish Python Package to PyPI when a release is created
+name: Publish to PyPI
 
 on:
   release:
@@ -19,25 +17,58 @@ permissions:
   id-token: write  # Required for trusted publishing
 
 jobs:
-  deploy:
+  test-before-publish:
     runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+        cache-dependency-glob: "pyproject.toml"
+    
+    - name: Set up Python 3.11
+      run: |
+        uv python install 3.11
+        uv venv
+    
+    - name: Install and test package
+      run: |
+        uv pip install -e .[test]
+        uv run pytest allocator/tests/ --tb=short -q
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: test-before-publish
     environment:
-      name: pypi
-      url: https://pypi.org/p/allocator
+      name: ${{ github.event.inputs.use_test_pypi == 'true' && 'test-pypi' || 'pypi' }}
+      url: ${{ github.event.inputs.use_test_pypi == 'true' && 'https://test.pypi.org/p/allocator' || 'https://pypi.org/p/allocator' }}
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.11'
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      
+    - name: Set up Python 3.11
+      run: |
+        uv python install 3.11
+        uv venv
+        
     - name: Install build dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install build
+        uv pip install build twine
+        
     - name: Build package
-      run: python -m build
-    - name: Publish package distributions to PyPI
+      run: |
+        python -m build
+        
+    - name: Check package quality
+      run: |
+        twine check dist/*
+        
+    - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@v1.13.0
       with:
-        repository-url: ${{ github.event.inputs.use_test_pypi == 'true' && 'https://test.pypi.org/legacy/' || 'https://upload.pypi.org/legacy/' }}
+        repository-url: ${{ github.event.inputs.use_test_pypi == 'true' && 'https://test.pypi.org/legacy/' || '' }}

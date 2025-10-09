@@ -4,14 +4,48 @@ on:
     branches: [ "master", "main" ]
   pull_request:
     branches: [ "master", "main" ]
+
 permissions:
   contents: read
+
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+        cache-dependency-glob: "pyproject.toml"
+    
+    - name: Set up Python 3.11
+      run: |
+        uv python install 3.11
+        uv venv
+    
+    - name: Install dev dependencies
+      run: |
+        uv pip install -e .[dev]
+        
+    - name: Run ruff linting
+      run: |
+        uv run ruff check allocator/
+        
+    - name: Run ruff formatting check
+      run: |
+        uv run ruff format --check allocator/
+        
+    - name: Run mypy type checking
+      run: |
+        uv run mypy allocator/
+
   test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13"]
     steps:
     - uses: actions/checkout@v4
     
@@ -26,21 +60,17 @@ jobs:
         uv python install ${{ matrix.python-version }}
         uv venv
     
-    - name: Install dependencies
+    - name: Install core dependencies
       run: |
-        uv pip install -e .
-        uv pip install pytest pytest-cov flake8
+        uv pip install -e .[test]
         
-    - name: Lint with flake8
+    - name: Install optional dependencies for comprehensive testing
       run: |
-        # stop the build if there are Python syntax errors or undefined names
-        uv run flake8 allocator --count --select=E9,F63,F7,F82 --show-source --statistics
-        # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        uv run flake8 allocator --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        uv pip install ortools scipy
         
-    - name: Test with pytest
+    - name: Test with pytest (core functionality)
       run: |
-        uv run pytest --cov=allocator --cov-report=xml --cov-report=term-missing -v
+        uv run pytest allocator/tests/ --cov=allocator --cov-report=xml --cov-report=term-missing -v --tb=short
         
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
@@ -49,3 +79,54 @@ jobs:
         file: ./coverage.xml
         fail_ci_if_error: false
         token: ${{ secrets.CODECOV_TOKEN }}
+
+  test-algorithms:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v3
+      with:
+        enable-cache: true
+        cache-dependency-glob: "pyproject.toml"
+    
+    - name: Set up Python 3.11
+      run: |
+        uv python install 3.11
+        uv venv
+    
+    - name: Install all optional dependencies
+      run: |
+        uv pip install -e .[test,algorithms,geo]
+        
+    - name: Test advanced algorithms
+      run: |
+        uv run pytest allocator/tests/api/ -k "ortools or google" -v --tb=short
+        
+  build:
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install uv  
+      uses: astral-sh/setup-uv@v3
+      
+    - name: Set up Python 3.11
+      run: |
+        uv python install 3.11
+        uv venv
+        
+    - name: Install build dependencies
+      run: |
+        uv pip install build
+        
+    - name: Build package
+      run: |
+        python -m build
+        
+    - name: Check package
+      run: |
+        uv pip install twine
+        twine check dist/*

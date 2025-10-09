@@ -1,4 +1,4 @@
-segment_id,osm_id,osm_name,osm_type,start_lat,start_long,end_lat,end_long
+segment_id,osm_id,osm_name,osm_type,latitude,longitude,end_lat,end_long
 830,114650781,,primary,12.9310267755,101.036403999,12.926844138,101.034700736
 225,52058628,จารุวร,primary,13.3101044837,101.183031805,13.3143332943,101.183851432
 687,103478334,ศุขประยูร,trunk,13.4455773,101.1588156,13.4454518794,101.163382625

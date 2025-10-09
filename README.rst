@@ -10,112 +10,183 @@ allocator: Optimally Allocate Geographically Distributed Tasks
 .. image:: https://img.shields.io/badge/docs-github.io-blue
     :target: https://geosensing.github.io/allocator/
 
-How can we efficiently collect data from geographically distributed locations? If the data 
-collection is being crowd-sourced, then we may want to exploit the fact that workers
-are geographically distributed. One simple heuristic to do so is to order the locations by 
-distance for each worker (with some task registration backend). If you have hired 
-workers (or rented drones) who you can send to different locations, then you must split the tasks 
-across workers (drones), and plan the 'shortest' routes for each, ala the Traveling Salesman 
-Problem (TSP). This is a problem that companies like Fedex etc. solve all the time. Since there 
-are no computationally feasible solutions for solving for the global minimum, one heuristic solution 
-is to split the locations into clusters of points that are close to each other (ideally, 
-we want the clusters to be 'balanced'), and then to estimate a TSP solution for each cluster. 
+**Allocator v1.0** provides a modern, Pythonic API for geographic task allocation, clustering, and routing optimization. 
 
-The package provides a simple way to implement these solutions. Broadly, it provides three kinds of functions:
+How can we efficiently collect data from geographically distributed locations? Whether you're coordinating crowdsourced data collection, optimizing delivery routes, or planning field research, allocator provides the tools you need.
 
-1. **Sort by Distance:** Produces an ordered list of workers for each point or an ordered list of points 
-    for each worker.
+✨ **What's New in v1.0**
+------------------------
 
-2. **Cluster the Points:** Clusters the points into *n_worker* groups.
+- **🎯 Modern Python API** - Clean, intuitive interface with type hints
+- **📦 Unified CLI** - Single command with subcommands (``allocator cluster``, ``allocator route``, ``allocator assign``)
+- **🚀 Performance** - Optimized algorithms with NumPy and scikit-learn
+- **📊 Rich Results** - Structured results with metadata and easy export
+- **🔧 No Backward Compatibility** - Clean slate, standards-compliant design
 
-3. **Shortest Path:** Order points within a cluster (or any small number of points) into a path or itinerary. 
+Core Functionality
+------------------
 
-The package also provides access to three different kinds of distance functions for calculating the distance matrices
-that underlie these functions: 
+**1. Clustering** 🎯
+  Group geographic points into balanced clusters for task allocation.
 
-1. **Euclidean Distance:** use option ``-d euclidean``; similar to the Haversine distance within the same `UTM zone <https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system>`__)
+**2. Routing** 🛣️  
+  Find optimal paths through sets of locations (TSP solving).
 
-2. **Haversine Distance:** use option ``-d haversine``. 
+**3. Assignment** 📍
+  Assign points to closest workers/centers with distance-based sorting.
 
-3. **OSRM Distance:** use option ``-d osrm``. Neither Haversine nor Euclidean distance take account of the actual road network or the traffic. To use actual travel time, use `Open Source Routing Machine API <http://project-osrm.org/docs/v5.7.0/api/?language=Python#table-service>`__ A maximum number of 100 points can be passed to the function if we use the public server. However, you can set up your own private OSRM server with ``--max-table-size`` to specific the maximum number of points.
+Quick Start
+-----------
 
-4. **Google Distance Matrix API:**. use option ``-d google``. This option available in ``sort_by_distane`` and ``cluster_kahip`` only due to Google Distance Matrix API has very usage limits. Please look at the limitations `here. <https://developers.google.com/maps/documentation/distance-matrix/usage-limits>`__
-
-Downloads
-----------
-As of February 3rd, 2018, the package had been downloaded nearly 1,700 times (see the `saved BigQuery <https://bigquery.cloud.google.com/savedquery/267723140544:91e63eb83be8482caf1b38da8f62229f>`__).
-
-Related Package
-^^^^^^^^^^^^^^^
-To sample locations randomly on the streets, check out `geo_sampling <https://github.com/soodoku/geo_sampling>`__.
-
-Application
-^^^^^^^^^^^^^^^
-Missing Women on the streets of Delhi. See `women count <https://github.com/soodoku/women-count>`__
-
-Install
--------
-
-::
+Installation::
 
     pip install allocator
 
-Functions
----------
+**Python API Example:**
 
-1. `Sort By Distance <allocator/sort_by_distance.py>`__
-    
-2. **Cluster**
-    
-    Cluster data collection locations using k-means (clustering) or KaHIP (graph partitioning). To check which of the algorithms produces more cohesive, balanced clusters,
-    run `Compare K-means to KaHIP <allocator/compare_kahip_kmeans.py>`__
-    
-    a. `k-means <allocator/cluster_kmeans.py>`__
+.. code-block:: python
 
-        **Examples:**
+    import allocator
+    import pandas as pd
 
-        ::
+    # Load your geographic data
+    data = pd.DataFrame({
+        'longitude': [101.0, 101.1, 101.2, 101.3],
+        'latitude': [13.0, 13.1, 13.2, 13.3],
+        'location_id': ['A', 'B', 'C', 'D']
+    })
 
-            python -m allocator.cluster_kmeans -n 10 allocator/examples/chonburi-roads-1k.csv --plot
+    # Cluster locations into groups
+    result = allocator.cluster(data, n_clusters=2, method='kmeans')
+    print(f"Cluster labels: {result.labels}")
+    print(f"Centroids: {result.centroids}")
 
+    # Find optimal route through locations  
+    route = allocator.shortest_path(data, method='ortools')
+    print(f"Optimal route: {route.route}")
+    print(f"Total distance: {route.total_distance}")
 
-    b. `KaHIP allocator <allocator/cluster_kahip.py>`__
+    # Assign points to closest centers
+    centers = pd.DataFrame({
+        'longitude': [101.05, 101.25], 
+        'latitude': [13.05, 13.25]
+    })
+    assignments = allocator.assign_to_closest(data, centers)
+    print(assignments.data)
 
+**CLI Example:**
 
-3. **Shortest Path**
+.. code-block:: bash
 
-    These function can be used find the estimated shortest path across all the locations in a cluster. We expose three different ways of getting the 'shortest' path, a) via MST (Christofides algorithm), b) via Google OR-Tools, b) Google Maps Directions API.
+    # Cluster geographic points
+    allocator cluster data.csv --clusters 3 --method kmeans --output clusters.csv
 
-    a. `Approximate TSP using MST <allocator/shortest_path_mst_tsp.py>`__
+    # Find optimal route  
+    allocator route locations.csv --method ortools --output route.csv
 
-    b. `Google OR Tools TSP solver Shortest path <allocator/shortest_path_ortools.py>`__
+    # Assign points to centers
+    allocator assign points.csv centers.csv --output assignments.csv
 
-    c. `Google Maps Directions API Shortest path <allocator/shortest_path_gm.py>`__ 
+Distance Metrics
+---------------
 
-    d. `OSRM Trip API Shortest path <allocator/shortest_path_osrm.py>`__ 
+All functions support multiple distance calculation methods:
 
+- **euclidean** - Fast Euclidean distance (good for local areas)
+- **haversine** - Great circle distance accounting for Earth's curvature  
+- **osrm** - Real road network distances via OSRM API
+- **google** - Google Maps distance matrix (requires API key)
+
+Algorithms
+----------
+
+**Clustering:**
+- **K-means**: Fast, well-balanced clusters
+- **KaHIP**: Graph partitioning for highly balanced clusters (requires external install)
+
+**Routing (TSP):**
+- **OR-Tools**: Exact solutions for small problems, heuristics for larger ones
+- **Christofides**: 1.5-approximation algorithm (requires external install)
+- **OSRM**: Real-world routing via road networks
+- **Google**: Google Maps Directions API
+
+Data Format
+-----------
+
+Input data must be pandas DataFrames or CSV files with these columns:
+
+- **longitude**: Geographic longitude (required)
+- **latitude**: Geographic latitude (required)  
+- Additional columns are preserved in results
+
+Examples and Use Cases
+---------------------
+
+- **Field Research**: Optimize survey routes for maximum efficiency
+- **Delivery/Logistics**: Plan optimal delivery routes and territories  
+- **Crowdsourcing**: Assign tasks to workers based on geographic proximity
+- **Emergency Response**: Allocate resources to incident locations
+- **Urban Planning**: Analyze spatial patterns and optimize service locations
+
+API Reference
+-------------
+
+**Main Functions:**
+
+.. code-block:: python
+
+    # High-level functions
+    allocator.cluster(data, n_clusters=3, method='kmeans', distance='euclidean')
+    allocator.shortest_path(data, method='ortools', distance='euclidean') 
+    allocator.assign_to_closest(points, workers, distance='euclidean')
+
+    # Specific algorithms
+    allocator.kmeans(data, n_clusters=3, distance='euclidean')
+    allocator.kahip(data, n_clusters=3)  # Requires KaHIP installation
+    allocator.tsp_ortools(data, distance='euclidean')
+    allocator.tsp_christofides(data)  # Requires Christofides installation
+
+**Result Types:**
+
+- ``ClusterResult``: Labels, centroids, convergence info, metadata
+- ``RouteResult``: Route order, total distance, metadata  
+- ``SortResult``: Sorted assignments with distances, metadata
+
+Requirements
+------------
+
+- Python 3.11+
+- Core: pandas, numpy, matplotlib, networkx, scikit-learn
+- CLI: click, rich
+- Optional: ortools, googlemaps, requests (for OSRM)
 
 Documentation
 -------------
 
-Documentation available at: https://allocator.readthedocs.io/en/latest/
+Complete documentation: https://geosensing.github.io/allocator/
+
+Development
+-----------
+
+This project uses modern Python development practices:
+
+- **uv** for dependency management
+- **pytest** for testing  
+- **black** and **isort** for code formatting
+- **ruff** for linting
+- **GitHub Actions** for CI/CD
+
+Contributing
+------------
+
+We welcome contributions! Please see our `Contributor Code of Conduct <http://contributor-covenant.org/version/1/0/0/>`__.
 
 Authors
 -------
 
 Suriyan Laohaprapanon and Gaurav Sood
 
-Contributor Code of Conduct
----------------------------
-
-The project welcomes contributions from everyone! In fact, it depends on
-it. To maintain this welcoming atmosphere, and to collaborate in a fun
-and productive way, we expect contributors to the project to abide by
-the `Contributor Code of
-Conduct <http://contributor-covenant.org/version/1/0/0/>`__.
-
 License
 -------
 
-The package is released under the `MIT
-License <https://opensource.org/licenses/MIT>`__.
+MIT License - see `LICENSE <https://opensource.org/licenses/MIT>`__ for details.

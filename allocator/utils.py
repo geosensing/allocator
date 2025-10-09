@@ -32,7 +32,7 @@ def fixup_columns(cols: list[str | int]) -> list[str]:
     out_cols = []
     for col in cols:
         if isinstance(col, int):
-            out_cols.append(f'col{col:d}')
+            out_cols.append(f"col{col:d}")
         else:
             out_cols.append(col)
     return out_cols

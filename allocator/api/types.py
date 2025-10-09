@@ -1,6 +1,7 @@
 """
 Type definitions and dataclasses for allocator API.
 """
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -13,6 +14,7 @@ import pandas as pd
 @dataclass
 class ClusterResult:
     """Result of clustering operation."""
+
     labels: np.ndarray
     centroids: np.ndarray
     n_iter: int
@@ -22,9 +24,10 @@ class ClusterResult:
     metadata: dict[str, Any]
 
 
-@dataclass  
+@dataclass
 class SortResult:
     """Result of sort by distance operation."""
+
     data: pd.DataFrame
     distance_matrix: np.ndarray | None
     metadata: dict[str, Any]
@@ -32,7 +35,8 @@ class SortResult:
 
 @dataclass
 class RouteResult:
-    """Result of shortest path operation.""" 
+    """Result of shortest path operation."""
+
     route: list[int]
     total_distance: float
     data: pd.DataFrame
@@ -42,6 +46,7 @@ class RouteResult:
 @dataclass
 class ComparisonResult:
     """Result of algorithm comparison."""
+
     results: dict[str, ClusterResult]
     statistics: pd.DataFrame
     metadata: dict[str, Any]

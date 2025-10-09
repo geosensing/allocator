@@ -5,96 +5,128 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "allocator"
 version = "1.0.0"
-description = "Optimally Allocate Geographically Distributed Tasks"
+description = "Modern Python package for geographic task allocation, clustering, and routing optimization"
 readme = {file = "README.rst", content-type = "text/x-rst"}
 requires-python = ">=3.11"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Suriyan Laohaprapanon", email = "suriyant@gmail.com"},
     {name = "Gaurav Sood", email = "gsood07@gmail.com"},
 ]
-keywords = ["routing", "shortest path", "geographic allocation", "optimization"]
+maintainers = [
+    {name = "Gaurav Sood", email = "gsood07@gmail.com"},
+]
+keywords = [
+    "geographic", "allocation", "clustering", "routing", "optimization", 
+    "tsp", "kmeans", "geospatial", "logistics", "shortest-path"
+]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3 :: Only",
     "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: GIS",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Utilities",
+    "Typing :: Typed",
 ]
 dependencies = [
-    "pandas>=1.0.0",
-    "numpy>=1.20.0",
-    "matplotlib>=3.3.0",
+    # Core data processing
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "scikit-learn>=1.3.0",
+    
+    # Distance calculations
     "utm>=0.7.0",
-    "networkx>=2.6.0",
-    "googlemaps>=4.0.0",
-    "polyline>=1.4.0",
-    "haversine>=2.5.0",
-    "folium>=0.12.0",
-    "scipy>=1.7.0",
-    "scikit-learn",
+    "haversine>=2.8.0",
+    
+    # Graph operations
+    "networkx>=3.0",
+    
+    # CLI interface
     "click>=8.0.0",
     "rich>=13.0.0",
+    
+    # Visualization (basic)
+    "matplotlib>=3.6.0",
 ]
 
 [project.optional-dependencies]
+# Algorithm-specific dependencies
+algorithms = [
+    "ortools>=9.5.0",           # OR-Tools TSP solver
+    "scipy>=1.10.0",            # Enhanced algorithms
+]
+geo = [
+    "googlemaps>=4.6.0",        # Google Maps API
+    "requests>=2.28.0",         # OSRM API calls
+    "folium>=0.14.0",           # Interactive maps
+    "polyline>=2.0.0",          # Route encoding
+]
+graph = [
+    "kahipwrapper>=0.1.0",      # KaHIP graph partitioning (if available)
+]
+
+# Development dependencies
 dev = [
-    "check-manifest",
-    "flake8",
-    "black",
-    "isort",
+    "ruff>=0.1.0",              # Modern linting and formatting
+    "mypy>=1.5.0",              # Type checking
+    "black>=23.0.0",            # Code formatting
+    "isort>=5.12.0",            # Import sorting
+    "pre-commit>=3.0.0",        # Git hooks
 ]
 test = [
-    "coverage",
-    "pytest",
-    "pytest-cov",
-    "tox",
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-xdist>=3.3.0",      # Parallel testing
+    "coverage>=7.2.0",
+    "hypothesis>=6.82.0",       # Property-based testing
 ]
 docs = [
-    "sphinx",
-    "sphinx_rtd_theme",
+    "sphinx>=7.0.0",
+    "sphinx-rtd-theme>=1.3.0",
+    "myst-parser>=2.0.0",       # Markdown support
+    "sphinx-autodoc-typehints>=1.24.0",
+]
+
+# Convenience groups
+all = [
+    "allocator[algorithms,geo,graph]",
+]
+complete = [
+    "allocator[all,dev,test,docs]",
 ]
 
 [project.urls]
-Homepage = "https://github.com/soodoku/allocator"
-"Bug Reports" = "https://github.com/geosensing/allocator/issues"
-Source = "https://github.com/geosensing/allocator"
+Homepage = "https://github.com/geosensing/allocator"
 Documentation = "https://geosensing.github.io/allocator/"
+Repository = "https://github.com/geosensing/allocator.git"
+"Bug Reports" = "https://github.com/geosensing/allocator/issues"
+"Source Code" = "https://github.com/geosensing/allocator"
+Changelog = "https://github.com/geosensing/allocator/blob/main/CHANGELOG.md"
 
 [project.scripts]
 allocator = "allocator.cli.main:cli"
 
 [tool.setuptools]
-packages = ["allocator"]
+packages = ["allocator", "allocator.api", "allocator.cli", "allocator.core", "allocator.distances", "allocator.io", "allocator.viz"]
 
 [tool.setuptools.package-data]
 allocator = [
-    "examples/*.csv",
-    "examples/*.png",
-    "examples/sort-by-distance/*.csv",
-    "examples/sort-by-distance/*.png",
-    "examples/kmeans/*.csv",
-    "examples/kmeans/*.png",
-    "examples/KaHIP/*.csv",
-    "examples/KaHIP/*.png",
-    "examples/TSP-buffoon/*.svg",
-    "examples/TSP-kmeans/*.svg",
-    "examples/TSP-ortools-kmeans/*.png",
-    "examples/TSP-ortools-kmeans/map/*.html",
-    "examples/TSP-ortools-buffoon/delhi/*.png",
-    "examples/TSP-ortools-buffoon/chonburi/*.png",
-    "examples/GM-buffoon/chonburi/*.png",
-    "examples/GM-buffoon/delhi/*.png",
-    "examples/OSRM-buffoon/*.html",
-    "examples/compare-kahip-kmeans/*.csv",
-    "tests/*.csv",
+    "py.typed",                     # Type information marker
+    "tests/*.csv",                  # Test data files
+    "examples/*.csv",               # Example data files
 ]
+
+[tool.setuptools.package-dir]
+"" = "."
 
 [tool.pytest.ini_options]
 testpaths = ["allocator/tests"]
@@ -117,4 +149,75 @@ exclude_lines = [
     "raise NotImplementedError",
     "if 0:",
     "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
 ]
+
+# Ruff configuration - Modern Python linter and formatter
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade
+    "RUF",    # Ruff-specific rules
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "B008",   # do not perform function calls in argument defaults
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["allocator"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+# Black configuration
+[tool.black]
+line-length = 100
+target-version = ['py311', 'py312', 'py313']
+skip-string-normalization = false
+
+# isort configuration  
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_output = 3
+known_first_party = ["allocator"]
+
+# mypy configuration
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+    "utm.*",
+    "haversine.*",
+    "networkx.*",
+    "matplotlib.*",
+    "folium.*",
+    "googlemaps.*",
+    "ortools.*",
+    "polyline.*",
+]
+ignore_missing_imports = true
