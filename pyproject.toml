@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools>=65.5.1", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling>=1.21.1"]
+build-backend = "hatchling.build"
 
 [project]
 name = "allocator"
@@ -69,9 +69,9 @@ geo = [
     "folium>=0.14.0",           # Interactive maps
     "polyline>=2.0.0",          # Route encoding
 ]
-graph = [
-    "kahipwrapper>=0.1.0",      # KaHIP graph partitioning (if available)
-]
+# graph = [
+#     "kahipwrapper>=0.1.0",      # KaHIP graph partitioning (if available)
+# ]
 
 # Development dependencies
 dev = [
@@ -97,7 +97,7 @@ docs = [
 
 # Convenience groups
 all = [
-    "allocator[algorithms,geo,graph]",
+    "allocator[algorithms,geo]",
 ]
 complete = [
     "allocator[all,dev,test,docs]",
@@ -220,3 +220,9 @@ module = [
     "polyline.*",
 ]
 ignore_missing_imports = true
+[tool.hatch.build.targets.wheel]
+packages = ["allocator"]
+
+[dependency-groups]
+dev = ["pytest>=7.0", "pytest-cov>=4.0", "ruff>=0.7.0", "mypy>=1.0"]
+test = ["pytest>=7.0", "pytest-cov>=4.0"]
