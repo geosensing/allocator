@@ -5,17 +5,20 @@ Modern data handling utilities with standardized formats.
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 import numpy as np
 import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 
 class DataHandler:
     """Handle various input/output formats for geographic data."""
 
-    REQUIRED_COLUMNS = ["longitude", "latitude"]
+    REQUIRED_COLUMNS: ClassVar[list[str]] = ["longitude", "latitude"]
 
     @classmethod
     def load_data(cls, data: str | Path | pd.DataFrame | np.ndarray | list) -> pd.DataFrame:
@@ -82,7 +85,7 @@ class DataHandler:
         initial_len = len(df)
         df = df.dropna(subset=cls.REQUIRED_COLUMNS)
         if len(df) < initial_len:
-            print(f"Warning: Removed {initial_len - len(df)} rows with invalid coordinates")
+            logger.warning(f"Removed {initial_len - len(df)} rows with invalid coordinates")
 
         return df
 

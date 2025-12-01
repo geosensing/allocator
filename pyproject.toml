@@ -1,12 +1,16 @@
 [build-system]
-requires = ["hatchling>=1.21.1"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.9.14,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "allocator"
+module-root = ""
 
 [project]
 name = "allocator"
 version = "1.0.0"
 description = "Modern Python package for geographic task allocation, clustering, and routing optimization"
-readme = {file = "README.rst", content-type = "text/x-rst"}
+readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
 authors = [
@@ -41,31 +45,32 @@ dependencies = [
     "pandas>=2.0.0",
     "numpy>=1.24.0",
     "scikit-learn>=1.3.0",
-    
     # Distance calculations
     "utm>=0.7.0",
     "haversine>=2.8.0",
-    
     # Graph operations
     "networkx>=3.0",
-    
     # CLI interface
     "click>=8.0.0",
     "rich>=13.0.0",
-    
+    # HTTP requests (for OSRM)
+    "requests>=2.28.0",
+    # Google Maps API
+    "googlemaps>=4.6.0",
+    # Optimization algorithms
+    "ortools>=9.5.0",
     # Visualization (basic)
     "matplotlib>=3.6.0",
+    "seaborn>=0.13.2",
 ]
 
 [project.optional-dependencies]
 # Algorithm-specific dependencies
 algorithms = [
-    "ortools>=9.5.0",           # OR-Tools TSP solver
     "scipy>=1.10.0",            # Enhanced algorithms
+    "Christofides>=1.0.0",      # Christofides TSP algorithm
 ]
 geo = [
-    "googlemaps>=4.6.0",        # Google Maps API
-    "requests>=2.28.0",         # OSRM API calls
     "folium>=0.14.0",           # Interactive maps
     "polyline>=2.0.0",          # Route encoding
 ]
@@ -114,21 +119,9 @@ Changelog = "https://github.com/geosensing/allocator/blob/main/CHANGELOG.md"
 [project.scripts]
 allocator = "allocator.cli.main:cli"
 
-[tool.setuptools]
-packages = ["allocator", "allocator.api", "allocator.cli", "allocator.core", "allocator.distances", "allocator.io", "allocator.viz"]
-
-[tool.setuptools.package-data]
-allocator = [
-    "py.typed",                     # Type information marker
-    "tests/*.csv",                  # Test data files
-    "examples/*.csv",               # Example data files
-]
-
-[tool.setuptools.package-dir]
-"" = "."
 
 [tool.pytest.ini_options]
-testpaths = ["allocator/tests"]
+testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
@@ -220,8 +213,7 @@ module = [
     "polyline.*",
 ]
 ignore_missing_imports = true
-[tool.hatch.build.targets.wheel]
-packages = ["allocator"]
+
 
 [dependency-groups]
 dev = ["pytest>=7.0", "pytest-cov>=4.0", "ruff>=0.7.0", "mypy>=1.0"]

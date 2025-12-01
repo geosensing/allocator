@@ -5,7 +5,6 @@ Modern clustering API for allocator package.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -29,7 +28,7 @@ def cluster(
     Args:
         data: Input data (file path, DataFrame, numpy array, or list)
         n_clusters: Number of clusters to create
-        method: Clustering method ('kmeans', 'kahip')
+        method: Clustering method ('kmeans')
         distance: Distance metric ('euclidean', 'haversine', 'osrm', 'google')
         random_state: Random seed for reproducibility
         **kwargs: Additional arguments for specific methods
@@ -49,12 +48,8 @@ def cluster(
         return kmeans(
             df, n_clusters=n_clusters, distance=distance, random_state=random_state, **kwargs
         )
-    elif method == "kahip":
-        return kahip(
-            df, n_clusters=n_clusters, distance=distance, random_state=random_state, **kwargs
-        )
     else:
-        raise ValueError(f"Unknown clustering method: {method}")
+        raise ValueError(f"Unknown clustering method: {method}. Available methods: 'kmeans'")
 
 
 def kmeans(
@@ -106,7 +101,7 @@ def kmeans(
     # Calculate inertia (sum of squared distances to centroids)
     inertia = None
     if distance == "euclidean":
-        from ..distances.distance_matrix import euclidean_distance_matrix
+        from ..distances import euclidean_distance_matrix
 
         coords = df[["longitude", "latitude"]].values
         distances = euclidean_distance_matrix(coords, result["centroids"])
@@ -126,77 +121,6 @@ def kmeans(
             "distance": distance,
             "n_clusters": n_clusters,
             "max_iter": max_iter,
-            "random_state": random_state,
-        },
-    )
-
-
-def kahip(
-    data: pd.DataFrame | np.ndarray,
-    n_clusters: int = 3,
-    distance: str = "euclidean",
-    n_closest: int = 15,
-    balance_edges: bool = False,
-    buffoon: bool = False,
-    random_state: int | None = None,
-    **kwargs,
-) -> ClusterResult:
-    """
-    KaHIP graph partitioning clustering.
-
-    Args:
-        data: Input data as DataFrame or numpy array
-        n_clusters: Number of clusters
-        distance: Distance metric
-        n_closest: Number of closest neighbors to connect in graph
-        balance_edges: Whether to balance edge weights
-        buffoon: Whether to use buffoon mode
-        random_state: Random seed for reproducibility
-        **kwargs: Additional arguments
-
-    Returns:
-        ClusterResult with clustering information
-    """
-    from ..core.algorithms import kahip_cluster as _kahip_cluster
-
-    # Ensure we have a DataFrame for output
-    if isinstance(data, np.ndarray):
-        df = DataHandler._from_numpy(data)
-    elif isinstance(data, (str, Path)):
-        df = DataHandler.load_data(data)
-    else:
-        df = data.copy()
-
-    # Run clustering algorithm
-    result = _kahip_cluster(
-        df,
-        n_clusters=n_clusters,
-        distance_method=distance,
-        n_closest=n_closest,
-        seed=random_state,
-        balance_edges=balance_edges,
-        buffoon=buffoon,
-        **kwargs,
-    )
-
-    # Add cluster assignments to DataFrame
-    df_result = df.copy()
-    df_result["cluster"] = result["labels"]
-
-    return ClusterResult(
-        labels=result["labels"],
-        centroids=None,  # KaHIP doesn't compute centroids
-        n_iter=1,  # KaHIP is not iterative
-        inertia=None,
-        data=df_result,
-        converged=True,
-        metadata={
-            "method": "kahip",
-            "distance": distance,
-            "n_clusters": n_clusters,
-            "n_closest": n_closest,
-            "balance_edges": balance_edges,
-            "buffoon": buffoon,
             "random_state": random_state,
         },
     )

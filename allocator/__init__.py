@@ -37,76 +37,74 @@ import sys
 
 # Import modern API
 from .api import (
-    cluster,
-    kmeans,
-    kahip,
-    shortest_path,
-    tsp_christofides,
-    tsp_ortools,
-    tsp_osrm,
-    tsp_google,
-    sort_by_distance,
-    assign_to_closest,
-    distance_assignment,
     ClusterResult,
+    ComparisonResult,
     RouteResult,
     SortResult,
-    ComparisonResult,
+    assign_to_closest,
+    cluster,
+    distance_assignment,
+    kmeans,
+    shortest_path,
+    sort_by_distance,
+    tsp_christofides,
+    tsp_google,
+    tsp_ortools,
+    tsp_osrm,
 )
 
 # Import utilities for advanced users
-from .distances.distance_matrix import (
-    get_distance_matrix,
+from .distances import (
     euclidean_distance_matrix,
-    haversine_distance_matrix,
-    osrm_distance_matrix,
+    get_distance_matrix,
     google_distance_matrix,
+    haversine_distance_matrix,
     latlon2xy,
+    osrm_distance_matrix,
     xy2latlog,
 )
 
 # Import visualization functions
-from .viz.plotting import plot_clusters, plot_assignments, plot_route, plot_comparison
+from .viz.plotting import plot_assignments, plot_clusters, plot_comparison, plot_route
 
 # Version
 __version__ = "1.0.0"
 
 # Export public API
 __all__ = [
-    # Main functions
-    "cluster",
-    "shortest_path",
-    "sort_by_distance",
-    "assign_to_closest",
-    "distance_assignment",
-    # Specific methods
-    "kmeans",
-    "kahip",
-    "tsp_christofides",
-    "tsp_ortools",
-    "tsp_osrm",
-    "tsp_google",
     # Result types
     "ClusterResult",
+    "ComparisonResult",
     "RouteResult",
     "SortResult",
-    "ComparisonResult",
+    "assign_to_closest",
+    # Main functions
+    "cluster",
+    "distance_assignment",
+    "euclidean_distance_matrix",
     # Distance utilities
     "get_distance_matrix",
-    "euclidean_distance_matrix",
-    "haversine_distance_matrix",
-    "osrm_distance_matrix",
+    "get_logger",
     "google_distance_matrix",
+    "haversine_distance_matrix",
+    # Specific methods
+    "kmeans",
     "latlon2xy",
-    "xy2latlog",
+    "osrm_distance_matrix",
+    "plot_assignments",
     # Visualization
     "plot_clusters",
-    "plot_assignments",
-    "plot_route",
     "plot_comparison",
+    "plot_route",
     # Logging utilities
     "setup_logging",
-    "get_logger",
+    "shortest_path",
+    "sort_by_distance",
+    "tsp_christofides",
+    "tsp_google",
+    "tsp_ortools",
+    "tsp_osrm",
+    "xy2latlog",
 ]
 
 

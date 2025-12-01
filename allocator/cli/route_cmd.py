@@ -68,7 +68,7 @@ def tsp(ctx, input_file, method, distance, output, output_format, api_key, osrm_
         console.print(f"[yellow]{method} TSP solver will be implemented in Phase 5[/yellow]")
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
-        raise click.Abort()
+        raise click.Abort() from e
 
 
 @click.command()
@@ -112,7 +112,7 @@ def christofides(ctx, input_file, distance, output, output_format):
         console.print("[yellow]Christofides TSP will be implemented in Phase 5[/yellow]")
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
-        raise click.Abort()
+        raise click.Abort() from e
 
 
 @click.command()
@@ -161,4 +161,4 @@ def ortools(ctx, input_file, distance, output, output_format, osrm_base_url):
         console.print("[yellow]OR-Tools TSP will be implemented in Phase 5[/yellow]")
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
-        raise click.Abort()
+        raise click.Abort() from e

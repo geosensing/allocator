@@ -1,0 +1,246 @@
+{
+  "analysis_timestamp": "2025-12-01T12:37:49.394798",
+  "cities_analyzed": [
+    "Delhi",
+    "Chonburi"
+  ],
+  "total_algorithms_tested": 20,
+  "performance_metrics": {
+    "Delhi": {
+      "clustering": {
+        "euclidean_3clusters": {
+          "result": "ClusterResult(labels=array([1, 0, 0, 2, 0, 2, 2, 1, 1, 2, 0, 1, 2, 0, 1, 0, 2, 2, 1, 0, 0, 2,\n       2, 1, 2, 2, 1, 2, 2, 2, 0, 1, 2, 2, 2, 1, 2, 0, 0, 1, 0, 1, 0, 0,\n       0, 2, 1, 0, 0, 2, 1, 2, 2, 0, 2, 1, 0, 2, 2, 2, 0, 1, 1, 2, 0, 2,\n       2, 0, 2, 1, 1, 0, 1, 0, 0, 0, 2, 2, 0, 0]), centroids=array([[77.11078955, 28.73123003],\n       [77.09315085, 28.56804573],\n       [77.24650749, 28.63392186]]), n_iter=3, inertia=np.float64(4993606860.397093), data=     longitude   latitude  segment_id            road_name  road_type  cluster\n521  77.081245  28.606661        3242         Unnamed Road   tertiary        1\n737  77.091640  28.825650        4505         Unnamed Road   tertiary        0\n740  77.086301  28.828650        4521         Unnamed Road   tertiary        0\n660  77.274198  28.681139        4125         Unnamed Road  secondary        2\n411  77.140924  28.787273        2587     Grand Trunk Road      trunk        0\n..         ...        ...         ...                  ...        ...      ...\n289  77.095888  28.687859        1873         Unnamed Road   tertiary        0\n652  77.240117  28.661412        4042  Mahatma Gandhi Marg    primary        2\n39   77.309850  28.543809         296         Unnamed Road  secondary        2\n589  77.078579  28.693159        3628         Unnamed Road   tertiary        0\n307  77.134344  28.707766        1945      Outer Ring Road    primary        0\n\n[80 rows x 6 columns], converged=True, metadata={'method': 'kmeans', 'distance': 'euclidean', 'n_clusters': 3, 'max_iter': 300, 'random_state': 42})",
+          "elapsed_time": 0.00754094123840332,
+          "cluster_sizes": {
+            "2": "32",
+            "0": "28",
+            "1": "20"
+          },
+          "size_variance": 24.888888888888886,
+          "n_clusters": 3,
+          "method": "euclidean"
+        },
+        "haversine_3clusters": {
+          "result": "ClusterResult(labels=array([1, 0, 0, 2, 0, 2, 2, 1, 1, 2, 0, 1, 2, 0, 1, 0, 2, 2, 1, 0, 0, 2,\n       2, 1, 2, 2, 1, 2, 2, 2, 0, 1, 2, 2, 2, 1, 2, 0, 0, 1, 0, 1, 0, 0,\n       0, 2, 1, 0, 0, 2, 1, 2, 2, 0, 2, 1, 0, 2, 2, 2, 0, 1, 1, 2, 0, 2,\n       2, 0, 2, 1, 1, 0, 1, 0, 0, 0, 2, 2, 0, 0]), centroids=array([[77.11078955, 28.73123003],\n       [77.09315085, 28.56804573],\n       [77.24650749, 28.63392186]]), n_iter=3, inertia=None, data=     longitude   latitude  segment_id            road_name  road_type  cluster\n521  77.081245  28.606661        3242         Unnamed Road   tertiary        1\n737  77.091640  28.825650        4505         Unnamed Road   tertiary        0\n740  77.086301  28.828650        4521         Unnamed Road   tertiary        0\n660  77.274198  28.681139        4125         Unnamed Road  secondary        2\n411  77.140924  28.787273        2587     Grand Trunk Road      trunk        0\n..         ...        ...         ...                  ...        ...      ...\n289  77.095888  28.687859        1873         Unnamed Road   tertiary        0\n652  77.240117  28.661412        4042  Mahatma Gandhi Marg    primary        2\n39   77.309850  28.543809         296         Unnamed Road  secondary        2\n589  77.078579  28.693159        3628         Unnamed Road   tertiary        0\n307  77.134344  28.707766        1945      Outer Ring Road    primary        0\n\n[80 rows x 6 columns], converged=True, metadata={'method': 'kmeans', 'distance': 'haversine', 'n_clusters': 3, 'max_iter': 300, 'random_state': 42})",
+          "elapsed_time": 0.0018351078033447266,
+          "cluster_sizes": {
+            "2": "32",
+            "0": "28",
+            "1": "20"
+          },
+          "size_variance": 24.888888888888886,
+          "n_clusters": 3,
+          "method": "haversine"
+        },
+        "euclidean_5clusters": {
+          "result": "ClusterResult(labels=array([4, 0, 0, 2, 0, 1, 1, 3, 1, 2, 4, 3, 2, 0, 4, 0, 2, 2, 4, 0, 0, 1,\n       2, 3, 2, 2, 1, 2, 2, 4, 4, 4, 1, 2, 2, 3, 2, 0, 0, 4, 0, 3, 0, 0,\n       0, 2, 4, 0, 0, 2, 4, 2, 1, 4, 2, 3, 0, 1, 2, 2, 0, 1, 4, 2, 0, 2,\n       2, 0, 2, 4, 4, 4, 1, 0, 0, 0, 2, 1, 0, 0]), centroids=array([[77.11009044, 28.74240908],\n       [77.23056812, 28.54925087],\n       [77.24546032, 28.65936128],\n       [77.11282541, 28.49888702],\n       [77.07379627, 28.62955232]]), n_iter=6, inertia=np.float64(3166828456.057515), data=     longitude   latitude  segment_id            road_name  road_type  cluster\n521  77.081245  28.606661        3242         Unnamed Road   tertiary        4\n737  77.091640  28.825650        4505         Unnamed Road   tertiary        0\n740  77.086301  28.828650        4521         Unnamed Road   tertiary        0\n660  77.274198  28.681139        4125         Unnamed Road  secondary        2\n411  77.140924  28.787273        2587     Grand Trunk Road      trunk        0\n..         ...        ...         ...                  ...        ...      ...\n289  77.095888  28.687859        1873         Unnamed Road   tertiary        0\n652  77.240117  28.661412        4042  Mahatma Gandhi Marg    primary        2\n39   77.309850  28.543809         296         Unnamed Road  secondary        1\n589  77.078579  28.693159        3628         Unnamed Road   tertiary        0\n307  77.134344  28.707766        1945      Outer Ring Road    primary        0\n\n[80 rows x 6 columns], converged=True, metadata={'method': 'kmeans', 'distance': 'euclidean', 'n_clusters': 5, 'max_iter': 300, 'random_state': 42})",
+          "elapsed_time": 0.010879039764404297,
+          "cluster_sizes": {
+            "0": "24",
+            "2": "24",
+            "4": "15",
+            "1": "11",
+            "3": "6"
+          },
+          "size_variance": 50.8,
+          "n_clusters": 5,
+          "method": "euclidean"
+        },
+        "haversine_5clusters": {
+          "result": "ClusterResult(labels=array([4, 0, 0, 2, 0, 1, 1, 3, 1, 2, 4, 3, 2, 4, 4, 0, 2, 2, 4, 0, 0, 1,\n       2, 3, 2, 2, 1, 2, 2, 4, 4, 4, 1, 2, 2, 3, 2, 4, 0, 4, 0, 3, 0, 4,\n       0, 2, 4, 0, 0, 2, 4, 2, 1, 4, 2, 3, 0, 1, 2, 2, 4, 1, 4, 2, 0, 2,\n       2, 4, 2, 4, 4, 4, 1, 0, 0, 4, 2, 1, 4, 0]), centroids=array([[77.10880197, 28.76535001],\n       [77.23056812, 28.54925087],\n       [77.24546032, 28.65936128],\n       [77.11282541, 28.49888702],\n       [77.08634005, 28.6477342 ]]), n_iter=6, inertia=None, data=     longitude   latitude  segment_id            road_name  road_type  cluster\n521  77.081245  28.606661        3242         Unnamed Road   tertiary        4\n737  77.091640  28.825650        4505         Unnamed Road   tertiary        0\n740  77.086301  28.828650        4521         Unnamed Road   tertiary        0\n660  77.274198  28.681139        4125         Unnamed Road  secondary        2\n411  77.140924  28.787273        2587     Grand Trunk Road      trunk        0\n..         ...        ...         ...                  ...        ...      ...\n289  77.095888  28.687859        1873         Unnamed Road   tertiary        4\n652  77.240117  28.661412        4042  Mahatma Gandhi Marg    primary        2\n39   77.309850  28.543809         296         Unnamed Road  secondary        1\n589  77.078579  28.693159        3628         Unnamed Road   tertiary        4\n307  77.134344  28.707766        1945      Outer Ring Road    primary        0\n\n[80 rows x 6 columns], converged=True, metadata={'method': 'kmeans', 'distance': 'haversine', 'n_clusters': 5, 'max_iter': 300, 'random_state': 42})",
+          "elapsed_time": 0.003913164138793945,
+          "cluster_sizes": {
+            "2": "24",
+            "4": "22",
+            "0": "17",
+            "1": "11",
+            "3": "6"
+          },
+          "size_variance": 45.2,
+          "n_clusters": 5,
+          "method": "haversine"
+        },
+        "euclidean_7clusters": {
+          "result": "ClusterResult(labels=array([4, 6, 6, 2, 6, 5, 5, 3, 1, 2, 0, 1, 2, 0, 4, 6, 2, 2, 4, 0, 6, 1,\n       2, 3, 2, 5, 1, 2, 2, 0, 0, 4, 5, 5, 2, 3, 2, 0, 6, 4, 0, 1, 0, 0,\n       6, 2, 4, 6, 0, 2, 4, 2, 5, 4, 2, 3, 6, 1, 2, 5, 0, 1, 4, 2, 6, 2,\n       2, 0, 2, 4, 4, 0, 1, 6, 0, 0, 2, 5, 0, 0]), centroids=array([[77.12889962, 28.6891787 ],\n       [77.16405171, 28.56488814],\n       [77.23582625, 28.66611628],\n       [77.1124186 , 28.47604846],\n       [77.04973214, 28.61967542],\n       [77.29872626, 28.55600144],\n       [77.09188796, 28.79351229]]), n_iter=5, inertia=np.float64(1805875075.7937088), data=     longitude   latitude  segment_id            road_name  road_type  cluster\n521  77.081245  28.606661        3242         Unnamed Road   tertiary        4\n737  77.091640  28.825650        4505         Unnamed Road   tertiary        6\n740  77.086301  28.828650        4521         Unnamed Road   tertiary        6\n660  77.274198  28.681139        4125         Unnamed Road  secondary        2\n411  77.140924  28.787273        2587     Grand Trunk Road      trunk        6\n..         ...        ...         ...                  ...        ...      ...\n289  77.095888  28.687859        1873         Unnamed Road   tertiary        0\n652  77.240117  28.661412        4042  Mahatma Gandhi Marg    primary        2\n39   77.309850  28.543809         296         Unnamed Road  secondary        5\n589  77.078579  28.693159        3628         Unnamed Road   tertiary        0\n307  77.134344  28.707766        1945      Outer Ring Road    primary        0\n\n[80 rows x 6 columns], converged=True, metadata={'method': 'kmeans', 'distance': 'euclidean', 'n_clusters': 7, 'max_iter': 300, 'random_state': 42})",
+          "elapsed_time": 0.00967717170715332,
+          "cluster_sizes": {
+            "2": "21",
+            "0": "17",
+            "4": "11",
+            "6": "11",
+            "5": "8",
+            "1": "8",
+            "3": "4"
+          },
+          "size_variance": 28.816326530612248,
+          "n_clusters": 7,
+          "method": "euclidean"
+        },
+        "haversine_7clusters": {
+          "result": "ClusterResult(labels=array([4, 6, 6, 2, 6, 5, 5, 3, 1, 2, 0, 1, 2, 0, 4, 6, 2, 2, 4, 0, 6, 1,\n       2, 3, 2, 5, 1, 2, 2, 0, 0, 4, 5, 5, 2, 3, 2, 0, 6, 4, 0, 1, 0, 0,\n       6, 2, 4, 6, 0, 2, 4, 2, 5, 4, 2, 3, 6, 1, 2, 5, 0, 1, 4, 2, 6, 2,\n       2, 0, 2, 4, 4, 0, 1, 6, 0, 0, 2, 5, 0, 0]), centroids=array([[77.12889962, 28.6891787 ],\n       [77.16405171, 28.56488814],\n       [77.23582625, 28.66611628],\n       [77.1124186 , 28.47604846],\n       [77.04973214, 28.61967542],\n       [77.29872626, 28.55600144],\n       [77.09188796, 28.79351229]]), n_iter=5, inertia=None, data=     longitude   latitude  segment_id            road_name  road_type  cluster\n521  77.081245  28.606661        3242         Unnamed Road   tertiary        4\n737  77.091640  28.825650        4505         Unnamed Road   tertiary        6\n740  77.086301  28.828650        4521         Unnamed Road   tertiary        6\n660  77.274198  28.681139        4125         Unnamed Road  secondary        2\n411  77.140924  28.787273        2587     Grand Trunk Road      trunk        6\n..         ...        ...         ...                  ...        ...      ...\n289  77.095888  28.687859        1873         Unnamed Road   tertiary        0\n652  77.240117  28.661412        4042  Mahatma Gandhi Marg    primary        2\n39   77.309850  28.543809         296         Unnamed Road  secondary        5\n589  77.078579  28.693159        3628         Unnamed Road   tertiary        0\n307  77.134344  28.707766        1945      Outer Ring Road    primary        0\n\n[80 rows x 6 columns], converged=True, metadata={'method': 'kmeans', 'distance': 'haversine', 'n_clusters': 7, 'max_iter': 300, 'random_state': 42})",
+          "elapsed_time": 0.0042171478271484375,
+          "cluster_sizes": {
+            "2": "21",
+            "0": "17",
+            "4": "11",
+            "6": "11",
+            "5": "8",
+            "1": "8",
+            "3": "4"
+          },
+          "size_variance": 28.816326530612248,
+          "n_clusters": 7,
+          "method": "haversine"
+        }
+      },
+      "routing": {
+        "tsp_5points": {
+          "result": "RouteResult(route=[0, 3, 4, 1, 2, 0], total_distance=69795.0, data=     longitude   latitude  segment_id         road_name  road_type  route_order\n521  77.081245  28.606661        3242      Unnamed Road   tertiary            0\n660  77.274198  28.681139        4125      Unnamed Road  secondary            1\n411  77.140924  28.787273        2587  Grand Trunk Road      trunk            2\n737  77.091640  28.825650        4505      Unnamed Road   tertiary            3\n740  77.086301  28.828650        4521      Unnamed Road   tertiary            4\n521  77.081245  28.606661        3242      Unnamed Road   tertiary            5, metadata={'method': 'ortools', 'distance': 'euclidean', 'n_points': 5})",
+          "elapsed_time": 0.18216180801391602,
+          "total_distance": 69795.0,
+          "avg_distance": 13959.0,
+          "n_points": 5
+        },
+        "tsp_8points": {
+          "result": "RouteResult(route=[0, 7, 5, 6, 3, 4, 1, 2, 0], total_distance=103262.0, data=     longitude   latitude  ...  road_type route_order\n521  77.081245  28.606661  ...   tertiary           0\n513  77.103328  28.471956  ...  secondary           1\n678  77.289653  28.499455  ...  secondary           2\n626  77.300217  28.533335  ...   tertiary           3\n660  77.274198  28.681139  ...  secondary           4\n411  77.140924  28.787273  ...      trunk           5\n737  77.091640  28.825650  ...   tertiary           6\n740  77.086301  28.828650  ...   tertiary           7\n521  77.081245  28.606661  ...   tertiary           8\n\n[9 rows x 6 columns], metadata={'method': 'ortools', 'distance': 'euclidean', 'n_points': 8})",
+          "elapsed_time": 0.0019719600677490234,
+          "total_distance": 103262.0,
+          "avg_distance": 12907.75,
+          "n_points": 8
+        },
+        "tsp_12points": {
+          "result": "RouteResult(route=[0, 10, 2, 1, 4, 3, 9, 6, 5, 8, 7, 11, 0], total_distance=114140.0, data=     longitude   latitude  ...  road_type route_order\n521  77.081245  28.606661  ...   tertiary           0\n811  77.120111  28.659649  ...   tertiary           1\n740  77.086301  28.828650  ...   tertiary           2\n737  77.091640  28.825650  ...   tertiary           3\n411  77.140924  28.787273  ...      trunk           4\n660  77.274198  28.681139  ...  secondary           5\n136  77.241261  28.626774  ...   tertiary           6\n626  77.300217  28.533335  ...   tertiary           7\n678  77.289653  28.499455  ...  secondary           8\n859  77.165731  28.560620  ...   tertiary           9\n513  77.103328  28.471956  ...  secondary          10\n76   77.109212  28.545696  ...  secondary          11\n521  77.081245  28.606661  ...   tertiary          12\n\n[13 rows x 6 columns], metadata={'method': 'ortools', 'distance': 'euclidean', 'n_points': 12})",
+          "elapsed_time": 0.0021359920501708984,
+          "total_distance": 114140.0,
+          "avg_distance": 9511.666666666666,
+          "n_points": 12
+        },
+        "tsp_15points": {
+          "result": "RouteResult(route=[0, 14, 7, 11, 8, 5, 6, 9, 12, 3, 4, 1, 2, 13, 10, 0], total_distance=146179.0, data=     longitude   latitude  ...  road_type route_order\n521  77.081245  28.606661  ...   tertiary           0\n938  76.896589  28.597675  ...  secondary           1\n513  77.103328  28.471956  ...  secondary           2\n76   77.109212  28.545696  ...  secondary           3\n859  77.165731  28.560620  ...   tertiary           4\n678  77.289653  28.499455  ...  secondary           5\n626  77.300217  28.533335  ...   tertiary           6\n136  77.241261  28.626774  ...   tertiary           7\n636  77.269731  28.637058  ...  secondary           8\n660  77.274198  28.681139  ...  secondary           9\n411  77.140924  28.787273  ...      trunk          10\n737  77.091640  28.825650  ...   tertiary          11\n740  77.086301  28.828650  ...   tertiary          12\n973  77.140822  28.677485  ...   tertiary          13\n811  77.120111  28.659649  ...   tertiary          14\n521  77.081245  28.606661  ...   tertiary          15\n\n[16 rows x 6 columns], metadata={'method': 'ortools', 'distance': 'euclidean', 'n_points': 15})",
+          "elapsed_time": 0.0027418136596679688,
+          "total_distance": 146179.0,
+          "avg_distance": 9745.266666666666,
+          "n_points": 15
+        }
+      }
+    },
+    "Chonburi": {
+      "clustering": {
+        "euclidean_3clusters": {
+          "result": "ClusterResult(labels=array([1, 1, 0, 1, 0, 2, 1, 1, 0, 0, 1, 0, 2, 2, 2, 1, 1, 1, 2, 0, 0, 0,\n       2, 1, 1, 2, 1, 2, 1, 0, 0, 0, 1, 2, 2, 1, 0, 1, 1, 0, 0, 1, 0, 1,\n       1, 0, 2, 2, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 1, 1, 2, 1,\n       0, 1, 2, 1, 1, 0, 2, 0, 0, 1, 1, 1, 2, 0]), centroids=array([[101.04959693,  13.36688204],\n       [100.96181549,  12.96835585],\n       [101.39617482,  13.29975597]]), n_iter=4, inertia=np.float64(19954050497.75064), data=      longitude   latitude  segment_id     road_name  road_type  cluster\n521  100.948365  12.985935        2450  Unnamed Road      trunk        1\n737  101.110921  13.071292        3426  Unnamed Road    primary        1\n740  100.957420  13.314886        3433  Unnamed Road  secondary        0\n660  100.952421  12.687883        3101  Unnamed Road   tertiary        1\n411  101.231256  13.565109        1940  Unnamed Road   tertiary        0\n..          ...        ...         ...           ...        ...      ...\n289  100.989811  13.164606        1332  Unnamed Road  secondary        1\n652  100.891332  12.728585        3062  Unnamed Road  secondary        1\n39   100.906762  12.952127         170   \u0e16\u0e19\u0e19\u0e2a\u0e38\u0e02\u0e38\u0e21\u0e27\u0e34\u0e17      trunk        1\n589  101.387329  13.289117        2785  Unnamed Road  secondary        2\n307  100.923497  13.269300        1459   \u0e1a\u0e32\u0e07\u0e41\u0e2a\u0e19\u0e2a\u0e32\u0e22 1   tertiary        0\n\n[80 rows x 6 columns], converged=True, metadata={'method': 'kmeans', 'distance': 'euclidean', 'n_clusters': 3, 'max_iter': 300, 'random_state': 42})",
+          "elapsed_time": 0.008041858673095703,
+          "cluster_sizes": {
+            "1": "38",
+            "0": "23",
+            "2": "19"
+          },
+          "size_variance": 66.8888888888889,
+          "n_clusters": 3,
+          "method": "euclidean"
+        },
+        "haversine_3clusters": {
+          "result": "ClusterResult(labels=array([1, 1, 0, 1, 0, 2, 1, 1, 0, 0, 1, 0, 2, 2, 2, 1, 1, 1, 2, 0, 0, 0,\n       2, 1, 1, 2, 1, 2, 1, 0, 0, 0, 1, 2, 2, 1, 0, 1, 1, 0, 0, 1, 0, 1,\n       1, 0, 2, 2, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 1, 1, 2, 1,\n       0, 1, 2, 1, 1, 0, 2, 0, 0, 1, 1, 1, 2, 0]), centroids=array([[101.04959693,  13.36688204],\n       [100.96181549,  12.96835585],\n       [101.39617482,  13.29975597]]), n_iter=4, inertia=None, data=      longitude   latitude  segment_id     road_name  road_type  cluster\n521  100.948365  12.985935        2450  Unnamed Road      trunk        1\n737  101.110921  13.071292        3426  Unnamed Road    primary        1\n740  100.957420  13.314886        3433  Unnamed Road  secondary        0\n660  100.952421  12.687883        3101  Unnamed Road   tertiary        1\n411  101.231256  13.565109        1940  Unnamed Road   tertiary        0\n..          ...        ...         ...           ...        ...      ...\n289  100.989811  13.164606        1332  Unnamed Road  secondary        1\n652  100.891332  12.728585        3062  Unnamed Road  secondary        1\n39   100.906762  12.952127         170   \u0e16\u0e19\u0e19\u0e2a\u0e38\u0e02\u0e38\u0e21\u0e27\u0e34\u0e17      trunk        1\n589  101.387329  13.289117        2785  Unnamed Road  secondary        2\n307  100.923497  13.269300        1459   \u0e1a\u0e32\u0e07\u0e41\u0e2a\u0e19\u0e2a\u0e32\u0e22 1   tertiary        0\n\n[80 rows x 6 columns], converged=True, metadata={'method': 'kmeans', 'distance': 'haversine', 'n_clusters': 3, 'max_iter': 300, 'random_state': 42})",
+          "elapsed_time": 0.002148151397705078,
+          "cluster_sizes": {
+            "1": "38",
+            "0": "23",
+            "2": "19"
+          },
+          "size_variance": 66.8888888888889,
+          "n_clusters": 3,
+          "method": "haversine"
+        },
+        "euclidean_5clusters": {
+          "result": "ClusterResult(labels=array([1, 0, 3, 1, 4, 2, 1, 1, 0, 3, 1, 3, 4, 4, 4, 0, 1, 1, 4, 3, 3, 4,\n       4, 1, 0, 4, 1, 2, 0, 3, 3, 3, 1, 2, 4, 0, 3, 0, 0, 3, 3, 1, 3, 1,\n       0, 3, 2, 2, 2, 1, 2, 1, 1, 0, 1, 1, 1, 0, 0, 2, 3, 4, 0, 0, 4, 0,\n       3, 0, 2, 0, 0, 0, 2, 3, 3, 0, 1, 1, 2, 3]), centroids=array([[101.00542567,  13.10720054],\n       [100.92625619,  12.85503903],\n       [101.45029375,  13.23686767],\n       [101.02282176,  13.36741537],\n       [101.29267085,  13.40612366]]), n_iter=9, inertia=np.float64(9428551638.69844), data=      longitude   latitude  segment_id     road_name  road_type  cluster\n521  100.948365  12.985935        2450  Unnamed Road      trunk        1\n737  101.110921  13.071292        3426  Unnamed Road    primary        0\n740  100.957420  13.314886        3433  Unnamed Road  secondary        3\n660  100.952421  12.687883        3101  Unnamed Road   tertiary        1\n411  101.231256  13.565109        1940  Unnamed Road   tertiary        4\n..          ...        ...         ...           ...        ...      ...\n289  100.989811  13.164606        1332  Unnamed Road  secondary        0\n652  100.891332  12.728585        3062  Unnamed Road  secondary        1\n39   100.906762  12.952127         170   \u0e16\u0e19\u0e19\u0e2a\u0e38\u0e02\u0e38\u0e21\u0e27\u0e34\u0e17      trunk        1\n589  101.387329  13.289117        2785  Unnamed Road  secondary        2\n307  100.923497  13.269300        1459   \u0e1a\u0e32\u0e07\u0e41\u0e2a\u0e19\u0e2a\u0e32\u0e22 1   tertiary        3\n\n[80 rows x 6 columns], converged=True, metadata={'method': 'kmeans', 'distance': 'euclidean', 'n_clusters': 5, 'max_iter': 300, 'random_state': 42})",
+          "elapsed_time": 0.015257120132446289,
+          "cluster_sizes": {
+            "1": "20",
+            "0": "20",
+            "3": "18",
+            "4": "11",
+            "2": "11"
+          },
+          "size_variance": 17.2,
+          "n_clusters": 5,
+          "method": "euclidean"
+        },
+        "haversine_5clusters": {
+          "result": "ClusterResult(labels=array([1, 0, 3, 1, 4, 2, 1, 1, 0, 3, 1, 3, 4, 4, 4, 0, 1, 1, 4, 3, 3, 4,\n       4, 1, 0, 4, 1, 2, 0, 3, 3, 3, 1, 2, 4, 0, 3, 0, 0, 3, 3, 1, 3, 1,\n       0, 3, 2, 2, 2, 1, 2, 1, 1, 0, 1, 1, 1, 0, 0, 2, 3, 4, 0, 0, 4, 0,\n       3, 0, 2, 0, 0, 0, 2, 3, 3, 0, 1, 1, 2, 3]), centroids=array([[101.00542567,  13.10720054],\n       [100.92625619,  12.85503903],\n       [101.45029375,  13.23686767],\n       [101.02282176,  13.36741537],\n       [101.29267085,  13.40612366]]), n_iter=9, inertia=None, data=      longitude   latitude  segment_id     road_name  road_type  cluster\n521  100.948365  12.985935        2450  Unnamed Road      trunk        1\n737  101.110921  13.071292        3426  Unnamed Road    primary        0\n740  100.957420  13.314886        3433  Unnamed Road  secondary        3\n660  100.952421  12.687883        3101  Unnamed Road   tertiary        1\n411  101.231256  13.565109        1940  Unnamed Road   tertiary        4\n..          ...        ...         ...           ...        ...      ...\n289  100.989811  13.164606        1332  Unnamed Road  secondary        0\n652  100.891332  12.728585        3062  Unnamed Road  secondary        1\n39   100.906762  12.952127         170   \u0e16\u0e19\u0e19\u0e2a\u0e38\u0e02\u0e38\u0e21\u0e27\u0e34\u0e17      trunk        1\n589  101.387329  13.289117        2785  Unnamed Road  secondary        2\n307  100.923497  13.269300        1459   \u0e1a\u0e32\u0e07\u0e41\u0e2a\u0e19\u0e2a\u0e32\u0e22 1   tertiary        3\n\n[80 rows x 6 columns], converged=True, metadata={'method': 'kmeans', 'distance': 'haversine', 'n_clusters': 5, 'max_iter': 300, 'random_state': 42})",
+          "elapsed_time": 0.0053730010986328125,
+          "cluster_sizes": {
+            "1": "20",
+            "0": "20",
+            "3": "18",
+            "4": "11",
+            "2": "11"
+          },
+          "size_variance": 17.2,
+          "n_clusters": 5,
+          "method": "haversine"
+        },
+        "euclidean_7clusters": {
+          "result": "ClusterResult(labels=array([1, 5, 0, 6, 3, 2, 6, 6, 5, 0, 1, 0, 4, 4, 4, 5, 1, 1, 4, 0, 0, 3,\n       4, 1, 5, 4, 1, 2, 5, 3, 0, 3, 6, 5, 4, 5, 0, 5, 5, 3, 3, 1, 0, 6,\n       5, 0, 2, 2, 2, 6, 2, 1, 1, 1, 1, 1, 6, 5, 5, 2, 0, 3, 5, 5, 4, 5,\n       0, 1, 2, 5, 1, 5, 2, 0, 3, 5, 6, 1, 2, 0]), centroids=array([[100.98851994,  13.35988562],\n       [100.92814924,  12.95011636],\n       [101.4701065 ,  13.25029203],\n       [101.15066519,  13.41406311],\n       [101.32176129,  13.38622737],\n       [101.02698815,  13.12191274],\n       [100.93472226,  12.73765511]]), n_iter=5, inertia=np.float64(6101836806.324735), data=      longitude   latitude  segment_id     road_name  road_type  cluster\n521  100.948365  12.985935        2450  Unnamed Road      trunk        1\n737  101.110921  13.071292        3426  Unnamed Road    primary        5\n740  100.957420  13.314886        3433  Unnamed Road  secondary        0\n660  100.952421  12.687883        3101  Unnamed Road   tertiary        6\n411  101.231256  13.565109        1940  Unnamed Road   tertiary        3\n..          ...        ...         ...           ...        ...      ...\n289  100.989811  13.164606        1332  Unnamed Road  secondary        5\n652  100.891332  12.728585        3062  Unnamed Road  secondary        6\n39   100.906762  12.952127         170   \u0e16\u0e19\u0e19\u0e2a\u0e38\u0e02\u0e38\u0e21\u0e27\u0e34\u0e17      trunk        1\n589  101.387329  13.289117        2785  Unnamed Road  secondary        2\n307  100.923497  13.269300        1459   \u0e1a\u0e32\u0e07\u0e41\u0e2a\u0e19\u0e2a\u0e32\u0e22 1   tertiary        0\n\n[80 rows x 6 columns], converged=True, metadata={'method': 'kmeans', 'distance': 'euclidean', 'n_clusters': 7, 'max_iter': 300, 'random_state': 42})",
+          "elapsed_time": 0.009667158126831055,
+          "cluster_sizes": {
+            "5": "18",
+            "1": "15",
+            "0": "13",
+            "2": "10",
+            "6": "8",
+            "3": "8",
+            "4": "8"
+          },
+          "size_variance": 13.673469387755102,
+          "n_clusters": 7,
+          "method": "euclidean"
+        },
+        "haversine_7clusters": {
+          "result": "ClusterResult(labels=array([1, 5, 0, 6, 3, 2, 6, 6, 5, 0, 1, 0, 4, 4, 4, 5, 1, 1, 4, 0, 0, 3,\n       4, 1, 5, 4, 1, 2, 5, 3, 0, 3, 6, 5, 4, 5, 0, 5, 5, 3, 3, 1, 0, 6,\n       5, 0, 2, 2, 2, 6, 2, 1, 1, 1, 1, 1, 6, 5, 5, 2, 0, 3, 5, 5, 4, 5,\n       0, 1, 2, 5, 1, 5, 2, 0, 3, 5, 6, 1, 2, 0]), centroids=array([[100.98851994,  13.35988562],\n       [100.92814924,  12.95011636],\n       [101.4701065 ,  13.25029203],\n       [101.15066519,  13.41406311],\n       [101.32176129,  13.38622737],\n       [101.02698815,  13.12191274],\n       [100.93472226,  12.73765511]]), n_iter=5, inertia=None, data=      longitude   latitude  segment_id     road_name  road_type  cluster\n521  100.948365  12.985935        2450  Unnamed Road      trunk        1\n737  101.110921  13.071292        3426  Unnamed Road    primary        5\n740  100.957420  13.314886        3433  Unnamed Road  secondary        0\n660  100.952421  12.687883        3101  Unnamed Road   tertiary        6\n411  101.231256  13.565109        1940  Unnamed Road   tertiary        3\n..          ...        ...         ...           ...        ...      ...\n289  100.989811  13.164606        1332  Unnamed Road  secondary        5\n652  100.891332  12.728585        3062  Unnamed Road  secondary        6\n39   100.906762  12.952127         170   \u0e16\u0e19\u0e19\u0e2a\u0e38\u0e02\u0e38\u0e21\u0e27\u0e34\u0e17      trunk        1\n589  101.387329  13.289117        2785  Unnamed Road  secondary        2\n307  100.923497  13.269300        1459   \u0e1a\u0e32\u0e07\u0e41\u0e2a\u0e19\u0e2a\u0e32\u0e22 1   tertiary        0\n\n[80 rows x 6 columns], converged=True, metadata={'method': 'kmeans', 'distance': 'haversine', 'n_clusters': 7, 'max_iter': 300, 'random_state': 42})",
+          "elapsed_time": 0.004191160202026367,
+          "cluster_sizes": {
+            "5": "18",
+            "1": "15",
+            "0": "13",
+            "2": "10",
+            "6": "8",
+            "3": "8",
+            "4": "8"
+          },
+          "size_variance": 13.673469387755102,
+          "n_clusters": 7,
+          "method": "haversine"
+        }
+      },
+      "routing": {
+        "tsp_5points": {
+          "result": "RouteResult(route=[0, 2, 4, 1, 3, 0], total_distance=211931.0, data=      longitude   latitude  segment_id     road_name  road_type  route_order\n521  100.948365  12.985935        2450  Unnamed Road      trunk            0\n740  100.957420  13.314886        3433  Unnamed Road  secondary            1\n411  101.231256  13.565109        1940  Unnamed Road   tertiary            2\n737  101.110921  13.071292        3426  Unnamed Road    primary            3\n660  100.952421  12.687883        3101  Unnamed Road   tertiary            4\n521  100.948365  12.985935        2450  Unnamed Road      trunk            5, metadata={'method': 'ortools', 'distance': 'euclidean', 'n_points': 5})",
+          "elapsed_time": 0.002007007598876953,
+          "total_distance": 211931.0,
+          "avg_distance": 42386.2,
+          "n_points": 5
+        },
+        "tsp_8points": {
+          "result": "RouteResult(route=[0, 6, 3, 7, 1, 5, 4, 2, 0], total_distance=260052.0, data=      longitude   latitude  segment_id     road_name  road_type  route_order\n521  100.948365  12.985935        2450  Unnamed Road      trunk            0\n626  100.916298  12.821170        2963   \u0e16\u0e19\u0e19\u0e2a\u0e38\u0e02\u0e38\u0e21\u0e27\u0e34\u0e17      trunk            1\n660  100.952421  12.687883        3101  Unnamed Road   tertiary            2\n513  101.012726  12.737539        2425  Unnamed Road   tertiary            3\n737  101.110921  13.071292        3426  Unnamed Road    primary            4\n678  101.560699  13.258251        3177  Unnamed Road   tertiary            5\n411  101.231256  13.565109        1940  Unnamed Road   tertiary            6\n740  100.957420  13.314886        3433  Unnamed Road  secondary            7\n521  100.948365  12.985935        2450  Unnamed Road      trunk            8, metadata={'method': 'ortools', 'distance': 'euclidean', 'n_points': 8})",
+          "elapsed_time": 0.0018808841705322266,
+          "total_distance": 260052.0,
+          "avg_distance": 32506.5,
+          "n_points": 8
+        },
+        "tsp_12points": {
+          "result": "RouteResult(route=[0, 6, 3, 7, 10, 1, 5, 4, 9, 11, 2, 8, 0], total_distance=261516.0, data=      longitude   latitude  ...  road_type route_order\n521  100.948365  12.985935  ...      trunk           0\n626  100.916298  12.821170  ...      trunk           1\n660  100.952421  12.687883  ...   tertiary           2\n513  101.012726  12.737539  ...   tertiary           3\n811  101.036058  12.901661  ...      trunk           4\n737  101.110921  13.071292  ...    primary           5\n678  101.560699  13.258251  ...   tertiary           6\n411  101.231256  13.565109  ...   tertiary           7\n136  101.041158  13.404899  ...      trunk           8\n76   100.979120  13.332111  ...      trunk           9\n740  100.957420  13.314886  ...  secondary          10\n859  100.989714  13.232886  ...  secondary          11\n521  100.948365  12.985935  ...      trunk          12\n\n[13 rows x 6 columns], metadata={'method': 'ortools', 'distance': 'euclidean', 'n_points': 12})",
+          "elapsed_time": 0.002310037612915039,
+          "total_distance": 261516.0,
+          "avg_distance": 21793.0,
+          "n_points": 12
+        },
+        "tsp_15points": {
+          "result": "RouteResult(route=[0, 6, 3, 7, 10, 1, 5, 14, 13, 12, 4, 9, 11, 2, 8, 0], total_distance=268048.0, data=      longitude   latitude  ...  road_type route_order\n521  100.948365  12.985935  ...      trunk           0\n626  100.916298  12.821170  ...      trunk           1\n660  100.952421  12.687883  ...   tertiary           2\n513  101.012726  12.737539  ...   tertiary           3\n811  101.036058  12.901661  ...      trunk           4\n737  101.110921  13.071292  ...    primary           5\n678  101.560699  13.258251  ...   tertiary           6\n938  101.405911  13.410975  ...  secondary           7\n973  101.317044  13.386050  ...  secondary           8\n636  101.282165  13.479294  ...  secondary           9\n411  101.231256  13.565109  ...   tertiary          10\n136  101.041158  13.404899  ...      trunk          11\n76   100.979120  13.332111  ...      trunk          12\n740  100.957420  13.314886  ...  secondary          13\n859  100.989714  13.232886  ...  secondary          14\n521  100.948365  12.985935  ...      trunk          15\n\n[16 rows x 6 columns], metadata={'method': 'ortools', 'distance': 'euclidean', 'n_points': 15})",
+          "elapsed_time": 0.0027561187744140625,
+          "total_distance": 268048.0,
+          "avg_distance": 17869.866666666665,
+          "n_points": 15
+        }
+      }
+    }
+  }
+}

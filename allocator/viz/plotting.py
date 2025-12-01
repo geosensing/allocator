@@ -4,8 +4,10 @@ Visualization utilities for allocator package.
 
 from __future__ import annotations
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from matplotlib import colors
 
 
 def plot_clusters(
@@ -27,9 +29,6 @@ def plot_clusters(
         save_path: Path to save plot (optional)
         show: Whether to display plot
     """
-    import matplotlib.pyplot as plt
-    from matplotlib import colors
-
     # Convert DataFrame to numpy array if needed
     if isinstance(data, pd.DataFrame):
         if "longitude" in data.columns and "latitude" in data.columns:
@@ -46,7 +45,7 @@ def plot_clusters(
     n_clusters = len(np.unique(labels))
 
     ax = fig.add_subplot(1, 1, 1)
-    for k, col in zip(range(n_clusters), cvalues):
+    for k, col in zip(range(n_clusters), cvalues, strict=False):
         my_members = labels == k
         ax.plot(X[my_members, 0], X[my_members, 1], "w", markerfacecolor=col, marker=".")
 
@@ -88,8 +87,6 @@ def plot_assignments(
         save_path: Path to save plot (optional)
         show: Whether to display plot
     """
-    import matplotlib.pyplot as plt
-    from matplotlib import colors
 
     if "assigned_points" not in data.columns:
         raise ValueError("DataFrame must contain 'assigned_points' column")
@@ -118,8 +115,6 @@ def plot_route(
         save_path: Path to save plot (optional)
         show: Whether to display plot
     """
-    import matplotlib.pyplot as plt
-
     if route_order is None:
         route_order = list(range(len(route_points)))
 
@@ -158,13 +153,13 @@ def plot_route(
 def plot_comparison(
     data1: dict,
     data2: dict,
-    labels: list[str] = ["Method 1", "Method 2"],
+    labels: list[str] | None = None,
     title: str = "Comparison",
     save_path: str | None = None,
     show: bool = True,
 ) -> None:
     """
-    Plot comparison between two methods (used by compare_kahip_kmeans).
+    Plot comparison between two clustering methods.
 
     Args:
         data1: First dataset with 'points' and 'labels' keys
@@ -174,7 +169,8 @@ def plot_comparison(
         save_path: Path to save plot (optional)
         show: Whether to display plot
     """
-    import matplotlib.pyplot as plt
+    if labels is None:
+        labels = ["Method 1", "Method 2"]
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 8))
 
@@ -202,7 +198,7 @@ def plot_clusters_on_axis(ax, data: np.ndarray, labels: np.ndarray, title: str =
     cvalues = list(colors.cnames.values())
     n_clusters = len(np.unique(labels))
 
-    for k, col in zip(range(n_clusters), cvalues):
+    for k, col in zip(range(n_clusters), cvalues, strict=False):
         my_members = labels == k
         ax.plot(data[my_members, 0], data[my_members, 1], "w", markerfacecolor=col, marker=".")
 

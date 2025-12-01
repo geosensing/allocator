@@ -4,8 +4,6 @@ Modern routing API for allocator package.
 
 from __future__ import annotations
 
-from typing import Any
-
 import numpy as np
 import pandas as pd
 
@@ -191,7 +189,7 @@ def tsp_osrm(
         total_distance = 0.0
     else:
         # Use OSRM distance matrix to solve TSP with nearest neighbor heuristic
-        from ..distances.distance_matrix import osrm_distance_matrix
+        from ..distances import osrm_distance_matrix
 
         distances = osrm_distance_matrix(
             points[["longitude", "latitude"]].values, osrm_base_url=osrm_base_url
@@ -232,7 +230,7 @@ def tsp_google(data: pd.DataFrame | np.ndarray, api_key: str, **kwargs) -> Route
         total_distance = 0.0
     else:
         # Use Google Maps distance matrix to solve TSP with nearest neighbor heuristic
-        from ..distances.distance_matrix import google_distance_matrix
+        from ..distances import google_distance_matrix
 
         distances = google_distance_matrix(
             points[["longitude", "latitude"]].values,

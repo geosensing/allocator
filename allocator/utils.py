@@ -14,8 +14,7 @@ def column_exists(df: pd.DataFrame, col: str) -> bool:
         True if exists, False if not exists.
     """
     if col and (col not in df.columns):
-        print(f"The specify column `{col}` not found in the input file")
-        return False
+        raise ValueError(f"Column '{col}' not found in the DataFrame")
     else:
         return True
 

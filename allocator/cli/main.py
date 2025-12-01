@@ -7,6 +7,8 @@ from rich.console import Console
 from rich.table import Table
 
 from .. import __version__
+from .cluster_cmd import kmeans
+from .route_cmd import christofides, ortools, tsp
 
 console = Console()
 
@@ -40,12 +42,7 @@ def route():
     pass
 
 
-# Import and register subcommands
-from .cluster_cmd import kmeans, kahip
-from .route_cmd import tsp, christofides, ortools
-
 cluster.add_command(kmeans)
-cluster.add_command(kahip)
 route.add_command(tsp)
 route.add_command(christofides)
 route.add_command(ortools)
@@ -73,7 +70,7 @@ route.add_command(ortools)
 @click.pass_context
 def sort(ctx, points, workers, by_worker, distance, output, output_format):
     """Sort points by distance to workers or assign to closest."""
-    from ..api import sort_by_distance, assign_to_closest
+    from ..api import sort_by_distance
     from ..io.data_handler import DataHandler
 
     try:
@@ -98,7 +95,7 @@ def sort(ctx, points, workers, by_worker, distance, output, output_format):
 
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
-        raise click.Abort()
+        raise click.Abort() from e
 
 
 @cli.command()
@@ -106,7 +103,7 @@ def sort(ctx, points, workers, by_worker, distance, output, output_format):
 @click.option(
     "--algorithms",
     "-a",
-    default="kmeans,kahip",
+    default="kmeans",
     help="Comma-separated list of algorithms to compare",
 )
 @click.option("--n-clusters", "-n", type=int, required=True, help="Number of clusters")
@@ -128,7 +125,7 @@ def compare(ctx, input_file, algorithms, n_clusters, distance, output):
         results = {}
 
         for algo in algos:
-            if algo in ["kmeans", "kahip"]:
+            if algo in ["kmeans"]:
                 console.print(f"Running {algo} clustering...")
                 result = cluster(input_file, n_clusters=n_clusters, method=algo, distance=distance)
                 results[algo] = result
@@ -166,7 +163,7 @@ def compare(ctx, input_file, algorithms, n_clusters, distance, output):
 
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
-        raise click.Abort()
+        raise click.Abort() from e
 
 
 if __name__ == "__main__":

@@ -4,12 +4,13 @@ Pure routing/TSP algorithm implementations.
 
 from __future__ import annotations
 
-from typing import Any
-
+import googlemaps
+import networkx as nx
 import numpy as np
-import pandas as pd
+import requests
+from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 
-from ..distances.distance_matrix import get_distance_matrix
+from ..distances import get_distance_matrix
 
 
 def solve_tsp_ortools(
@@ -26,14 +27,6 @@ def solve_tsp_ortools(
     Returns:
         (total_distance, route) tuple
     """
-    try:
-        from ortools.constraint_solver import pywrapcp
-        from ortools.constraint_solver import routing_enums_pb2
-    except ImportError:
-        raise ImportError(
-            "ortools package is required for OR-Tools TSP solver. Install with: pip install ortools"
-        )
-
     # Check for empty data
     if len(points) == 0:
         raise ValueError("Cannot solve TSP with empty data")
@@ -110,12 +103,11 @@ def solve_tsp_christofides(
     """
     try:
         from Christofides import christofides
-        import networkx as nx
-    except ImportError:
+    except ImportError as e:
         raise ImportError(
-            "Christofides package is required for Christofides TSP solver. "
-            "Install with: pip install Christofides"
-        )
+            "Christofides algorithm requires the 'Christofides' package. "
+            "Install it with: pip install Christofides"
+        ) from e
 
     # Get distance matrix
     distances = get_distance_matrix(points, points, method=distance_method, **distance_kwargs)
@@ -156,7 +148,6 @@ def solve_tsp_osrm(
     Returns:
         (total_distance, route) tuple
     """
-    import requests
 
     if osrm_base_url is None:
         osrm_base_url = "http://router.project-osrm.org"
@@ -190,17 +181,17 @@ def solve_tsp_osrm(
         route = [0]  # Start with first point
 
         # OSRM returns the optimal order
-        for leg in waypoints:
+        for _leg in waypoints:
             # This is simplified - real implementation would need to parse the leg structure
             pass
 
         # For now, return a simple route (this would need proper OSRM response parsing)
-        route = list(range(len(points))) + [0]  # Simple circular tour
+        route = [*list(range(len(points))), 0]  # Simple circular tour
 
         return total_distance, route
 
     except requests.RequestException as e:
-        raise ValueError(f"OSRM request failed: {e}")
+        raise ValueError(f"OSRM request failed: {e}") from e
 
 
 def solve_tsp_google(points: np.ndarray, api_key: str, **kwargs) -> tuple[float, list[int]]:
@@ -215,14 +206,6 @@ def solve_tsp_google(points: np.ndarray, api_key: str, **kwargs) -> tuple[float,
     Returns:
         (total_distance, route) tuple
     """
-    try:
-        import googlemaps
-    except ImportError:
-        raise ImportError(
-            "googlemaps package is required for Google TSP solver. "
-            "Install with: pip install googlemaps"
-        )
-
     gmaps = googlemaps.Client(key=api_key)
 
     # Convert points to lat,lng format for Google
@@ -234,7 +217,7 @@ def solve_tsp_google(points: np.ndarray, api_key: str, **kwargs) -> tuple[float,
 
     # For now, return a basic circular tour
     n = len(points)
-    route = list(range(n)) + [0]
+    route = [*list(range(n)), 0]
 
     # Calculate approximate distance using Google Distance Matrix
     try:
@@ -256,4 +239,4 @@ def solve_tsp_google(points: np.ndarray, api_key: str, **kwargs) -> tuple[float,
         return float(total_distance), route
 
     except Exception as e:
-        raise ValueError(f"Google Maps API error: {e}")
+        raise ValueError(f"Google Maps API error: {e}") from e

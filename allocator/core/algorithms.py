@@ -4,16 +4,11 @@ Pure algorithm implementations without CLI, plotting, or file I/O.
 
 from __future__ import annotations
 
-import os
-import shlex
-import subprocess
-from random import randint
-
 import networkx as nx
 import numpy as np
 import pandas as pd
 
-from ..distances.distance_matrix import get_distance_matrix
+from ..distances import get_distance_matrix
 
 
 def initialize_centroids(points: np.ndarray, k: int, random_state: int | None = None) -> np.ndarray:
@@ -117,156 +112,6 @@ def kmeans_cluster(
     return {"labels": labels, "centroids": centroids, "iterations": max_iter, "converged": False}
 
 
-def kahip_cluster(
-    data: pd.DataFrame | np.ndarray,
-    n_clusters: int,
-    distance_method: str = "euclidean",
-    n_closest: int = 15,
-    seed: int | None = None,
-    balance_edges: bool = False,
-    buffoon: bool = False,
-    kahip_dir: str = "./KaHIP/src",
-    **distance_kwargs,
-) -> dict:
-    """
-    Pure KaHIP clustering implementation.
-
-    Args:
-        data: Input data as DataFrame with longitude/latitude or numpy array [n, 2]
-        n_clusters: Number of clusters
-        distance_method: Distance calculation method
-        n_closest: Number of closest neighbors to connect in graph
-        seed: Random seed for KaHIP
-        balance_edges: Whether to use balanced edge partitioning
-        buffoon: Whether to use buffoon mode
-        kahip_dir: Path to KaHIP directory
-        **distance_kwargs: Additional arguments for distance calculation
-
-    Returns:
-        Dictionary with 'labels' and 'graph' keys
-    """
-    # Convert DataFrame to numpy array if needed
-    if isinstance(data, pd.DataFrame):
-        if "longitude" in data.columns and "latitude" in data.columns:
-            X = data[["longitude", "latitude"]].values
-        else:
-            raise ValueError("DataFrame must contain 'longitude' and 'latitude' columns")
-    else:
-        X = np.asarray(data)
-
-    if seed is None:
-        seed = randint(0, 0xFFFF)
-
-    # Get distance matrix
-    distances = get_distance_matrix(X, X, method=distance_method, **distance_kwargs)
-
-    if distances is None:
-        raise ValueError("Could not calculate distance matrix")
-
-    # FIXME: KaHIP doesn't like complete graph. Only N closest distances will be used.
-    for d in distances:
-        s = np.argsort(d)
-        for i in s[n_closest:]:
-            d[i] = 0
-
-    # Create graph
-    G = nx.from_numpy_array(distances)
-
-    if buffoon:
-        # Use KaHIP buffoon version
-        labels = _run_kahip_buffoon(G, n_clusters, seed, kahip_dir)
-    else:
-        # Use Python wrapper version
-        labels = _run_kahip_wrapper(G, n_clusters, seed, balance_edges)
-
-    return {"labels": labels, "graph": G}
-
-
-def _run_kahip_buffoon(G: nx.Graph, n_clusters: int, seed: int, kahip_dir: str) -> np.ndarray:
-    """Run KaHIP buffoon version."""
-    # Export Graph to METIS text file format
-    with open("metis.graph", "w") as f:
-        f.write(f"{len(G.nodes())} {len(G.edges())} 11\n")
-        for n in G.nodes():
-            a = ["1"]
-            for e in G.edges(n, data=True):
-                a.append(str(e[1] + 1))
-                a.append(str(int(e[2]["weight"])))
-            f.write(" ".join(a) + "\n")
-
-    os.putenv("LD_LIBRARY_PATH", os.path.join(kahip_dir, "extern/argtable-2.10/lib"))
-
-    buffoon_cmd = (
-        f"mpirun -n {n_clusters} {kahip_dir}/optimized/buffoon metis.graph "
-        f"--seed {seed} --k {n_clusters} --preconfiguration=strong "
-        f"--max_num_threads={n_clusters}"
-    )
-
-    print(f"Command line: '{buffoon_cmd}'")
-
-    # Execute command
-    p = subprocess.Popen(
-        shlex.split(buffoon_cmd), stdout=subprocess.PIPE, stderr=subprocess.PIPE, close_fds=True
-    )
-    out, err = p.communicate()
-
-    print(f"Output: {out.decode()}")
-
-    # Read results
-    ldf = pd.read_csv(f"tmppartition{n_clusters}", header=None)
-    labels = ldf[0].values
-
-    # Clean up temporary files
-    try:
-        os.remove("metis.graph")
-        os.remove(f"tmppartition{n_clusters}")
-    except FileNotFoundError:
-        pass
-
-    return labels
-
-
-def _run_kahip_wrapper(G: nx.Graph, n_clusters: int, seed: int, balance_edges: bool) -> np.ndarray:
-    """Run KaHIP using Python wrapper."""
-    try:
-        from kahipwrapper import kaHIP
-    except ImportError:
-        raise ImportError(
-            "kahipwrapper package is required for KaHIP clustering. "
-            "Install with: pip install kahipwrapper"
-        )
-
-    ncount = len(G)
-    vwgt = None
-    xadj = []
-    adjcwgt = []
-    adjncy = []
-    nparts = n_clusters
-    imbalance = 0.03
-    suppress_output = False
-    mode = kaHIP.STRONG
-
-    for n in G.nodes():
-        xadj.append(len(adjncy))
-        for e in G.edges(n, data=True):
-            to = e[1]
-            adjncy.append(to)
-            w = int(e[2]["weight"])
-            adjcwgt.append(w)
-    xadj.append(len(adjncy))
-
-    if balance_edges:
-        edgecut, part = kaHIP.kaffpa_balance_NE(
-            ncount, vwgt, xadj, adjcwgt, adjncy, nparts, imbalance, suppress_output, seed, mode
-        )
-    else:
-        edgecut, part = kaHIP.kaffpa(
-            ncount, vwgt, xadj, adjcwgt, adjncy, nparts, imbalance, suppress_output, seed, mode
-        )
-
-    return np.array(part)
-
-
 def sort_by_distance_assignment(
     data: pd.DataFrame | np.ndarray,
     centroids: np.ndarray,
@@ -316,7 +161,6 @@ def calculate_cluster_statistics(
     Returns:
         List of dictionaries with cluster statistics
     """
-    import networkx as nx
 
     results = []
     X = data[["longitude", "latitude"]].values

@@ -1,23 +1,17 @@
 """Distance matrix calculations."""
 
-from .distance_matrix import (
-    get_distance_matrix,
-    euclidean_distance_matrix,
-    haversine_distance_matrix,
-    osrm_distance_matrix,
-    google_distance_matrix,
-    latlon2xy,
-    xy2latlog,
-    pairwise_distances,
-)
+from .euclidean import euclidean_distance_matrix, latlon2xy, pairwise_distances, xy2latlog
+from .external_apis import google_distance_matrix, osrm_distance_matrix
+from .factory import get_distance_matrix
+from .haversine import haversine_distance_matrix
 
 __all__ = [
-    "get_distance_matrix",
     "euclidean_distance_matrix",
-    "haversine_distance_matrix",
-    "osrm_distance_matrix",
+    "get_distance_matrix",
     "google_distance_matrix",
+    "haversine_distance_matrix",
     "latlon2xy",
-    "xy2latlog",
+    "osrm_distance_matrix",
     "pairwise_distances",
+    "xy2latlog",
 ]

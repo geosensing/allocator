@@ -4,8 +4,6 @@ Modern distance-based assignment API for allocator package.
 
 from __future__ import annotations
 
-from typing import Any
-
 import numpy as np
 import pandas as pd
 
@@ -52,7 +50,7 @@ def _sort_workers_by_point(
     points_df: pd.DataFrame, workers_df: pd.DataFrame, distance: str = "euclidean", **kwargs
 ) -> SortResult:
     """Sort workers by distance to each point (default behavior)."""
-    from ..distances.distance_matrix import get_distance_matrix
+    from ..distances import get_distance_matrix
 
     # Extract coordinates
     points_coords = _extract_coordinates(points_df)
@@ -101,7 +99,7 @@ def _sort_points_by_worker(
     points_df: pd.DataFrame, workers_df: pd.DataFrame, distance: str = "euclidean", **kwargs
 ) -> SortResult:
     """Sort points by distance to each worker."""
-    from ..distances.distance_matrix import get_distance_matrix
+    from ..distances import get_distance_matrix
 
     # Extract coordinates
     points_coords = _extract_coordinates(points_df)
