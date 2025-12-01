@@ -6,7 +6,7 @@ This directory contains comprehensive workflow scripts demonstrating allocator v
 
 ### 1. **quick_start.py** - Basic API Introduction
 ```bash
-uv run python quick_start.py
+uv run python examples/scripts/quick_start.py
 ```
 
 **Purpose:** Simple demonstration of core allocator functions  
@@ -24,7 +24,7 @@ uv run python quick_start.py
 
 ### 2. **real_world_workflow.py** - Complete Production Workflow
 ```bash
-uv run python real_world_workflow.py
+uv run python examples/scripts/real_world_workflow.py
 ```
 
 **Purpose:** End-to-end analysis using real road network data  
@@ -43,7 +43,7 @@ uv run python real_world_workflow.py
 
 ### 3. **algorithm_comparison.py** - Comprehensive Analysis & Visualization
 ```bash
-uv run python algorithm_comparison.py
+uv run python examples/scripts/algorithm_comparison.py
 ```
 
 **Purpose:** Generate organized visualizations and comparison reports  
@@ -71,7 +71,7 @@ uv run python algorithm_comparison.py
 
 ### 4. **distance_methods.py** - Distance Calculation Demo
 ```bash
-uv run python distance_methods.py
+uv run python examples/scripts/distance_methods.py
 ```
 
 **Purpose:** Compare different distance calculation methods  
@@ -83,7 +83,7 @@ uv run python distance_methods.py
 
 ### 5. **cli_workflow_demo.py** - Command Line Interface Demo
 ```bash
-uv run python cli_workflow_demo.py
+uv run python examples/scripts/cli_workflow_demo.py
 ```
 
 **Purpose:** Demonstrate CLI functionality with real data  
@@ -98,27 +98,27 @@ uv run python cli_workflow_demo.py
 ### Quick Start
 ```bash
 # Basic introduction
-uv run python quick_start.py
+uv run python examples/scripts/quick_start.py
 
 # See real-world performance  
-uv run python real_world_workflow.py
+uv run python examples/scripts/real_world_workflow.py
 ```
 
 ### Generate Comprehensive Analysis
 ```bash
 # Create full analysis with visualizations
-uv run python algorithm_comparison.py
+uv run python examples/scripts/algorithm_comparison.py
 
-# Results will be in ../outputs/latest/
+# Results will be in examples/outputs/latest/
 ```
 
 ### CLI Testing
 ```bash
 # Test command-line interface
-uv run python cli_workflow_demo.py
+uv run python examples/scripts/cli_workflow_demo.py
 
 # Then try actual CLI commands:
-uv run allocator cluster kmeans ../inputs/delhi-roads-1k.csv --n-clusters 5
+uv run allocator cluster kmeans examples/inputs/delhi-roads-1k.csv --n-clusters 5
 ```
 
 ## 📊 Output Organization
@@ -195,7 +195,7 @@ points, raw_data = load_and_prepare_data(city, sample_size=200)  # Larger analys
 ```
 
 ### Adding New Cities
-1. Add road network CSV to `../inputs/`
+1. Add road network CSV to `examples/inputs/`
 2. Update city list in script: `cities = ['Delhi', 'Chonburi', 'NewCity']`
 3. Follow same CSV format as existing files
 
@@ -208,9 +208,9 @@ distance_methods = ['euclidean', 'haversine', 'osrm']  # Add OSRM
 
 ## 🔗 Next Steps
 
-1. **Start with:** `quick_start.py` to understand basic functionality
-2. **Validate with:** `real_world_workflow.py` for performance insights
-3. **Generate reports:** `algorithm_comparison.py` for comprehensive analysis
+1. **Start with:** `uv run python examples/scripts/quick_start.py` to understand basic functionality
+2. **Validate with:** `uv run python examples/scripts/real_world_workflow.py` for performance insights
+3. **Generate reports:** `uv run python examples/scripts/algorithm_comparison.py` for comprehensive analysis
 4. **Scale up:** Modify sample sizes and add new datasets
 5. **Integrate:** Use CLI commands in production workflows
 

@@ -16,7 +16,7 @@ import allocator
 def load_road_data(city_name: str) -> pd.DataFrame:
     """Load and preprocess road network data for a city."""
     
-    file_path = f"{city_name.lower()}-roads-1k.csv"
+    file_path = f"examples/inputs/{city_name.lower()}-roads-1k.csv"
     
     print(f"📊 Loading {city_name} road network data...")
     roads = pd.read_csv(file_path)

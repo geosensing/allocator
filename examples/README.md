@@ -6,16 +6,16 @@ This directory provides a complete demonstration suite for **allocator v1.0** us
 
 ```bash
 # 1. Basic API introduction (1-2 seconds)
-cd scripts && uv run python quick_start.py
+uv run python examples/scripts/quick_start.py
 
 # 2. Real-world performance analysis (5-10 seconds)
-uv run python real_world_workflow.py
+uv run python examples/scripts/real_world_workflow.py
 
 # 3. Generate comprehensive visualizations (30-60 seconds)
-uv run python algorithm_comparison.py
+uv run python examples/scripts/algorithm_comparison.py
 
 # View results
-open ../outputs/latest/comparisons/reports/executive_summary.html
+open examples/outputs/latest/comparisons/reports/executive_summary.html
 ```
 
 ## 📁 Directory Structure
@@ -74,7 +74,7 @@ examples/
 
 ### 1. Quick API Introduction
 ```bash
-cd scripts && uv run python quick_start.py
+uv run python examples/scripts/quick_start.py
 ```
 - **Purpose:** Learn basic allocator functionality
 - **Runtime:** 1-2 seconds
@@ -82,7 +82,7 @@ cd scripts && uv run python quick_start.py
 
 ### 2. Real-World Performance Analysis  
 ```bash
-cd scripts && uv run python real_world_workflow.py
+uv run python examples/scripts/real_world_workflow.py
 ```
 - **Purpose:** Production performance validation
 - **Runtime:** 5-10 seconds
@@ -90,7 +90,7 @@ cd scripts && uv run python real_world_workflow.py
 
 ### 3. Comprehensive Visualization Generation
 ```bash  
-cd scripts && uv run python algorithm_comparison.py
+uv run python examples/scripts/algorithm_comparison.py
 ```
 - **Purpose:** Research, reporting, executive presentations
 - **Runtime:** 30-60 seconds
@@ -101,6 +101,9 @@ cd scripts && uv run python algorithm_comparison.py
 - 📋 **CSV datasets:** Algorithm results, route solutions  
 - 📄 **HTML reports:** Executive summaries, detailed analysis
 - 🔧 **JSON summaries:** Machine-readable performance metrics
+
+**💾 Intermediate File Preservation:**
+All generated outputs (PNG charts, CSV data, HTML reports) are automatically preserved in timestamped directories under `examples/outputs/YYYY-MM-DD_HH-MM/` with organized structure by city and analysis type. This ensures all intermediate analysis files are retained for review, comparison, and further processing.
 
 ## 📊 Example Outputs
 
@@ -177,19 +180,19 @@ All dependencies are defined in `../../pyproject.toml`:
 ### Development & Testing
 ```bash
 # Quick validation (1-2 seconds)
-uv run python quick_start.py
+uv run python examples/scripts/quick_start.py
 
 # Performance testing (5-10 seconds)  
-uv run python real_world_workflow.py
+uv run python examples/scripts/real_world_workflow.py
 ```
 
 ### Production Analysis
 ```bash
 # Comprehensive reporting (30-60 seconds)
-uv run python algorithm_comparison.py
+uv run python examples/scripts/algorithm_comparison.py
 
 # Custom CLI workflows
-uv run allocator cluster kmeans inputs/delhi-roads-1k.csv --n-clusters 7 --output results.csv
+uv run allocator cluster kmeans examples/inputs/delhi-roads-1k.csv --n-clusters 7 --output results.csv
 ```
 
 ### Large-Scale Deployment
@@ -222,7 +225,7 @@ route = allocator.shortest_path(points.head(10), method='ortools')
 #!/bin/bash
 # Production batch processing
 for city in delhi chonburi; do
-    allocator cluster kmeans inputs/${city}-roads-1k.csv \
+    allocator cluster kmeans examples/inputs/${city}-roads-1k.csv \
         --n-clusters 5 \
         --output results/${city}_zones.csv
 done
@@ -232,7 +235,7 @@ done
 ```python
 # Load analysis results for dashboard
 import json
-with open('outputs/latest/comparisons/data/analysis_summary.json') as f:
+with open('examples/outputs/latest/comparisons/data/analysis_summary.json') as f:
     metrics = json.load(f)
     
 # Display in web dashboard, monitoring system, etc.
@@ -250,9 +253,9 @@ This demonstration suite validates:
 
 ## 📝 Next Steps
 
-1. **Explore:** Run `quick_start.py` to understand basic functionality
-2. **Validate:** Use `real_world_workflow.py` for performance insights  
-3. **Generate:** Create professional reports with `algorithm_comparison.py`
+1. **Explore:** Run `uv run python examples/scripts/quick_start.py` to understand basic functionality
+2. **Validate:** Use `uv run python examples/scripts/real_world_workflow.py` for performance insights  
+3. **Generate:** Create professional reports with `uv run python examples/scripts/algorithm_comparison.py`
 4. **Customize:** Modify scripts for your specific datasets and requirements
 5. **Scale:** Implement in production systems using CLI or Python API
 

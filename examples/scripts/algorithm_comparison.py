@@ -22,7 +22,7 @@ def setup_output_directories():
     
     # Create timestamped run directory
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    run_dir = Path("../outputs") / timestamp
+    run_dir = Path("examples/outputs") / timestamp
     
     # Create structure: outputs/TIMESTAMP/city/analysis_type/file_type/
     cities = ["delhi", "chonburi"]
@@ -39,7 +39,7 @@ def setup_output_directories():
         (run_dir / "comparisons" / file_type).mkdir(parents=True, exist_ok=True)
     
     # Update latest symlink
-    latest_link = Path("../outputs/latest")
+    latest_link = Path("examples/outputs/latest")
     try:
         if latest_link.exists() or latest_link.is_symlink():
             latest_link.unlink()
@@ -61,7 +61,7 @@ def load_and_prepare_data(city: str, sample_size: int = 100):
     
     print(f"📊 Loading {city} road network data...")
     
-    roads = pd.read_csv(f"../inputs/{city.lower()}-roads-1k.csv")
+    roads = pd.read_csv(f"examples/inputs/{city.lower()}-roads-1k.csv")
     
     # Convert to analysis format
     points = pd.DataFrame({
