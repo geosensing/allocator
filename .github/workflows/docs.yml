@@ -36,6 +36,10 @@ jobs:
       run: |
         uv pip install -e .[docs]
         
+    - name: Generate installation docs from pyproject.toml
+      run: |
+        uv run python scripts/generate_installation_docs.py
+        
     - name: Build documentation
       run: |
         cd docs

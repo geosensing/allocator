@@ -56,17 +56,23 @@ else:
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
-    'sphinx.ext.doctest']
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.doctest', 
+    'sphinx.ext.napoleon',          # Google/NumPy style docstrings
+    'sphinx.ext.viewcode',          # Source code links
+    'myst_parser',                  # Markdown support
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-#
-# source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = {
+    '.rst': None,
+    '.md': None,
+}
 
 # The master toctree document.
 master_doc = 'index'
@@ -109,6 +115,19 @@ pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
+
+# MyST parser configuration
+myst_enable_extensions = [
+    "deflist",        # Definition lists
+    "tasklist",       # Task lists  
+    "colon_fence",    # ::: code blocks
+    "linkify",        # Auto-link URLs
+    "substitution",   # Variable substitution
+    "attrs_inline",   # Inline attributes
+]
+
+# MyST heading anchors
+myst_heading_anchors = 3
 
 
 # -- Options for HTML output ----------------------------------------------
