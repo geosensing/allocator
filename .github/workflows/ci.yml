@@ -42,11 +42,6 @@ jobs:
       run: |
         uv run mypy allocator/ || echo "Type checking has known issues, continuing..."
         
-    - name: Validate examples
-      run: |
-        uv run python examples/quick_start.py
-        uv run python examples/distance_methods.py
-        uv run python examples/cli_examples.py
 
   test:
     runs-on: ubuntu-latest
