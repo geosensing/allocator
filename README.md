@@ -1,4 +1,4 @@
-# allocator: Optimal Geographic Task Allocation
+# allocator: Efficiently collect data from geographically distributed locations
 
 [![PyPI version](https://img.shields.io/pypi/v/allocator.svg)](https://pypi.python.org/pypi/allocator)
 [![Downloads](https://pepy.tech/badge/allocator)](https://pepy.tech/project/allocator)
