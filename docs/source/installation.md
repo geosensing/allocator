@@ -91,9 +91,11 @@ pip install "allocator[docs]"
 
 Includes:
 - `sphinx` ≥7.0.0 - Documentation generator
-- `sphinx-rtd-theme` ≥1.3.0 - Read the Docs theme
+- `furo` ≥2023.9.10 - Additional functionality
 - `myst-parser` ≥2.0.0 - Markdown support for Sphinx
+- `linkify-it-py` ≥2.0.0 - Additional functionality
 - `sphinx-autodoc-typehints` ≥1.24.0 - Type hints in API docs
+- `sphinx-design` ≥0.5.0 - Additional functionality
 
 ## Complete Installation
 

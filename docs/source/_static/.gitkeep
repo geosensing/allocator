@@ -1,0 +1,2 @@
+# Keep this directory in version control
+# Sphinx expects _static directory to exist for static assets

@@ -95,9 +95,11 @@ test = [
 ]
 docs = [
     "sphinx>=7.0.0",
-    "sphinx-rtd-theme>=1.3.0",
+    "furo>=2023.9.10",          # Modern Sphinx theme
     "myst-parser>=2.0.0",       # Markdown support
+    "linkify-it-py>=2.0.0",     # Required for MyST linkify extension
     "sphinx-autodoc-typehints>=1.24.0",
+    "sphinx-design>=0.5.0",     # Modern design components
 ]
 
 # Convenience groups
