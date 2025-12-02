@@ -1,13 +1,11 @@
-# allocator: Modern Geographic Task Allocation
+# allocator: Efficiently collect data from geographically distributed locations
 
 [![PyPI version](https://img.shields.io/pypi/v/allocator.svg)](https://pypi.python.org/pypi/allocator)
 [![Downloads](https://pepy.tech/badge/allocator)](https://pepy.tech/project/allocator)
 [![CI](https://github.com/geosensing/allocator/actions/workflows/ci.yml/badge.svg)](https://github.com/geosensing/allocator/actions/workflows/ci.yml)
 [![Documentation](https://img.shields.io/badge/docs-github.io-blue)](https://geosensing.github.io/allocator/)
 
-**Allocator v1.0** provides a modern, Pythonic API for geographic task allocation, clustering, and routing optimization.
-
-> **📖 [Complete Documentation](https://geosensing.github.io/allocator/)** | **🚀 [Quick Start](https://geosensing.github.io/allocator/quickstart.html)** | **💡 [Examples](https://geosensing.github.io/allocator/examples/overview.html)**
+**Allocator** provides a modern, Pythonic API for geographic task allocation, clustering, and routing optimization.
 
 ## Key Features
 
