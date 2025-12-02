@@ -1,4 +1,4 @@
-# allocator: Modern Geographic Task Allocation
+# allocator: Optimal Geographic Task Allocation
 
 [![PyPI version](https://img.shields.io/pypi/v/allocator.svg)](https://pypi.python.org/pypi/allocator)
 [![Downloads](https://pepy.tech/badge/allocator)](https://pepy.tech/project/allocator)
