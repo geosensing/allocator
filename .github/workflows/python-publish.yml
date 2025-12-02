@@ -65,6 +65,6 @@ jobs:
         uv tool run twine check dist/*
         
     - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@v1.18.0
+      uses: pypa/gh-action-pypi-publish@v1.13.0
       with:
         repository-url: ${{ github.event.inputs.use_test_pypi == 'true' && 'https://test.pypi.org/legacy/' || '' }}
