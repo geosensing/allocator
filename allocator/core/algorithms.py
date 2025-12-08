@@ -13,6 +13,7 @@ from ..distances import get_distance_matrix
 try:
     from sklearn.cluster import KMeans
     from sklearn.utils.validation import check_array
+
     HAS_SKLEARN = True
 except ImportError:
     HAS_SKLEARN = False
@@ -70,7 +71,14 @@ class CustomKMeans(KMeans if HAS_SKLEARN else object):
     including haversine, OSRM, and Google Maps API distances.
     """
 
-    def __init__(self, n_clusters=8, distance_method="euclidean", max_iter=300, random_state=None, **distance_kwargs):
+    def __init__(
+        self,
+        n_clusters=8,
+        distance_method="euclidean",
+        max_iter=300,
+        random_state=None,
+        **distance_kwargs,
+    ):
         if HAS_SKLEARN:
             # Initialize sklearn KMeans with all parameters
             super().__init__(n_clusters=n_clusters, max_iter=max_iter, random_state=random_state)
@@ -81,12 +89,14 @@ class CustomKMeans(KMeans if HAS_SKLEARN else object):
     def _transform(self, X):
         """Override sklearn's distance calculation to use custom metrics."""
         if not HAS_SKLEARN:
-            raise ImportError("sklearn is required for CustomKMeans. Install with: pip install 'allocator[algorithms]'")
+            raise ImportError(
+                "sklearn is required for CustomKMeans. Install with: pip install 'allocator[algorithms]'"
+            )
 
         # Use our custom distance factory instead of sklearn's euclidean
-        distances = get_distance_matrix(X, self.cluster_centers_,
-                                      method=self.distance_method,
-                                      **self.distance_kwargs)
+        distances = get_distance_matrix(
+            X, self.cluster_centers_, method=self.distance_method, **self.distance_kwargs
+        )
         return distances
 
     def _update_centroids(self, X, labels):
@@ -111,7 +121,7 @@ class CustomKMeans(KMeans if HAS_SKLEARN else object):
             # Fallback to original implementation if sklearn not available
             return self._fit_custom_implementation(X)
 
-        X = check_array(X, accept_sparse='csr', dtype=[np.float64, np.float32])
+        X = check_array(X, accept_sparse="csr", dtype=[np.float64, np.float32])
 
         # Initialize using sklearn's initialization logic
         super().fit(X)
@@ -119,9 +129,9 @@ class CustomKMeans(KMeans if HAS_SKLEARN else object):
         # Now run our custom iterations
         for iteration in range(self.max_iter):
             # Calculate distances using custom metric
-            distances = get_distance_matrix(X, self.cluster_centers_,
-                                          method=self.distance_method,
-                                          **self.distance_kwargs)
+            distances = get_distance_matrix(
+                X, self.cluster_centers_, method=self.distance_method, **self.distance_kwargs
+            )
 
             # Assign points to nearest centroids
             labels = np.argmin(distances, axis=1)
@@ -145,9 +155,9 @@ class CustomKMeans(KMeans if HAS_SKLEARN else object):
 
     def _fit_custom_implementation(self, X):
         """Fallback to original implementation when sklearn is not available."""
-        result = _kmeans_cluster_original(X, self.n_clusters,
-                                        distance_method=self.distance_method,
-                                        **self.distance_kwargs)
+        result = _kmeans_cluster_original(
+            X, self.n_clusters, distance_method=self.distance_method, **self.distance_kwargs
+        )
         self.cluster_centers_ = result["centroids"]
         self.labels_ = result["labels"]
         self.n_iter_ = result["iterations"]
@@ -184,7 +194,7 @@ def kmeans_cluster(
             distance_method=distance_method,
             max_iter=max_iter,
             random_state=random_state,
-            **distance_kwargs
+            **distance_kwargs,
         )
         kmeans.fit(X)
 
@@ -196,7 +206,9 @@ def kmeans_cluster(
         }
 
     # Fall back to original implementation
-    return _kmeans_cluster_original(X, n_clusters, distance_method, max_iter, random_state, **distance_kwargs)
+    return _kmeans_cluster_original(
+        X, n_clusters, distance_method, max_iter, random_state, **distance_kwargs
+    )
 
 
 def _kmeans_cluster_original(

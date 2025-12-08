@@ -91,8 +91,10 @@ class TestClusterAPI(unittest.TestCase):
         labels_identical = np.array_equal(result1.labels, result2.labels)
         labels_flipped = np.array_equal(result1.labels, 1 - result2.labels)
 
-        self.assertTrue(labels_identical or labels_flipped,
-                       "Clustering results should be reproducible (labels may be flipped)")
+        self.assertTrue(
+            labels_identical or labels_flipped,
+            "Clustering results should be reproducible (labels may be flipped)",
+        )
 
         # Centroids should be the same (possibly in different order)
         centroids1_sorted = np.sort(result1.centroids.flatten())

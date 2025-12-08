@@ -12,12 +12,14 @@ from matplotlib import colors
 try:
     import folium
     from folium import plugins
+
     HAS_FOLIUM = True
 except ImportError:
     HAS_FOLIUM = False
 
 try:
     import polyline
+
     HAS_POLYLINE = True
 except ImportError:
     HAS_POLYLINE = False
@@ -277,18 +279,26 @@ def plot_clusters_interactive(
         zoom_start = 8
 
     # Create base map
-    m = folium.Map(
-        location=[center_lat, center_lon],
-        zoom_start=zoom_start,
-        tiles='OpenStreetMap'
-    )
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=zoom_start, tiles="OpenStreetMap")
 
     # Color palette for clusters
     n_clusters = len(np.unique(labels))
     color_palette = [
-        '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57',
-        '#FF9FF3', '#54A0FF', '#5F27CD', '#00D2D3', '#FF9F43',
-        '#A55EEA', '#26DE81', '#FD79A8', '#FDCB6E', '#6C5CE7'
+        "#FF6B6B",
+        "#4ECDC4",
+        "#45B7D1",
+        "#96CEB4",
+        "#FECA57",
+        "#FF9FF3",
+        "#54A0FF",
+        "#5F27CD",
+        "#00D2D3",
+        "#FF9F43",
+        "#A55EEA",
+        "#26DE81",
+        "#FD79A8",
+        "#FDCB6E",
+        "#6C5CE7",
     ]
 
     # Extend palette if needed
@@ -304,10 +314,10 @@ def plot_clusters_interactive(
             location=[lat, lon],
             radius=6,
             popup=f"Point {i}<br>Cluster: {cluster_id}<br>Coords: ({lon:.4f}, {lat:.4f})",
-            color='white',
+            color="white",
             weight=1,
             fillColor=color,
-            fillOpacity=0.8
+            fillOpacity=0.8,
         ).add_to(m)
 
     # Add centroids if provided
@@ -317,8 +327,8 @@ def plot_clusters_interactive(
             folium.Marker(
                 location=[lat, lon],
                 popup=f"Centroid {k}<br>Coords: ({lon:.4f}, {lat:.4f})",
-                icon=folium.Icon(color='black', icon='star', prefix='fa'),
-                tooltip=f"Cluster {k} Centroid"
+                icon=folium.Icon(color="black", icon="star", prefix="fa"),
+                tooltip=f"Cluster {k} Centroid",
             ).add_to(m)
 
     # Add legend
@@ -337,7 +347,7 @@ def plot_clusters_interactive(
         legend_html += f'<p><span style="color:{color};">●</span> Cluster {k}</p>'
 
     if n_clusters > 8:
-        legend_html += f'<p>... and {n_clusters - 8} more</p>'
+        legend_html += f"<p>... and {n_clusters - 8} more</p>"
 
     legend_html += "</div>"
     m.get_root().html.add_child(folium.Element(legend_html))
@@ -403,11 +413,7 @@ def plot_route_interactive(
         zoom_start = 8
 
     # Create base map
-    m = folium.Map(
-        location=[center_lat, center_lon],
-        zoom_start=zoom_start,
-        tiles='OpenStreetMap'
-    )
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=zoom_start, tiles="OpenStreetMap")
 
     # Add route line
     if route_geometry and HAS_POLYLINE:
@@ -418,11 +424,7 @@ def plot_route_interactive(
             route_coords = [[lat, lon] for lat, lon in decoded_coords]
 
             folium.PolyLine(
-                locations=route_coords,
-                color='blue',
-                weight=4,
-                opacity=0.8,
-                popup="Optimized Route"
+                locations=route_coords, color="blue", weight=4, opacity=0.8, popup="Optimized Route"
             ).add_to(m)
         except Exception:
             # Fall back to straight line connections if decoding fails
@@ -437,23 +439,23 @@ def plot_route_interactive(
 
         # Color-code start, end, and intermediate points
         if i == 0:
-            icon_color = 'green'
-            icon_symbol = 'play'
-            label = 'Start'
+            icon_color = "green"
+            icon_symbol = "play"
+            label = "Start"
         elif i == len(route_order) - 1:
-            icon_color = 'red'
-            icon_symbol = 'stop'
-            label = 'End'
+            icon_color = "red"
+            icon_symbol = "stop"
+            label = "End"
         else:
-            icon_color = 'blue'
-            icon_symbol = f'{i}'
-            label = f'Stop {i}'
+            icon_color = "blue"
+            icon_symbol = f"{i}"
+            label = f"Stop {i}"
 
         folium.Marker(
             location=[lat, lon],
             popup=f"{label}<br>Point {point_idx}<br>Coords: ({lon:.4f}, {lat:.4f})",
-            icon=folium.Icon(color=icon_color, icon=icon_symbol, prefix='fa'),
-            tooltip=f"{label} (Point {point_idx})"
+            icon=folium.Icon(color=icon_color, icon=icon_symbol, prefix="fa"),
+            tooltip=f"{label} (Point {point_idx})",
         ).add_to(m)
 
     # Calculate route statistics
@@ -467,7 +469,7 @@ def plot_route_interactive(
                 font-size:14px; padding: 10px">
     <h4>{title}</h4>
     <p><strong>Points:</strong> {len(route_points)}</p>
-    <p><strong>Route Type:</strong> {'API Route' if route_geometry else 'Direct Lines'}</p>
+    <p><strong>Route Type:</strong> {"API Route" if route_geometry else "Direct Lines"}</p>
     <p><strong>Est. Distance:</strong> {total_distance:.2f} km</p>
     <hr>
     <p><span style="color:green;">●</span> Start Point</p>
@@ -487,7 +489,9 @@ def plot_route_interactive(
     return m
 
 
-def _add_straight_line_route(m: folium.Map, route_points: np.ndarray, route_order: list[int]) -> None:
+def _add_straight_line_route(
+    m: folium.Map, route_points: np.ndarray, route_order: list[int]
+) -> None:
     """Add straight line connections between route points."""
     ordered_points = route_points[route_order]
 
@@ -497,10 +501,10 @@ def _add_straight_line_route(m: folium.Map, route_points: np.ndarray, route_orde
 
     folium.PolyLine(
         locations=route_coords,
-        color='blue',
+        color="blue",
         weight=3,
         opacity=0.7,
-        popup="Direct Route (Straight Lines)"
+        popup="Direct Route (Straight Lines)",
     ).add_to(m)
 
 
@@ -516,7 +520,7 @@ def _calculate_route_distance(route_points: np.ndarray, route_order: list[int]) 
         # Haversine formula
         dlat = lat2 - lat1
         dlon = lon2 - lon1
-        a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
+        a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
         c = 2 * asin(sqrt(a))
 
         # Earth radius in kilometers
@@ -532,8 +536,10 @@ def _calculate_route_distance(route_points: np.ndarray, route_order: list[int]) 
         next_point = ordered_points[(i + 1) % len(ordered_points)]  # Return to start
 
         distance = haversine_distance(
-            current_point[1], current_point[0],  # lat1, lon1
-            next_point[1], next_point[0]         # lat2, lon2
+            current_point[1],
+            current_point[0],  # lat1, lon1
+            next_point[1],
+            next_point[0],  # lat2, lon2
         )
         total_distance += distance
 
