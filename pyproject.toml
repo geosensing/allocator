@@ -8,7 +8,7 @@ module-root = ""
 
 [project]
 name = "allocator"
-version = "1.0.0"
+version = "1.1.0"
 description = "Modern Python package for geographic task allocation, clustering, and routing optimization"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -44,7 +44,6 @@ dependencies = [
     # Core data processing
     "pandas>=2.0.0",
     "numpy>=1.24.0",
-    "scikit-learn>=1.3.0",
     # Distance calculations
     "utm>=0.7.0",
     "haversine>=2.8.0",
@@ -67,8 +66,8 @@ dependencies = [
 [project.optional-dependencies]
 # Algorithm-specific dependencies
 algorithms = [
-    "scipy>=1.10.0",            # Enhanced algorithms
-    "Christofides>=1.0.0",      # Christofides TSP algorithm
+    "Christofides>=1.0.0",      # Christofides TSP algorithm  
+    "scikit-learn>=1.3.0",      # Machine learning algorithms
 ]
 geo = [
     "folium>=0.14.0",           # Interactive maps
@@ -216,6 +215,17 @@ module = [
 ]
 ignore_missing_imports = true
 
+# Deptry configuration
+[tool.deptry]
+pep621_dev_dependency_groups = ["dev", "test", "docs"]
+
+[tool.deptry.per_rule_ignores]
+DEP001 = ["Christofides"]  # Christofides is in optional algorithms group
+DEP002 = ["Christofides"]  # Christofides is correctly used in routing code
+
+[tool.deptry.package_module_name_map]
+Christofides = "christofides"
+linkify-it-py = "linkify_it_py"
 
 [dependency-groups]
 dev = ["pytest>=7.0", "pytest-cov>=4.0", "ruff>=0.7.0", "mypy>=1.0"]

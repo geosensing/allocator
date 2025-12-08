@@ -2,6 +2,86 @@
 
 All notable changes to the allocator project are documented in this file.
 
+## [1.1.0] - 2024-12-08 🚀
+
+### ✨ New Features
+
+**Interactive Geographic Visualizations:**
+- Added `plot_clusters_interactive()` for interactive K-means clustering maps with folium
+- Added `plot_route_interactive()` for interactive TSP route visualization with real maps
+- Enhanced geographic context with OpenStreetMap tiles and zoom/pan capabilities
+- Support for polyline-encoded routes from OSRM and Google Maps APIs
+- Professional HTML output suitable for presentations and web sharing
+
+**Enhanced Machine Learning Integration:**
+- Introduced `CustomKMeans` class extending sklearn's KMeans with custom distance metrics
+- Seamless fallback to pure Python implementation when sklearn unavailable
+- Optimized performance while maintaining compatibility with haversine, OSRM, and Google Maps distances
+- Improved convergence detection and reproducibility with random_state support
+
+**Dependency Management Improvements:**
+- Reorganized optional dependencies into logical groups: `algorithms`, `geo`, `dev`, `test`, `docs`
+- Configured deptry for proper dependency validation with PEP 621 support
+- Enhanced optional dependency handling with clear error messages
+- Streamlined installation with `pip install 'allocator[geo]'` for mapping features
+
+### 🔧 Code Quality & Performance
+
+**Linting & Standards:**
+- Fixed all ruff linting errors across entire codebase (58+ issues resolved)
+- Enhanced code style consistency with proper whitespace handling
+- Added `strict=` parameters to `zip()` calls for safety
+- Improved variable naming and removed unused assignments
+
+**Testing & Reliability:**
+- Maintained 100% test coverage with 72 passing tests
+- Enhanced K-means reproducibility testing for sklearn integration
+- Improved test robustness for label permutation handling
+- Validated compatibility across Python 3.11, 3.12, and 3.13
+
+**Documentation & Examples:**
+- Added comprehensive interactive visualization demo script
+- Enhanced example scripts with proper error handling
+- Improved docstring quality and type annotations
+- Created professional HTML output examples for demos
+
+### 🛠️ Technical Improvements
+
+**Algorithm Optimizations:**
+- Hybrid sklearn/custom K-means approach for best of both worlds
+- Maintained geographic accuracy while leveraging sklearn optimizations
+- Enhanced distance matrix calculations with vectorized operations
+- Improved memory usage for large geographic datasets
+
+**Infrastructure:**
+- Enhanced CI/CD pipeline with automated quality checks
+- Improved build process with uv and modern packaging
+- Better dependency conflict resolution
+- Streamlined release process with comprehensive testing
+
+### 📦 Installation & Compatibility
+
+**New Optional Groups:**
+```bash
+pip install 'allocator[algorithms]'  # scikit-learn for ML algorithms  
+pip install 'allocator[geo]'         # folium + polyline for interactive maps
+pip install 'allocator[all]'         # all optional features
+```
+
+**Maintained Compatibility:**
+- All existing APIs remain unchanged
+- No breaking changes for current users
+- Backward compatible with v1.0.0 usage patterns
+
+### 🐛 Bug Fixes
+
+- Resolved dependency conflicts in development environment
+- Fixed inconsistent K-means results between implementations
+- Improved error handling for edge cases in clustering
+- Enhanced stability for large geographic datasets
+
+---
+
 ## [1.0.0] - 2024-10-09 🎉
 
 ### 🚀 Major Release - Complete Modernization

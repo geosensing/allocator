@@ -6,9 +6,10 @@ This script reads the project dependencies and optional-dependencies from pyproj
 and generates a comprehensive installation guide.
 """
 
+import sys
 import tomllib
 from pathlib import Path
-import sys
+
 
 def get_dep_description(dep_name: str) -> str:
     """Get human-readable description for a dependency."""
@@ -17,53 +18,53 @@ def get_dep_description(dep_name: str) -> str:
         'pandas': 'Data manipulation and analysis',
         'numpy': 'Numerical computations',
         'scikit-learn': 'Machine learning algorithms',
-        
+
         # Distance calculations
         'utm': 'Coordinate system transformations',
         'haversine': 'Geographic distance calculations',
-        
+
         # Graph operations
         'networkx': 'Graph algorithms',
-        
+
         # CLI interface
         'click': 'Command-line interface framework',
         'rich': 'Rich terminal output and formatting',
-        
+
         # HTTP requests
         'requests': 'HTTP library for API calls',
-        
+
         # External APIs
         'googlemaps': 'Google Maps API integration',
-        
+
         # Optimization
         'ortools': 'High-performance optimization algorithms',
-        
+
         # Visualization
         'matplotlib': 'Basic plotting and visualization',
         'seaborn': 'Statistical data visualization',
-        
+
         # Algorithm extensions
         'scipy': 'Enhanced mathematical algorithms',
         'Christofides': 'Christofides TSP algorithm for optimal routing',
-        
+
         # Geographic features
         'folium': 'Interactive maps and visualizations',
         'polyline': 'Route encoding for mapping APIs',
-        
+
         # Development tools
         'ruff': 'Modern linting and formatting',
         'mypy': 'Type checking',
         'black': 'Code formatting',
         'isort': 'Import sorting',
         'pre-commit': 'Git hooks for code quality',
-        
+
         # Testing
         'pytest': 'Testing framework',
         'pytest-cov': 'Coverage reporting',
         'pytest-xdist': 'Parallel testing',
         'coverage': 'Code coverage analysis',
         'hypothesis': 'Property-based testing',
-        
+
         # Documentation
         'sphinx': 'Documentation generator',
         'sphinx-rtd-theme': 'Read the Docs theme',
@@ -88,17 +89,17 @@ def format_dependency(dep: str) -> tuple[str, str]:
 
 def generate_installation_content(project_data: dict) -> str:
     """Generate installation documentation content."""
-    
+
     name = project_data['name']
     requires_python = project_data.get('requires-python', '>=3.11')  # Fix key name
     dependencies = project_data['dependencies']
     optional_deps = project_data.get('optional-dependencies', {})
-    
+
     content = f'''# Installation Guide
 
 ## Requirements
 
-**Python Version**: {requires_python}  
+**Python Version**: {requires_python}
 **Operating System**: Windows, macOS, Linux
 
 ## Basic Installation
@@ -134,7 +135,7 @@ uv add {name}
     for group, deps in optional_deps.items():
         if group in ['all', 'complete']:  # Skip meta-groups
             continue
-            
+
         group_title = group.replace('_', ' ').title()
         content += f'''### {group_title}
 
@@ -150,7 +151,7 @@ Includes:
             description = get_dep_description(dep_name)
             version_info = f" {version}" if version else ""
             content += f'- `{dep_name}`{version_info} - {description}\n'
-        
+
         content += '\n'
 
     # Add convenience groups
@@ -191,7 +192,7 @@ data = pd.DataFrame({{
 result = {name}.cluster(data, n_clusters=2)
 print(f"✓ Clustering: Created {{result['n_clusters']}} clusters")
 
-# Test routing  
+# Test routing
 route = {name}.shortest_path(data)
 print(f"✓ Routing: {{route['total_distance']:.1f}}km route")
 
@@ -257,8 +258,8 @@ uv add {name}
     content += f'''
 ### System Requirements
 
-**Memory**: 2GB+ recommended for large datasets (1000+ points)  
-**Storage**: 100MB for package + 50MB per analysis run  
+**Memory**: 2GB+ recommended for large datasets (1000+ points)
+**Storage**: 100MB for package + 50MB per analysis run
 **Network**: Optional for OSRM/Google Maps API features
 
 ## Development Installation
@@ -341,7 +342,7 @@ def get_group_description(group: str) -> str:
     """Get description for an optional dependency group."""
     descriptions = {
         'algorithms': 'Enhanced algorithms including Christofides TSP',
-        'geo': 'Interactive mapping and route visualization', 
+        'geo': 'Interactive mapping and route visualization',
         'dev': 'Development and testing tools',
         'test': 'Testing framework and coverage tools',
         'docs': 'Documentation building tools',
@@ -356,29 +357,29 @@ def main():
         if not pyproject_path.exists():
             print(f"Error: pyproject.toml not found at {pyproject_path}")
             sys.exit(1)
-            
+
         with open(pyproject_path, "rb") as f:
             data = tomllib.load(f)
-        
+
         project_data = data.get("project", {})
         if not project_data:
             print("Error: No [project] section found in pyproject.toml")
             sys.exit(1)
-        
+
         # Generate content
         content = generate_installation_content(project_data)
-        
+
         # Write to docs
         docs_path = Path(__file__).parent.parent / "docs/source/installation.md"
         docs_path.parent.mkdir(parents=True, exist_ok=True)
         docs_path.write_text(content)
-        
+
         print(f"✅ Generated installation docs: {docs_path}")
         print(f"📦 Package: {project_data['name']}")
         print(f"🐍 Python: {project_data.get('requires-python', '>=3.11')}")
         print(f"📋 Core dependencies: {len(project_data['dependencies'])}")
         print(f"🔧 Optional groups: {len(project_data.get('optional-dependencies', {}))}")
-        
+
     except Exception as e:
         print(f"Error generating installation docs: {e}")
         sys.exit(1)

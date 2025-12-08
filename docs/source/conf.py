@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # allocator documentation build configuration file, created by
 # sphinx-quickstart on Sat Jul 08 07:41:14 2017.
@@ -18,23 +17,17 @@
 #
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('../..'))
 
 # Read project metadata from pyproject.toml
-try:
-    import tomllib
-except ImportError:
-    # For Python < 3.11, use tomli
-    try:
-        import tomli as tomllib
-    except ImportError:
-        tomllib = None
+import tomllib
 from pathlib import Path
 
 project_root = Path(__file__).parent.parent.parent
 pyproject_path = project_root / "pyproject.toml"
 
-if pyproject_path.exists() and tomllib is not None:
+if pyproject_path.exists():
     with open(pyproject_path, "rb") as f:
         pyproject_data = tomllib.load(f)
     project_metadata = pyproject_data.get("project", {})
@@ -58,7 +51,7 @@ else:
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.doctest', 
+    'sphinx.ext.doctest',
     'sphinx.ext.napoleon',          # Google/NumPy style docstrings
     'sphinx.ext.viewcode',          # Source code links
     'myst_parser',                  # Markdown support
@@ -76,7 +69,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = project_metadata.get("name", "allocator")
-copyright = u'2017, Suriyan Laohaprapanon, Gaurav Sood'
+copyright = '2017, Suriyan Laohaprapanon, Gaurav Sood'
 author_list = project_metadata.get("authors", [])
 if author_list:
     if isinstance(author_list[0], dict):
@@ -84,7 +77,7 @@ if author_list:
     else:
         author = ", ".join(author_list)
 else:
-    author = u'Suriyan Laohaprapanon, Gaurav Sood'
+    author = 'Suriyan Laohaprapanon, Gaurav Sood'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -116,7 +109,7 @@ todo_include_todos = False
 # MyST parser configuration
 myst_enable_extensions = [
     "deflist",        # Definition lists
-    "tasklist",       # Task lists  
+    "tasklist",       # Task lists
     "colon_fence",    # ::: code blocks
     "linkify",        # Auto-link URLs
     "substitution",   # Variable substitution
@@ -189,8 +182,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'allocator.tex', u'allocator Documentation',
-     u'Suriyan Laohaprapanon, Gaurav Sood', 'manual'),
+    (master_doc, 'allocator.tex', 'allocator Documentation',
+     'Suriyan Laohaprapanon, Gaurav Sood', 'manual'),
 ]
 
 
@@ -199,7 +192,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'allocator', u'allocator Documentation',
+    (master_doc, 'allocator', 'allocator Documentation',
      [author], 1)
 ]
 
@@ -210,7 +203,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'allocator', u'allocator Documentation',
+    (master_doc, 'allocator', 'allocator Documentation',
      author, 'allocator', 'One line description of project.',
      'Miscellaneous'),
 ]
