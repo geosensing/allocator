@@ -27,33 +27,34 @@ def run_command(command: str, description: str | None = None) -> dict:
             command.split(),
             capture_output=True,
             text=True,
-            cwd="/Users/soodoku/Documents/GitHub/allocator"
+            cwd="/Users/soodoku/Documents/GitHub/allocator",
         )
         elapsed = time.time() - start_time
 
         if result.returncode == 0:
             print(result.stdout)
             return {
-                'success': True,
-                'stdout': result.stdout,
-                'stderr': result.stderr,
-                'elapsed_time': elapsed,
-                'return_code': result.returncode
+                "success": True,
+                "stdout": result.stdout,
+                "stderr": result.stderr,
+                "elapsed_time": elapsed,
+                "return_code": result.returncode,
             }
         else:
             print(f"❌ Command failed with return code {result.returncode}")
             print(f"Error: {result.stderr}")
             return {
-                'success': False,
-                'stdout': result.stdout,
-                'stderr': result.stderr,
-                'elapsed_time': elapsed,
-                'return_code': result.returncode
+                "success": False,
+                "stdout": result.stdout,
+                "stderr": result.stderr,
+                "elapsed_time": elapsed,
+                "return_code": result.returncode,
             }
 
     except Exception as e:
         print(f"❌ Exception running command: {e}")
-        return {'success': False, 'error': str(e)}
+        return {"success": False, "error": str(e)}
+
 
 def prepare_sample_data():
     """Prepare sample data files from road network data for CLI demonstration."""
@@ -68,25 +69,29 @@ def prepare_sample_data():
     delhi_roads = pd.read_csv("delhi-roads-1k.csv")
 
     # Convert to proper format for allocator (longitude, latitude)
-    delhi_sample = pd.DataFrame({
-        'longitude': delhi_roads['start_long'].head(50),
-        'latitude': delhi_roads['start_lat'].head(50),
-        'segment_id': delhi_roads['segment_id'].head(50),
-        'road_name': delhi_roads['osm_name'].fillna('Unnamed Road').head(50),
-        'road_type': delhi_roads['osm_type'].head(50)
-    })
+    delhi_sample = pd.DataFrame(
+        {
+            "longitude": delhi_roads["start_long"].head(50),
+            "latitude": delhi_roads["start_lat"].head(50),
+            "segment_id": delhi_roads["segment_id"].head(50),
+            "road_name": delhi_roads["osm_name"].fillna("Unnamed Road").head(50),
+            "road_type": delhi_roads["osm_type"].head(50),
+        }
+    )
 
     # Save sample data
     sample_file = demo_dir / "delhi_sample.csv"
     delhi_sample.to_csv(sample_file, index=False)
 
     # Create worker/depot locations
-    workers = pd.DataFrame({
-        'longitude': [77.1, 77.2, 77.0],
-        'latitude': [28.6, 28.7, 28.5],
-        'worker_id': ['North_Depot', 'Central_Depot', 'South_Depot'],
-        'capacity': [100, 150, 120]
-    })
+    workers = pd.DataFrame(
+        {
+            "longitude": [77.1, 77.2, 77.0],
+            "latitude": [28.6, 28.7, 28.5],
+            "worker_id": ["North_Depot", "Central_Depot", "South_Depot"],
+            "capacity": [100, 150, 120],
+        }
+    )
 
     workers_file = demo_dir / "service_depots.csv"
     workers.to_csv(workers_file, index=False)
@@ -96,11 +101,12 @@ def prepare_sample_data():
     print(f"   • {workers_file}: {len(workers)} service depots")
 
     return {
-        'sample_file': str(sample_file),
-        'workers_file': str(workers_file),
-        'sample_size': len(delhi_sample),
-        'workers_size': len(workers)
+        "sample_file": str(sample_file),
+        "workers_file": str(workers_file),
+        "sample_size": len(delhi_sample),
+        "workers_size": len(workers),
     }
+
 
 def demonstrate_cli_help():
     """Demonstrate CLI help and information commands."""
@@ -113,7 +119,7 @@ def demonstrate_cli_help():
         ("uv run allocator --version", "Show version"),
         ("uv run allocator cluster --help", "Show clustering help"),
         ("uv run allocator route --help", "Show routing help"),
-        ("uv run allocator sort --help", "Show assignment help")
+        ("uv run allocator sort --help", "Show assignment help"),
     ]
 
     results = {}
@@ -121,6 +127,7 @@ def demonstrate_cli_help():
         results[cmd] = run_command(cmd, desc)
 
     return results
+
 
 def demonstrate_clustering_commands(sample_file: str):
     """Demonstrate clustering CLI commands."""
@@ -129,14 +136,22 @@ def demonstrate_clustering_commands(sample_file: str):
     print("=" * 50)
 
     commands = [
-        (f"uv run allocator cluster kmeans {sample_file} --n-clusters 3",
-         "K-means clustering with 3 clusters"),
-        (f"uv run allocator cluster kmeans {sample_file} --n-clusters 5 --distance haversine",
-         "K-means with haversine distance"),
-        (f"uv run allocator cluster kmeans {sample_file} --n-clusters 4 --output cli_demo_data/clusters.csv",
-         "K-means with output file"),
-        (f"uv run allocator cluster kmeans {sample_file} --n-clusters 3 --format json",
-         "K-means with JSON output")
+        (
+            f"uv run allocator cluster kmeans {sample_file} --n-clusters 3",
+            "K-means clustering with 3 clusters",
+        ),
+        (
+            f"uv run allocator cluster kmeans {sample_file} --n-clusters 5 --distance haversine",
+            "K-means with haversine distance",
+        ),
+        (
+            f"uv run allocator cluster kmeans {sample_file} --n-clusters 4 --output cli_demo_data/clusters.csv",
+            "K-means with output file",
+        ),
+        (
+            f"uv run allocator cluster kmeans {sample_file} --n-clusters 3 --format json",
+            "K-means with JSON output",
+        ),
     ]
 
     results = {}
@@ -145,6 +160,7 @@ def demonstrate_clustering_commands(sample_file: str):
         time.sleep(0.5)  # Brief pause between commands
 
     return results
+
 
 def demonstrate_routing_commands(sample_file: str):
     """Demonstrate routing CLI commands."""
@@ -158,14 +174,19 @@ def demonstrate_routing_commands(sample_file: str):
     small_sample.to_csv(small_file, index=False)
 
     commands = [
-        (f"uv run allocator route ortools {small_file}",
-         "TSP routing with OR-Tools"),
-        (f"uv run allocator route ortools {small_file} --distance haversine",
-         "TSP routing with haversine distance"),
-        (f"uv run allocator route ortools {small_file} --output cli_demo_data/route.csv",
-         "TSP routing with output file"),
-        (f"uv run allocator route ortools {small_file} --format json",
-         "TSP routing with JSON output")
+        (f"uv run allocator route ortools {small_file}", "TSP routing with OR-Tools"),
+        (
+            f"uv run allocator route ortools {small_file} --distance haversine",
+            "TSP routing with haversine distance",
+        ),
+        (
+            f"uv run allocator route ortools {small_file} --output cli_demo_data/route.csv",
+            "TSP routing with output file",
+        ),
+        (
+            f"uv run allocator route ortools {small_file} --format json",
+            "TSP routing with JSON output",
+        ),
     ]
 
     results = {}
@@ -174,6 +195,7 @@ def demonstrate_routing_commands(sample_file: str):
         time.sleep(0.5)
 
     return results
+
 
 def demonstrate_assignment_commands(sample_file: str, workers_file: str):
     """Demonstrate assignment CLI commands."""
@@ -182,14 +204,22 @@ def demonstrate_assignment_commands(sample_file: str, workers_file: str):
     print("=" * 50)
 
     commands = [
-        (f"uv run allocator sort {sample_file} --workers {workers_file}",
-         "Basic assignment to closest workers"),
-        (f"uv run allocator sort {sample_file} --workers {workers_file} --distance haversine",
-         "Assignment with haversine distance"),
-        (f"uv run allocator sort {sample_file} --workers {workers_file} --output cli_demo_data/assignments.csv",
-         "Assignment with output file"),
-        (f"uv run allocator sort {sample_file} --workers {workers_file} --format json",
-         "Assignment with JSON output")
+        (
+            f"uv run allocator sort {sample_file} --workers {workers_file}",
+            "Basic assignment to closest workers",
+        ),
+        (
+            f"uv run allocator sort {sample_file} --workers {workers_file} --distance haversine",
+            "Assignment with haversine distance",
+        ),
+        (
+            f"uv run allocator sort {sample_file} --workers {workers_file} --output cli_demo_data/assignments.csv",
+            "Assignment with output file",
+        ),
+        (
+            f"uv run allocator sort {sample_file} --workers {workers_file} --format json",
+            "Assignment with JSON output",
+        ),
     ]
 
     results = {}
@@ -198,6 +228,7 @@ def demonstrate_assignment_commands(sample_file: str, workers_file: str):
         time.sleep(0.5)
 
     return results
+
 
 def demonstrate_advanced_workflows(sample_file: str, workers_file: str):
     """Demonstrate advanced CLI workflow combinations."""
@@ -213,7 +244,7 @@ def demonstrate_advanced_workflows(sample_file: str, workers_file: str):
     cluster_cmd = f"uv run allocator cluster kmeans {sample_file} --n-clusters 3 --output cli_demo_data/zones.csv"
     cluster_result = run_command(cluster_cmd, "Create maintenance zones")
 
-    if cluster_result.get('success'):
+    if cluster_result.get("success"):
         # Step 2: Route within each cluster (simplified for demo)
         print("\n2️⃣ Then, optimize routes within zones...")
 
@@ -222,8 +253,10 @@ def demonstrate_advanced_workflows(sample_file: str, workers_file: str):
             clustered_data = pd.read_csv("cli_demo_data/zones.csv")
 
             # Route within largest cluster
-            largest_cluster = clustered_data['cluster'].value_counts().index[0]
-            cluster_subset = clustered_data[clustered_data['cluster'] == largest_cluster].head(8)  # Limit for demo
+            largest_cluster = clustered_data["cluster"].value_counts().index[0]
+            cluster_subset = clustered_data[clustered_data["cluster"] == largest_cluster].head(
+                8
+            )  # Limit for demo
             cluster_file = "cli_demo_data/cluster_subset.csv"
             cluster_subset.to_csv(cluster_file, index=False)
 
@@ -239,9 +272,10 @@ def demonstrate_advanced_workflows(sample_file: str, workers_file: str):
     assign_result = run_command(assign_cmd, "Assign locations to service depots")
 
     return {
-        'cluster_step': cluster_result,
-        'assign_step': assign_result if 'assign_result' in locals() else None
+        "cluster_step": cluster_result,
+        "assign_step": assign_result if "assign_result" in locals() else None,
     }
+
 
 def demonstrate_file_formats():
     """Demonstrate different input/output file formats."""
@@ -264,6 +298,7 @@ def demonstrate_file_formats():
 
     print(f"\n💾 Total files created: {len(demo_files)}")
 
+
 def main():
     """Run complete CLI workflow demonstration."""
 
@@ -279,24 +314,22 @@ def main():
 
     try:
         # 1. Help commands
-        all_results['help'] = demonstrate_cli_help()
+        all_results["help"] = demonstrate_cli_help()
 
         # 2. Clustering commands
-        all_results['clustering'] = demonstrate_clustering_commands(data_info['sample_file'])
+        all_results["clustering"] = demonstrate_clustering_commands(data_info["sample_file"])
 
         # 3. Routing commands
-        all_results['routing'] = demonstrate_routing_commands(data_info['sample_file'])
+        all_results["routing"] = demonstrate_routing_commands(data_info["sample_file"])
 
         # 4. Assignment commands
-        all_results['assignment'] = demonstrate_assignment_commands(
-            data_info['sample_file'],
-            data_info['workers_file']
+        all_results["assignment"] = demonstrate_assignment_commands(
+            data_info["sample_file"], data_info["workers_file"]
         )
 
         # 5. Advanced workflows
-        all_results['advanced'] = demonstrate_advanced_workflows(
-            data_info['sample_file'],
-            data_info['workers_file']
+        all_results["advanced"] = demonstrate_advanced_workflows(
+            data_info["sample_file"], data_info["workers_file"]
         )
 
         # 6. File format summary
@@ -316,9 +349,9 @@ def main():
     for _category, results in all_results.items():
         if isinstance(results, dict):
             for _cmd, result in results.items():
-                if isinstance(result, dict) and 'success' in result:
+                if isinstance(result, dict) and "success" in result:
                     total_commands += 1
-                    if result['success']:
+                    if result["success"]:
                         successful_commands += 1
 
     success_rate = (successful_commands / total_commands) * 100 if total_commands > 0 else 0

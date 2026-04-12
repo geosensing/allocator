@@ -49,14 +49,15 @@ def setup_output_directories():
     except (PermissionError, OSError) as e:
         print(f"⚠️ Could not create symlink: {e}")
         # Create a simple text file instead
-        with open(latest_link.with_suffix('.txt'), 'w') as f:
+        with open(latest_link.with_suffix(".txt"), "w") as f:
             f.write(f"Latest run: {timestamp}")
-        latest_link = latest_link.with_suffix('.txt')
+        latest_link = latest_link.with_suffix(".txt")
 
     print(f"📁 Created organized output structure: {run_dir}")
     print(f"🔗 Updated latest symlink: {latest_link}")
 
     return run_dir
+
 
 def load_and_prepare_data(city: str, sample_size: int = 100):
     """Load road data and prepare for analysis."""
@@ -66,13 +67,15 @@ def load_and_prepare_data(city: str, sample_size: int = 100):
     roads = pd.read_csv(f"examples/inputs/{city.lower()}-roads-1k.csv")
 
     # Convert to analysis format
-    points = pd.DataFrame({
-        'longitude': roads['start_long'],
-        'latitude': roads['start_lat'],
-        'segment_id': roads['segment_id'],
-        'road_name': roads['osm_name'].fillna('Unnamed Road'),
-        'road_type': roads['osm_type']
-    })
+    points = pd.DataFrame(
+        {
+            "longitude": roads["start_long"],
+            "latitude": roads["start_lat"],
+            "segment_id": roads["segment_id"],
+            "road_name": roads["osm_name"].fillna("Unnamed Road"),
+            "road_type": roads["osm_type"],
+        }
+    )
 
     # Sample for analysis
     if len(points) > sample_size:
@@ -84,6 +87,7 @@ def load_and_prepare_data(city: str, sample_size: int = 100):
 
     return sample_points, roads
 
+
 def compare_clustering_algorithms(points: pd.DataFrame, city: str, output_dir: Path):
     """Compare different clustering approaches and save organized results."""
 
@@ -94,7 +98,7 @@ def compare_clustering_algorithms(points: pd.DataFrame, city: str, output_dir: P
 
     # Test different cluster counts and distance methods
     n_clusters_list = [3, 5, 7]
-    distance_methods = ['euclidean', 'haversine']
+    distance_methods = ["euclidean", "haversine"]
 
     results = {}
 
@@ -107,24 +111,21 @@ def compare_clustering_algorithms(points: pd.DataFrame, city: str, output_dir: P
             try:
                 start_time = time.time()
                 result = allocator.cluster(
-                    points,
-                    n_clusters=n_clusters,
-                    distance=method,
-                    random_state=42
+                    points, n_clusters=n_clusters, distance=method, random_state=42
                 )
                 elapsed_time = time.time() - start_time
 
                 # Calculate quality metrics
-                cluster_sizes = result.data['cluster'].value_counts()
+                cluster_sizes = result.data["cluster"].value_counts()
                 size_variance = np.var(cluster_sizes.values)
 
                 results[key] = {
-                    'result': result,
-                    'elapsed_time': elapsed_time,
-                    'cluster_sizes': dict(cluster_sizes),
-                    'size_variance': size_variance,
-                    'n_clusters': n_clusters,
-                    'method': method
+                    "result": result,
+                    "elapsed_time": elapsed_time,
+                    "cluster_sizes": dict(cluster_sizes),
+                    "size_variance": size_variance,
+                    "n_clusters": n_clusters,
+                    "method": method,
                 }
 
                 # Save CSV result with clean naming
@@ -135,7 +136,7 @@ def compare_clustering_algorithms(points: pd.DataFrame, city: str, output_dir: P
 
             except Exception as e:
                 print(f"    ✗ Failed: {e}")
-                results[key] = {'error': str(e)}
+                results[key] = {"error": str(e)}
 
     # Generate comparison visualization
     create_clustering_visualization(results, city, city_dir / "visualizations")
@@ -144,6 +145,7 @@ def compare_clustering_algorithms(points: pd.DataFrame, city: str, output_dir: P
     create_clustering_report(results, city, city_dir / "reports")
 
     return results
+
 
 def create_clustering_visualization(results: dict, city: str, viz_dir: Path):
     """Create clustering comparison visualization."""
@@ -154,7 +156,9 @@ def create_clustering_visualization(results: dict, city: str, viz_dir: Path):
     sns.set_style("whitegrid")
 
     fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-    fig.suptitle(f'Clustering Performance Analysis - {city.title()}', fontsize=18, fontweight='bold')
+    fig.suptitle(
+        f"Clustering Performance Analysis - {city.title()}", fontsize=18, fontweight="bold"
+    )
 
     # Extract data for plotting
     methods = []
@@ -163,11 +167,11 @@ def create_clustering_visualization(results: dict, city: str, viz_dir: Path):
     variances = []
 
     for _key, result in results.items():
-        if 'error' not in result:
-            methods.append(result['method'])
-            clusters.append(result['n_clusters'])
-            times.append(result['elapsed_time'])
-            variances.append(result['size_variance'])
+        if "error" not in result:
+            methods.append(result["method"])
+            clusters.append(result["n_clusters"])
+            times.append(result["elapsed_time"])
+            variances.append(result["size_variance"])
 
     if not times:  # No successful results
         plt.close()
@@ -175,46 +179,76 @@ def create_clustering_visualization(results: dict, city: str, viz_dir: Path):
 
     # 1. Execution Time Analysis
     ax1 = axes[0, 0]
-    colors = ['#1f77b4' if m == 'euclidean' else '#ff7f0e' for m in methods]
-    ax1.scatter(clusters, times, c=colors, s=120, alpha=0.8, edgecolor='black')
-    ax1.set_xlabel('Number of Clusters', fontsize=12)
-    ax1.set_ylabel('Execution Time (seconds)', fontsize=12)
-    ax1.set_title('Clustering Time vs Problem Size', fontsize=14, fontweight='bold')
+    colors = ["#1f77b4" if m == "euclidean" else "#ff7f0e" for m in methods]
+    ax1.scatter(clusters, times, c=colors, s=120, alpha=0.8, edgecolor="black")
+    ax1.set_xlabel("Number of Clusters", fontsize=12)
+    ax1.set_ylabel("Execution Time (seconds)", fontsize=12)
+    ax1.set_title("Clustering Time vs Problem Size", fontsize=14, fontweight="bold")
     ax1.grid(True, alpha=0.3)
 
     # Add legend
     from matplotlib.lines import Line2D
-    legend_elements = [Line2D([0], [0], marker='o', color='w', markerfacecolor='#1f77b4', markersize=10, label='Euclidean'),
-                       Line2D([0], [0], marker='o', color='w', markerfacecolor='#ff7f0e', markersize=10, label='Haversine')]
-    ax1.legend(handles=legend_elements, loc='upper left')
+
+    legend_elements = [
+        Line2D(
+            [0],
+            [0],
+            marker="o",
+            color="w",
+            markerfacecolor="#1f77b4",
+            markersize=10,
+            label="Euclidean",
+        ),
+        Line2D(
+            [0],
+            [0],
+            marker="o",
+            color="w",
+            markerfacecolor="#ff7f0e",
+            markersize=10,
+            label="Haversine",
+        ),
+    ]
+    ax1.legend(handles=legend_elements, loc="upper left")
 
     # 2. Cluster Balance Analysis
     ax2 = axes[0, 1]
-    ax2.scatter(clusters, variances, c=colors, s=120, alpha=0.8, edgecolor='black')
-    ax2.set_xlabel('Number of Clusters', fontsize=12)
-    ax2.set_ylabel('Cluster Size Variance', fontsize=12)
-    ax2.set_title('Cluster Balance Quality', fontsize=14, fontweight='bold')
+    ax2.scatter(clusters, variances, c=colors, s=120, alpha=0.8, edgecolor="black")
+    ax2.set_xlabel("Number of Clusters", fontsize=12)
+    ax2.set_ylabel("Cluster Size Variance", fontsize=12)
+    ax2.set_title("Cluster Balance Quality", fontsize=14, fontweight="bold")
     ax2.grid(True, alpha=0.3)
 
     # 3. Method Performance Comparison
     ax3 = axes[1, 0]
-    euclidean_times = [t for i, t in enumerate(times) if methods[i] == 'euclidean']
-    haversine_times = [t for i, t in enumerate(times) if methods[i] == 'haversine']
+    euclidean_times = [t for i, t in enumerate(times) if methods[i] == "euclidean"]
+    haversine_times = [t for i, t in enumerate(times) if methods[i] == "haversine"]
 
-    method_names = ['Euclidean', 'Haversine']
-    avg_times = [np.mean(euclidean_times) if euclidean_times else 0,
-                 np.mean(haversine_times) if haversine_times else 0]
+    method_names = ["Euclidean", "Haversine"]
+    avg_times = [
+        np.mean(euclidean_times) if euclidean_times else 0,
+        np.mean(haversine_times) if haversine_times else 0,
+    ]
 
-    bars = ax3.bar(method_names, avg_times, color=['#1f77b4', '#ff7f0e'], alpha=0.8, edgecolor='black')
-    ax3.set_ylabel('Average Execution Time (seconds)', fontsize=12)
-    ax3.set_title('Performance by Distance Method', fontsize=14, fontweight='bold')
+    bars = ax3.bar(
+        method_names, avg_times, color=["#1f77b4", "#ff7f0e"], alpha=0.8, edgecolor="black"
+    )
+    ax3.set_ylabel("Average Execution Time (seconds)", fontsize=12)
+    ax3.set_title("Performance by Distance Method", fontsize=14, fontweight="bold")
     ax3.grid(True, alpha=0.3)
 
     # Add value labels on bars
     for bar, time_val in zip(bars, avg_times, strict=True):
         if time_val > 0:
-            ax3.text(bar.get_x() + bar.get_width()/2, bar.get_height() + max(avg_times) * 0.01,
-                    f'{time_val:.3f}s', ha='center', va='bottom', fontsize=11, fontweight='bold')
+            ax3.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height() + max(avg_times) * 0.01,
+                f"{time_val:.3f}s",
+                ha="center",
+                va="bottom",
+                fontsize=11,
+                fontweight="bold",
+            )
 
     # 4. Scalability Analysis
     ax4 = axes[1, 1]
@@ -225,27 +259,36 @@ def create_clustering_visualization(results: dict, city: str, viz_dir: Path):
         cluster_times = [t for i, t in enumerate(times) if clusters[i] == n]
         avg_times_by_cluster.append(np.mean(cluster_times) if cluster_times else 0)
 
-    ax4.plot(cluster_counts, avg_times_by_cluster, marker='o', linewidth=3, markersize=10,
-            color='#2ca02c', markeredgecolor='black', markeredgewidth=2)
-    ax4.set_xlabel('Number of Clusters', fontsize=12)
-    ax4.set_ylabel('Average Execution Time (seconds)', fontsize=12)
-    ax4.set_title('Scalability Analysis', fontsize=14, fontweight='bold')
+    ax4.plot(
+        cluster_counts,
+        avg_times_by_cluster,
+        marker="o",
+        linewidth=3,
+        markersize=10,
+        color="#2ca02c",
+        markeredgecolor="black",
+        markeredgewidth=2,
+    )
+    ax4.set_xlabel("Number of Clusters", fontsize=12)
+    ax4.set_ylabel("Average Execution Time (seconds)", fontsize=12)
+    ax4.set_title("Scalability Analysis", fontsize=14, fontweight="bold")
     ax4.grid(True, alpha=0.3)
 
     plt.tight_layout()
 
     # Save visualization
     viz_path = viz_dir / f"{city.lower()}_clustering_analysis.png"
-    plt.savefig(viz_path, dpi=300, bbox_inches='tight', facecolor='white')
+    plt.savefig(viz_path, dpi=300, bbox_inches="tight", facecolor="white")
     plt.close()
 
     print(f"    ✓ Saved visualization: {viz_path.name}")
+
 
 def create_clustering_report(results: dict, city: str, report_dir: Path):
     """Create HTML summary report for clustering analysis."""
 
     # Generate summary statistics
-    successful_runs = {k: v for k, v in results.items() if 'error' not in v}
+    successful_runs = {k: v for k, v in results.items() if "error" not in v}
 
     if not successful_runs:
         return
@@ -295,7 +338,7 @@ def create_clustering_report(results: dict, city: str, report_dir: Path):
     """
 
     for key, result in results.items():
-        if 'error' not in result:
+        if "error" not in result:
             html_content += f"""
                 <tr>
                     <td>{key}</td>
@@ -331,10 +374,11 @@ def create_clustering_report(results: dict, city: str, report_dir: Path):
 
     # Save HTML report
     report_path = report_dir / f"{city.lower()}_clustering_report.html"
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         f.write(html_content)
 
     print(f"    ✓ Saved report: {report_path.name}")
+
 
 def compare_routing_algorithms(points: pd.DataFrame, city: str, output_dir: Path):
     """Compare routing performance with different parameters."""
@@ -361,18 +405,18 @@ def compare_routing_algorithms(points: pd.DataFrame, city: str, output_dir: Path
             subset = points.head(size).copy()
 
             start_time = time.time()
-            result = allocator.shortest_path(subset, method='ortools')
+            result = allocator.shortest_path(subset, method="ortools")
             elapsed_time = time.time() - start_time
 
             # Calculate metrics
             avg_distance = result.total_distance / size if size > 0 else 0
 
             results[key] = {
-                'result': result,
-                'elapsed_time': elapsed_time,
-                'total_distance': result.total_distance,
-                'avg_distance': avg_distance,
-                'n_points': size
+                "result": result,
+                "elapsed_time": elapsed_time,
+                "total_distance": result.total_distance,
+                "avg_distance": avg_distance,
+                "n_points": size,
             }
 
             # Save CSV result with clean naming
@@ -383,7 +427,7 @@ def compare_routing_algorithms(points: pd.DataFrame, city: str, output_dir: Path
 
         except Exception as e:
             print(f"    ✗ Failed: {e}")
-            results[key] = {'error': str(e)}
+            results[key] = {"error": str(e)}
 
     # Generate visualizations and reports
     create_routing_visualization(results, city, city_dir / "visualizations")
@@ -391,13 +435,16 @@ def compare_routing_algorithms(points: pd.DataFrame, city: str, output_dir: Path
 
     return results
 
+
 def create_routing_visualization(results: dict, city: str, viz_dir: Path):
     """Create routing comparison visualization."""
 
     print("  📊 Generating routing visualizations...")
 
     fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-    fig.suptitle(f'TSP Routing Performance Analysis - {city.title()}', fontsize=18, fontweight='bold')
+    fig.suptitle(
+        f"TSP Routing Performance Analysis - {city.title()}", fontsize=18, fontweight="bold"
+    )
 
     # Extract data
     sizes = []
@@ -405,10 +452,10 @@ def create_routing_visualization(results: dict, city: str, viz_dir: Path):
     distances = []
 
     for _key, result in results.items():
-        if 'error' not in result:
-            sizes.append(result['n_points'])
-            times.append(result['elapsed_time'])
-            distances.append(result['total_distance'] / 1000)  # Convert to km
+        if "error" not in result:
+            sizes.append(result["n_points"])
+            times.append(result["elapsed_time"])
+            distances.append(result["total_distance"] / 1000)  # Convert to km
 
     if not times:
         plt.close()
@@ -416,44 +463,44 @@ def create_routing_visualization(results: dict, city: str, viz_dir: Path):
 
     # 1. Execution time vs problem size
     ax1 = axes[0, 0]
-    ax1.scatter(sizes, times, s=150, c='#e74c3c', alpha=0.8, edgecolor='black')
+    ax1.scatter(sizes, times, s=150, c="#e74c3c", alpha=0.8, edgecolor="black")
     if len(sizes) > 2:
         z = np.polyfit(sizes, times, 2)  # Quadratic fit for TSP
         p = np.poly1d(z)
         x_smooth = np.linspace(min(sizes), max(sizes), 100)
-        ax1.plot(x_smooth, p(x_smooth), "--", color='#c0392b', linewidth=2, alpha=0.8)
-    ax1.set_xlabel('Number of Points', fontsize=12)
-    ax1.set_ylabel('Solution Time (seconds)', fontsize=12)
-    ax1.set_title('TSP Complexity Growth', fontsize=14, fontweight='bold')
+        ax1.plot(x_smooth, p(x_smooth), "--", color="#c0392b", linewidth=2, alpha=0.8)
+    ax1.set_xlabel("Number of Points", fontsize=12)
+    ax1.set_ylabel("Solution Time (seconds)", fontsize=12)
+    ax1.set_title("TSP Complexity Growth", fontsize=14, fontweight="bold")
     ax1.grid(True, alpha=0.3)
 
     # 2. Route distance vs problem size
     ax2 = axes[0, 1]
-    ax2.scatter(sizes, distances, s=150, c='#3498db', alpha=0.8, edgecolor='black')
+    ax2.scatter(sizes, distances, s=150, c="#3498db", alpha=0.8, edgecolor="black")
     if len(sizes) > 1:
         z2 = np.polyfit(sizes, distances, 1)  # Linear fit
         p2 = np.poly1d(z2)
         x_smooth = np.linspace(min(sizes), max(sizes), 100)
-        ax2.plot(x_smooth, p2(x_smooth), "--", color='#2980b9', linewidth=2, alpha=0.8)
-    ax2.set_xlabel('Number of Points', fontsize=12)
-    ax2.set_ylabel('Total Route Distance (km)', fontsize=12)
-    ax2.set_title('Route Length Growth', fontsize=14, fontweight='bold')
+        ax2.plot(x_smooth, p2(x_smooth), "--", color="#2980b9", linewidth=2, alpha=0.8)
+    ax2.set_xlabel("Number of Points", fontsize=12)
+    ax2.set_ylabel("Total Route Distance (km)", fontsize=12)
+    ax2.set_title("Route Length Growth", fontsize=14, fontweight="bold")
     ax2.grid(True, alpha=0.3)
 
     # 3. Solution efficiency
     ax3 = axes[1, 0]
-    efficiency = [d/t if t > 0 else 0 for d, t in zip(distances, times, strict=False)]
-    ax3.bar(range(len(sizes)), efficiency, color='#27ae60', alpha=0.8, edgecolor='black')
-    ax3.set_xlabel('Problem Size', fontsize=12)
-    ax3.set_ylabel('Distance/Time (km/s)', fontsize=12)
-    ax3.set_title('Solution Efficiency', fontsize=14, fontweight='bold')
+    efficiency = [d / t if t > 0 else 0 for d, t in zip(distances, times, strict=False)]
+    ax3.bar(range(len(sizes)), efficiency, color="#27ae60", alpha=0.8, edgecolor="black")
+    ax3.set_xlabel("Problem Size", fontsize=12)
+    ax3.set_ylabel("Distance/Time (km/s)", fontsize=12)
+    ax3.set_title("Solution Efficiency", fontsize=14, fontweight="bold")
     ax3.set_xticks(range(len(sizes)))
-    ax3.set_xticklabels([f'{s} pts' for s in sizes])
+    ax3.set_xticklabels([f"{s} pts" for s in sizes])
     ax3.grid(True, alpha=0.3)
 
     # 4. Performance summary
     ax4 = axes[1, 1]
-    ax4.axis('off')
+    ax4.axis("off")
 
     # Create summary text
     summary_text = f"""
@@ -472,22 +519,30 @@ def create_routing_visualization(results: dict, city: str, viz_dir: Path):
     ⚖️ Avg Efficiency: {np.mean(efficiency):.1f} km/s
     """
 
-    ax4.text(0.1, 0.9, summary_text, transform=ax4.transAxes, fontsize=12,
-            verticalalignment='top', bbox={"boxstyle": 'round', "facecolor": '#ecf0f1', "alpha": 0.8})
+    ax4.text(
+        0.1,
+        0.9,
+        summary_text,
+        transform=ax4.transAxes,
+        fontsize=12,
+        verticalalignment="top",
+        bbox={"boxstyle": "round", "facecolor": "#ecf0f1", "alpha": 0.8},
+    )
 
     plt.tight_layout()
 
     # Save visualization
     viz_path = viz_dir / f"{city.lower()}_routing_analysis.png"
-    plt.savefig(viz_path, dpi=300, bbox_inches='tight', facecolor='white')
+    plt.savefig(viz_path, dpi=300, bbox_inches="tight", facecolor="white")
     plt.close()
 
     print(f"    ✓ Saved visualization: {viz_path.name}")
 
+
 def create_routing_report(results: dict, city: str, report_dir: Path):
     """Create HTML summary report for routing analysis."""
 
-    successful_runs = {k: v for k, v in results.items() if 'error' not in v}
+    successful_runs = {k: v for k, v in results.items() if "error" not in v}
 
     if not successful_runs:
         return
@@ -536,7 +591,11 @@ def create_routing_report(results: dict, city: str, report_dir: Path):
     """
 
     for _key, result in successful_runs.items():
-        efficiency = (result['total_distance']/1000) / result['elapsed_time'] if result['elapsed_time'] > 0 else 0
+        efficiency = (
+            (result["total_distance"] / 1000) / result["elapsed_time"]
+            if result["elapsed_time"] > 0
+            else 0
+        )
         html_content += f"""
             <tr>
                 <td>{result['n_points']} points</td>
@@ -564,10 +623,11 @@ def create_routing_report(results: dict, city: str, report_dir: Path):
 
     # Save HTML report
     report_path = report_dir / f"{city.lower()}_routing_report.html"
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         f.write(html_content)
 
     print(f"    ✓ Saved report: {report_path.name}")
+
 
 def generate_executive_summary(all_results: dict, output_dir: Path):
     """Generate overall executive summary report."""
@@ -611,7 +671,9 @@ def generate_executive_summary(all_results: dict, output_dir: Path):
     for _city, city_results in all_results.items():
         for _category, results in city_results.items():
             if isinstance(results, dict):
-                total_algorithms += len([r for r in results.values() if isinstance(r, dict) and 'error' not in r])
+                total_algorithms += len(
+                    [r for r in results.values() if isinstance(r, dict) and "error" not in r]
+                )
 
     # Add overview metrics
     html_content += f"""
@@ -646,18 +708,24 @@ def generate_executive_summary(all_results: dict, output_dir: Path):
         clustering_time = "N/A"
         routing_time = "N/A"
 
-        if 'clustering' in city_results:
-            clustering_results = [r for r in city_results['clustering'].values()
-                               if isinstance(r, dict) and 'elapsed_time' in r]
+        if "clustering" in city_results:
+            clustering_results = [
+                r
+                for r in city_results["clustering"].values()
+                if isinstance(r, dict) and "elapsed_time" in r
+            ]
             if clustering_results:
-                avg_clustering_time = np.mean([r['elapsed_time'] for r in clustering_results])
+                avg_clustering_time = np.mean([r["elapsed_time"] for r in clustering_results])
                 clustering_time = f"{avg_clustering_time:.3f}s"
 
-        if 'routing' in city_results:
-            routing_results = [r for r in city_results['routing'].values()
-                             if isinstance(r, dict) and 'elapsed_time' in r]
+        if "routing" in city_results:
+            routing_results = [
+                r
+                for r in city_results["routing"].values()
+                if isinstance(r, dict) and "elapsed_time" in r
+            ]
             if routing_results:
-                avg_routing_time = np.mean([r['elapsed_time'] for r in routing_results])
+                avg_routing_time = np.mean([r["elapsed_time"] for r in routing_results])
                 routing_time = f"{avg_routing_time:.3f}s"
 
         html_content += f"""
@@ -712,23 +780,24 @@ def generate_executive_summary(all_results: dict, output_dir: Path):
 
     # Save executive summary
     summary_path = output_dir / "comparisons" / "reports" / "executive_summary.html"
-    with open(summary_path, 'w') as f:
+    with open(summary_path, "w") as f:
         f.write(html_content)
 
     # Also save JSON summary for machine processing
     json_summary = {
-        'analysis_timestamp': datetime.now().isoformat(),
-        'cities_analyzed': list(all_results.keys()),
-        'total_algorithms_tested': total_algorithms,
-        'performance_metrics': all_results
+        "analysis_timestamp": datetime.now().isoformat(),
+        "cities_analyzed": list(all_results.keys()),
+        "total_algorithms_tested": total_algorithms,
+        "performance_metrics": all_results,
     }
 
     json_path = output_dir / "comparisons" / "data" / "analysis_summary.json"
-    with open(json_path, 'w') as f:
+    with open(json_path, "w") as f:
         json.dump(json_summary, f, indent=2, default=str)
 
     print(f"✅ Saved executive summary: {summary_path.name}")
     print(f"✅ Saved JSON summary: {json_path.name}")
+
 
 def create_readme(output_dir: Path):
     """Create README for the run directory."""
@@ -788,10 +857,11 @@ This run analyzed road network data for Delhi, India and Chonburi, Thailand usin
 """
 
     readme_path = output_dir / "README.md"
-    with open(readme_path, 'w') as f:
+    with open(readme_path, "w") as f:
         f.write(readme_content)
 
     print(f"✅ Created run documentation: {readme_path.name}")
+
 
 def main():
     """Run complete algorithm comparison with clean organization."""
@@ -802,7 +872,7 @@ def main():
 
     # Setup organized output structure
     output_dir = setup_output_directories()
-    cities = ['Delhi', 'Chonburi']
+    cities = ["Delhi", "Chonburi"]
     all_results = {}
 
     # Run analysis for each city
@@ -817,15 +887,15 @@ def main():
 
             # Run analyses
             city_results = {
-                'clustering': compare_clustering_algorithms(points, city, output_dir),
-                'routing': compare_routing_algorithms(points, city, output_dir)
+                "clustering": compare_clustering_algorithms(points, city, output_dir),
+                "routing": compare_routing_algorithms(points, city, output_dir),
             }
 
             all_results[city] = city_results
 
         except Exception as e:
             print(f"❌ Error analyzing {city}: {e}")
-            all_results[city] = {'error': str(e)}
+            all_results[city] = {"error": str(e)}
 
     # Generate executive summary and documentation
     generate_executive_summary(all_results, output_dir)
@@ -837,18 +907,18 @@ def main():
     print(f"{'='*80}")
 
     # Count generated files by type
-    file_counts = {'CSV Data': 0, 'PNG Charts': 0, 'HTML Reports': 0, 'Other': 0}
+    file_counts = {"CSV Data": 0, "PNG Charts": 0, "HTML Reports": 0, "Other": 0}
 
-    for file_path in output_dir.rglob('*'):
+    for file_path in output_dir.rglob("*"):
         if file_path.is_file():
-            if file_path.suffix == '.csv':
-                file_counts['CSV Data'] += 1
-            elif file_path.suffix == '.png':
-                file_counts['PNG Charts'] += 1
-            elif file_path.suffix == '.html':
-                file_counts['HTML Reports'] += 1
+            if file_path.suffix == ".csv":
+                file_counts["CSV Data"] += 1
+            elif file_path.suffix == ".png":
+                file_counts["PNG Charts"] += 1
+            elif file_path.suffix == ".html":
+                file_counts["HTML Reports"] += 1
             else:
-                file_counts['Other'] += 1
+                file_counts["Other"] += 1
 
     total_files = sum(file_counts.values())
 

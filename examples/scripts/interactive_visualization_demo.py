@@ -25,18 +25,18 @@ def generate_sample_data():
     # Sample locations around major US cities
     cities = {
         "New York": [
-            [-74.0059, 40.7128],   # NYC
-            [-74.0365, 40.7061],   # Jersey City
-            [-73.9442, 40.6782],   # Brooklyn
-            [-73.8648, 40.7282],   # Queens
-            [-73.9973, 40.7505],   # Midtown
+            [-74.0059, 40.7128],  # NYC
+            [-74.0365, 40.7061],  # Jersey City
+            [-73.9442, 40.6782],  # Brooklyn
+            [-73.8648, 40.7282],  # Queens
+            [-73.9973, 40.7505],  # Midtown
         ],
         "San Francisco": [
-            [-122.4194, 37.7749], # SF Downtown
-            [-122.4586, 37.7516], # Mission
-            [-122.4376, 37.7849], # Chinatown
-            [-122.4014, 37.7849], # Financial
-            [-122.3959, 37.7849], # SOMA
+            [-122.4194, 37.7749],  # SF Downtown
+            [-122.4586, 37.7516],  # Mission
+            [-122.4376, 37.7849],  # Chinatown
+            [-122.4014, 37.7849],  # Financial
+            [-122.3959, 37.7849],  # SOMA
         ],
         "Chicago": [
             [-87.6298, 41.8781],  # Downtown
@@ -44,7 +44,7 @@ def generate_sample_data():
             [-87.6298, 41.8919],  # Lincoln Park
             [-87.6244, 41.8588],  # Chinatown
             [-87.6064, 41.8781],  # Lake Shore
-        ]
+        ],
     }
 
     return cities
@@ -79,7 +79,7 @@ def demo_clustering_visualization():
             result.centroids,
             title=f"{city_name} Clustering (Static)",
             save_path=str(output_dir / f"{city_name.lower()}_clustering_static.png"),
-            show=False
+            show=False,
         )
 
         # Interactive visualization (new!)
@@ -89,7 +89,7 @@ def demo_clustering_visualization():
             result.labels,
             result.centroids,
             title=f"{city_name} Clustering Results",
-            save_path=str(output_dir / f"{city_name.lower()}_clustering_interactive.html")
+            save_path=str(output_dir / f"{city_name.lower()}_clustering_interactive.html"),
         )
 
         print(f"  ✅ Saved: {city_name.lower()}_clustering_interactive.html")
@@ -123,7 +123,7 @@ def demo_route_visualization():
             route_result.data[["longitude", "latitude"]].values,
             route_result.route,
             title=f"{city_name} Optimized Route",
-            save_path=str(output_dir / f"{city_name.lower()}_route_interactive.html")
+            save_path=str(output_dir / f"{city_name.lower()}_route_interactive.html"),
         )
 
         print(f"  ✅ Saved: {city_name.lower()}_route_interactive.html")
@@ -230,7 +230,7 @@ def create_demo_index():
     """
 
     index_path = output_dir / "index.html"
-    with open(index_path, 'w') as f:
+    with open(index_path, "w") as f:
         f.write(html_content)
 
     print(f"\n📄 Created demo index: {index_path}")
