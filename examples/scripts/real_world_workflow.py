@@ -134,9 +134,9 @@ def routing_analysis(points: pd.DataFrame, city_name: str) -> dict:
         elapsed = time.time() - start_time
 
         print(f"✓ Route optimization completed in {elapsed:.2f}s")
-        print(f"  • Total route distance: {route_result.total_distance/1000:.2f} km")
+        print(f"  • Total route distance: {route_result.total_distance / 1000:.2f} km")
         print(
-            f"  • Average distance between stops: {route_result.total_distance/len(route_points)/1000:.2f} km"
+            f"  • Average distance between stops: {route_result.total_distance / len(route_points) / 1000:.2f} km"
         )
 
         # Show route order with road names
@@ -316,9 +316,9 @@ def main():
     all_results = {}
 
     for city in cities:
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"🏙️ ANALYZING {city.upper()} ROAD NETWORK")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
 
         try:
             # Load and preprocess data
@@ -347,9 +347,9 @@ def main():
             all_results[city] = {"error": str(e)}
 
     # Final summary
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("📈 WORKFLOW SUMMARY")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     for city, results in all_results.items():
         if "error" in results:

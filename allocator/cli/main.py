@@ -11,6 +11,7 @@ from rich.table import Table
 from .. import __version__
 from .cluster_cmd import kmeans
 from .itinerary_cmd import itinerary
+from .random_walk_cmd import random_walk_cmd
 from .route_cmd import christofides, ortools, tsp
 
 console = Console()
@@ -53,6 +54,7 @@ route.add_command(tsp)
 route.add_command(christofides)
 route.add_command(ortools)
 cli.add_command(itinerary)
+cli.add_command(random_walk_cmd, name="random-walk")
 
 
 @cli.command()

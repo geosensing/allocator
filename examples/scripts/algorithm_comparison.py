@@ -315,14 +315,14 @@ def create_clustering_report(results: dict, city: str, report_dir: Path):
     <body>
         <div class="container">
             <h1>🎯 Clustering Analysis Report: {city.title()}</h1>
-            <p class="timestamp">Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <p class="timestamp">Generated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}</p>
 
             <h2>📊 Executive Summary</h2>
             <div class="metric">
                 <strong>Total Algorithms Tested:</strong> {len(successful_runs)}<br>
-                <strong>Fastest Method:</strong> {min(successful_runs.items(), key=lambda x: x[1]['elapsed_time'])[0]}
-                ({min(successful_runs.items(), key=lambda x: x[1]['elapsed_time'])[1]['elapsed_time']:.4f}s)<br>
-                <strong>Best Balanced:</strong> {min(successful_runs.items(), key=lambda x: x[1]['size_variance'])[0]}
+                <strong>Fastest Method:</strong> {min(successful_runs.items(), key=lambda x: x[1]["elapsed_time"])[0]}
+                ({min(successful_runs.items(), key=lambda x: x[1]["elapsed_time"])[1]["elapsed_time"]:.4f}s)<br>
+                <strong>Best Balanced:</strong> {min(successful_runs.items(), key=lambda x: x[1]["size_variance"])[0]}
             </div>
 
             <h2>📈 Performance Results</h2>
@@ -342,10 +342,10 @@ def create_clustering_report(results: dict, city: str, report_dir: Path):
             html_content += f"""
                 <tr>
                     <td>{key}</td>
-                    <td>{result['n_clusters']}</td>
-                    <td>{result['method'].title()}</td>
-                    <td>{result['elapsed_time']:.4f}</td>
-                    <td>{result['size_variance']:.2f}</td>
+                    <td>{result["n_clusters"]}</td>
+                    <td>{result["method"].title()}</td>
+                    <td>{result["elapsed_time"]:.4f}</td>
+                    <td>{result["size_variance"]:.2f}</td>
                     <td><span class="success">✓ Success</span></td>
                 </tr>
             """
@@ -353,7 +353,7 @@ def create_clustering_report(results: dict, city: str, report_dir: Path):
             html_content += f"""
                 <tr>
                     <td>{key}</td>
-                    <td colspan="5">❌ {result['error']}</td>
+                    <td colspan="5">❌ {result["error"]}</td>
                 </tr>
             """
 
@@ -423,7 +423,7 @@ def compare_routing_algorithms(points: pd.DataFrame, city: str, output_dir: Path
             csv_path = city_dir / "data" / f"tsp_ortools_{size}points.csv"
             result.data.to_csv(csv_path, index=False)
 
-            print(f"    ✓ {result.total_distance/1000:.1f}km route in {elapsed_time:.3f}s")
+            print(f"    ✓ {result.total_distance / 1000:.1f}km route in {elapsed_time:.3f}s")
 
         except Exception as e:
             print(f"    ✗ Failed: {e}")
@@ -569,13 +569,13 @@ def create_routing_report(results: dict, city: str, report_dir: Path):
     <body>
         <div class="container">
             <h1>🛣️ Routing Analysis Report: {city.title()}</h1>
-            <p class="timestamp">Generated on: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+            <p class="timestamp">Generated on: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}</p>
 
             <h2>📊 Executive Summary</h2>
             <div class="metric">
                 <strong>TSP Problems Solved:</strong> {len(successful_runs)}<br>
-                <strong>Fastest Solution:</strong> {min(successful_runs.items(), key=lambda x: x[1]['elapsed_time'])[1]['elapsed_time']:.4f}s<br>
-                <strong>Longest Route:</strong> {max(successful_runs.items(), key=lambda x: x[1]['total_distance'])[1]['total_distance']/1000:.1f} km<br>
+                <strong>Fastest Solution:</strong> {min(successful_runs.items(), key=lambda x: x[1]["elapsed_time"])[1]["elapsed_time"]:.4f}s<br>
+                <strong>Longest Route:</strong> {max(successful_runs.items(), key=lambda x: x[1]["total_distance"])[1]["total_distance"] / 1000:.1f} km<br>
                 <strong>Algorithm:</strong> OR-Tools with Euclidean distance
             </div>
 
@@ -598,10 +598,10 @@ def create_routing_report(results: dict, city: str, report_dir: Path):
         )
         html_content += f"""
             <tr>
-                <td>{result['n_points']} points</td>
-                <td>{result['elapsed_time']:.4f}</td>
-                <td>{result['total_distance']/1000:.1f}</td>
-                <td>{result['avg_distance']/1000:.1f}</td>
+                <td>{result["n_points"]} points</td>
+                <td>{result["elapsed_time"]:.4f}</td>
+                <td>{result["total_distance"] / 1000:.1f}</td>
+                <td>{result["avg_distance"] / 1000:.1f}</td>
                 <td>{efficiency:.1f}</td>
             </tr>
         """
@@ -661,7 +661,7 @@ def generate_executive_summary(all_results: dict, output_dir: Path):
     <body>
         <div class="container">
             <h1>🌏 Allocator v1.0 - Analysis Executive Summary</h1>
-            <p class="timestamp">Analysis completed on: {datetime.now().strftime('%Y-%m-%d at %H:%M:%S')}</p>
+            <p class="timestamp">Analysis completed on: {datetime.now().strftime("%Y-%m-%d at %H:%M:%S")}</p>
     """
 
     # Count total successful algorithms
@@ -802,7 +802,7 @@ def generate_executive_summary(all_results: dict, output_dir: Path):
 def create_readme(output_dir: Path):
     """Create README for the run directory."""
 
-    readme_content = f"""# Allocator Analysis Run - {datetime.now().strftime('%Y-%m-%d %H:%M')}
+    readme_content = f"""# Allocator Analysis Run - {datetime.now().strftime("%Y-%m-%d %H:%M")}
 
 ## 📁 Directory Structure
 
@@ -877,9 +877,9 @@ def main():
 
     # Run analysis for each city
     for city in cities:
-        print(f"\n{'='*80}")
+        print(f"\n{'=' * 80}")
         print(f"🏙️ ANALYZING {city.upper()}")
-        print(f"{'='*80}")
+        print(f"{'=' * 80}")
 
         try:
             # Load data
@@ -902,9 +902,9 @@ def main():
     create_readme(output_dir)
 
     # Final report
-    print(f"\n{'='*80}")
+    print(f"\n{'=' * 80}")
     print("🎉 ANALYSIS COMPLETE - ORGANIZED OUTPUT SUMMARY")
-    print(f"{'='*80}")
+    print(f"{'=' * 80}")
 
     # Count generated files by type
     file_counts = {"CSV Data": 0, "PNG Charts": 0, "HTML Reports": 0, "Other": 0}

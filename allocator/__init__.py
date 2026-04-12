@@ -44,6 +44,7 @@ from .api import (
     ClusterResult,
     ComparisonResult,
     ItineraryResult,
+    RandomWalkResult,
     RouteResult,
     SortResult,
     assign_to_closest,
@@ -51,6 +52,7 @@ from .api import (
     create_itineraries,
     distance_assignment,
     kmeans,
+    random_walk,
     shortest_path,
     sort_by_distance,
     tsp_christofides,
@@ -76,6 +78,7 @@ __all__ = [
     "ClusterResult",
     "ComparisonResult",
     "ItineraryResult",
+    "RandomWalkResult",
     "RouteResult",
     "SortResult",
     # Main functions
@@ -98,6 +101,8 @@ __all__ = [
     "plot_clusters",
     "plot_comparison",
     "plot_route",
+    # Random walk
+    "random_walk",
     # Logging utilities
     "setup_logging",
     "shortest_path",

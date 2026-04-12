@@ -38,7 +38,9 @@ def kmeans_cluster(
     else:
         X = np.asarray(data)
 
-    kmeans = KMeans(n_clusters=n_clusters, max_iter=max_iter, random_state=random_state, n_init="auto")
+    kmeans = KMeans(
+        n_clusters=n_clusters, max_iter=max_iter, random_state=random_state, n_init="auto"
+    )
     kmeans.fit(X)
 
     return {

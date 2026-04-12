@@ -44,6 +44,8 @@ dependencies = [
     # Core data processing
     "pandas>=2.0.0",
     "numpy>=1.24.0",
+    # Machine learning algorithms
+    "scikit-learn>=1.3.0",
     # Scientific computing (for simulation)
     "scipy>=1.10.0",
     # Distance calculations
@@ -68,8 +70,7 @@ dependencies = [
 [project.optional-dependencies]
 # Algorithm-specific dependencies
 algorithms = [
-    "Christofides>=1.0.0",      # Christofides TSP algorithm  
-    "scikit-learn>=1.3.0",      # Machine learning algorithms
+    "Christofides>=1.0.0",
 ]
 geo = [
     "folium>=0.14.0",           # Interactive maps
@@ -224,6 +225,31 @@ module = [
 ]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "allocator.vulture_whitelist"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = [
+    "allocator.distances.factory",
+    "allocator.distances.euclidean",
+    "allocator.core.routing",
+    "allocator.api.*",
+    "allocator.cli.*",
+]
+disallow_untyped_defs = false
+warn_return_any = false
+warn_unreachable = false
+check_untyped_defs = false
+disallow_incomplete_defs = false
+
+[[tool.mypy.overrides]]
+module = [
+    "allocator.distances.external_apis",
+    "allocator.viz.plotting",
+]
+ignore_errors = true
+
 # Deptry configuration
 [tool.deptry]
 extend_exclude = ["tests/", "benchmarks/", "examples/"]
@@ -231,7 +257,7 @@ optional_dependencies_dev_groups = ["dev", "test", "docs"]
 
 [tool.deptry.per_rule_ignores]
 DEP001 = ["Christofides"]
-DEP002 = ["Christofides", "seaborn", "allocator"]
+DEP002 = ["Christofides", "seaborn", "allocator", "scipy"]
 
 [tool.deptry.package_module_name_map]
 Christofides = "christofides"

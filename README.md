@@ -1,57 +1,87 @@
-# allocator: Efficiently collect data from geographically distributed locations
+# allocator
 
 [![PyPI version](https://img.shields.io/pypi/v/allocator.svg)](https://pypi.python.org/pypi/allocator)
 [![Downloads](https://pepy.tech/badge/allocator)](https://pepy.tech/project/allocator)
 [![CI](https://github.com/geosensing/allocator/actions/workflows/ci.yml/badge.svg)](https://github.com/geosensing/allocator/actions/workflows/ci.yml)
 [![Documentation](https://img.shields.io/badge/docs-github.io-blue)](https://geosensing.github.io/allocator/)
 
-**Allocator** provides a modern, Pythonic API for geographic task allocation, clustering, and routing optimization.
+Field teams, delivery services, and survey organizations waste time and money on inefficient routes. When you have 100+ locations to visit, manual planning fails. Allocator solves this.
 
-## Key Features
+## What It Does
 
-- **🎯 Clustering**: Group geographic points into balanced zones
-- **🛣️ Routing**: Find optimal paths through locations (TSP solving)  
-- **📍 Assignment**: Connect points to closest workers/centers
-- **🚀 Performance**: Optimized algorithms with NumPy and scikit-learn
-- **📦 Modern API**: Clean Python interface + unified CLI
+- **Cluster**: Divide locations into balanced work zones
+- **Route**: Find the shortest path through locations (TSP)
+- **Assign**: Match locations to nearest workers or depots
+- **Random Walk**: Generate survey itineraries on road networks
 
-## Quick Start
+## Install
 
 ```bash
 pip install allocator
 ```
 
+## Python API
+
+### Cluster locations into zones
+
 ```python
 import allocator
 import pandas as pd
 
-# Geographic locations
 locations = pd.DataFrame({
-    'longitude': [100.5018, 100.5065, 100.5108],
-    'latitude': [13.7563, 13.7590, 13.7633]
+    'longitude': [100.501, 100.506, 100.510, 100.515, 100.520],
+    'latitude': [13.756, 13.759, 13.763, 13.768, 13.772]
 })
 
-# Group into zones
-clusters = allocator.cluster(locations, n_clusters=2)
+result = allocator.cluster(locations, n_clusters=2)
+print(result.labels)  # [0 0 0 1 1]
+```
 
-# Find optimal route
-route = allocator.shortest_path(locations)
+### Find shortest route
 
-# Assign to service centers
-centers = pd.DataFrame({
+```python
+route = allocator.shortest_path(locations, method='ortools')
+print(route.route)  # [0, 1, 2, 4, 3, 0]
+```
+
+### Assign to nearest depot
+
+```python
+depots = pd.DataFrame({
     'longitude': [100.50, 100.52],
     'latitude': [13.75, 13.77]
 })
-assignments = allocator.assign(locations, centers)
+
+assignments = allocator.assign_to_closest(locations, depots)
+print(assignments.data['assigned_worker'].tolist())  # [0, 0, 1, 1, 1]
 ```
 
-## Documentation & Examples
+### Generate random walk itineraries
 
-- **📖 [Full Documentation](https://geosensing.github.io/allocator/)**
-- **🚀 [Installation & Tutorial](https://geosensing.github.io/allocator/quickstart.html)**  
-- **🔧 [API Reference](https://geosensing.github.io/allocator/api/clustering.html)**
-- **💡 [Real-World Examples](https://geosensing.github.io/allocator/examples/overview.html)**
+```python
+import networkx as nx
 
-## License & Contributing
+# Load road network graph (from OSMnx or similar)
+G = nx.read_graphml("road_network.graphml")
 
-MIT License. Contributions welcome - see [Contributing Guide](https://geosensing.github.io/allocator/contributing.html).
+result = allocator.random_walk(G, n_walks=10, walk_length_m=5000)
+print(result.data)  # DataFrame with waypoints
+```
+
+## CLI
+
+```bash
+allocator cluster kmeans locations.csv -n 5 -o zones.csv
+allocator route tsp locations.csv --method ortools -o route.csv
+allocator sort locations.csv --workers depots.csv -o assignments.csv
+allocator random-walk road_network.graphml -n 10 -l 5000 -o waypoints.csv
+```
+
+## Documentation
+
+- [Full Documentation](https://geosensing.github.io/allocator/)
+- [API Reference](https://geosensing.github.io/allocator/api/clustering.html)
+
+## License
+
+MIT

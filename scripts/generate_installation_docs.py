@@ -15,87 +15,77 @@ def get_dep_description(dep_name: str) -> str:
     """Get human-readable description for a dependency."""
     descriptions = {
         # Core data processing
-        'pandas': 'Data manipulation and analysis',
-        'numpy': 'Numerical computations',
-        'scikit-learn': 'Machine learning algorithms',
-
+        "pandas": "Data manipulation and analysis",
+        "numpy": "Numerical computations",
+        "scikit-learn": "Machine learning algorithms",
         # Distance calculations
-        'utm': 'Coordinate system transformations',
-        'haversine': 'Geographic distance calculations',
-
+        "utm": "Coordinate system transformations",
+        "haversine": "Geographic distance calculations",
         # Graph operations
-        'networkx': 'Graph algorithms',
-
+        "networkx": "Graph algorithms",
         # CLI interface
-        'click': 'Command-line interface framework',
-        'rich': 'Rich terminal output and formatting',
-
+        "click": "Command-line interface framework",
+        "rich": "Rich terminal output and formatting",
         # HTTP requests
-        'requests': 'HTTP library for API calls',
-
+        "requests": "HTTP library for API calls",
         # External APIs
-        'googlemaps': 'Google Maps API integration',
-
+        "googlemaps": "Google Maps API integration",
         # Optimization
-        'ortools': 'High-performance optimization algorithms',
-
+        "ortools": "High-performance optimization algorithms",
         # Visualization
-        'matplotlib': 'Basic plotting and visualization',
-        'seaborn': 'Statistical data visualization',
-
+        "matplotlib": "Basic plotting and visualization",
+        "seaborn": "Statistical data visualization",
         # Algorithm extensions
-        'scipy': 'Enhanced mathematical algorithms',
-        'Christofides': 'Christofides TSP algorithm for optimal routing',
-
+        "scipy": "Enhanced mathematical algorithms",
+        "Christofides": "Christofides TSP algorithm for optimal routing",
         # Geographic features
-        'folium': 'Interactive maps and visualizations',
-        'polyline': 'Route encoding for mapping APIs',
-
+        "folium": "Interactive maps and visualizations",
+        "polyline": "Route encoding for mapping APIs",
         # Development tools
-        'ruff': 'Modern linting and formatting',
-        'mypy': 'Type checking',
-        'black': 'Code formatting',
-        'isort': 'Import sorting',
-        'pre-commit': 'Git hooks for code quality',
-
+        "ruff": "Modern linting and formatting",
+        "mypy": "Type checking",
+        "black": "Code formatting",
+        "isort": "Import sorting",
+        "pre-commit": "Git hooks for code quality",
         # Testing
-        'pytest': 'Testing framework',
-        'pytest-cov': 'Coverage reporting',
-        'pytest-xdist': 'Parallel testing',
-        'coverage': 'Code coverage analysis',
-        'hypothesis': 'Property-based testing',
-
+        "pytest": "Testing framework",
+        "pytest-cov": "Coverage reporting",
+        "pytest-xdist": "Parallel testing",
+        "coverage": "Code coverage analysis",
+        "hypothesis": "Property-based testing",
         # Documentation
-        'sphinx': 'Documentation generator',
-        'sphinx-rtd-theme': 'Read the Docs theme',
-        'myst-parser': 'Markdown support for Sphinx',
-        'sphinx-autodoc-typehints': 'Type hints in API docs',
+        "sphinx": "Documentation generator",
+        "sphinx-rtd-theme": "Read the Docs theme",
+        "myst-parser": "Markdown support for Sphinx",
+        "sphinx-autodoc-typehints": "Type hints in API docs",
     }
-    return descriptions.get(dep_name, 'Additional functionality')
+    return descriptions.get(dep_name, "Additional functionality")
+
 
 def format_dependency(dep: str) -> tuple[str, str]:
     """Extract package name and version from dependency string."""
-    if '>=' in dep:
-        name, version = dep.split('>=', 1)
+    if ">=" in dep:
+        name, version = dep.split(">=", 1)
         return name, f"≥{version}"
-    elif '>' in dep:
-        name, version = dep.split('>', 1)
+    elif ">" in dep:
+        name, version = dep.split(">", 1)
         return name, f">{version}"
-    elif '==' in dep:
-        name, version = dep.split('==', 1)
+    elif "==" in dep:
+        name, version = dep.split("==", 1)
         return name, f"={version}"
     else:
         return dep, ""
 
+
 def generate_installation_content(project_data: dict) -> str:
     """Generate installation documentation content."""
 
-    name = project_data['name']
-    requires_python = project_data.get('requires-python', '>=3.11')  # Fix key name
-    dependencies = project_data['dependencies']
-    optional_deps = project_data.get('optional-dependencies', {})
+    name = project_data["name"]
+    requires_python = project_data.get("requires-python", ">=3.11")  # Fix key name
+    dependencies = project_data["dependencies"]
+    optional_deps = project_data.get("optional-dependencies", {})
 
-    content = f'''# Installation Guide
+    content = f"""# Installation Guide
 
 ## Requirements
 
@@ -129,15 +119,15 @@ uv add {name}
 
 {name} supports several optional dependency groups for extended functionality:
 
-'''
+"""
 
     # Generate optional dependency sections
     for group, deps in optional_deps.items():
-        if group in ['all', 'complete']:  # Skip meta-groups
+        if group in ["all", "complete"]:  # Skip meta-groups
             continue
 
-        group_title = group.replace('_', ' ').title()
-        content += f'''### {group_title}
+        group_title = group.replace("_", " ").title()
+        content += f"""### {group_title}
 
 ```bash
 # {get_group_description(group)}
@@ -145,17 +135,17 @@ pip install "{name}[{group}]"
 ```
 
 Includes:
-'''
+"""
         for dep in deps:
             dep_name, version = format_dependency(dep)
             description = get_dep_description(dep_name)
             version_info = f" {version}" if version else ""
-            content += f'- `{dep_name}`{version_info} - {description}\n'
+            content += f"- `{dep_name}`{version_info} - {description}\n"
 
-        content += '\n'
+        content += "\n"
 
     # Add convenience groups
-    content += f'''## Complete Installation
+    content += f"""## Complete Installation
 
 ### All Features
 
@@ -246,16 +236,16 @@ uv add {name}
 
 {name} requires these core packages:
 
-'''
+"""
 
     # List core dependencies
     for dep in dependencies:
         dep_name, version = format_dependency(dep)
         description = get_dep_description(dep_name)
         version_info = f" {version}" if version else ""
-        content += f'- **{dep_name}{version_info}** - {description}\n'
+        content += f"- **{dep_name}{version_info}** - {description}\n"
 
-    content += f'''
+    content += f"""
 ### System Requirements
 
 **Memory**: 2GB+ recommended for large datasets (1000+ points)
@@ -334,20 +324,22 @@ docker run --rm -v $(pwd):/workspace {name}
 - **Documentation**: [https://geosensing.github.io/{name}/](https://geosensing.github.io/{name}/)
 - **Issues**: [GitHub Issues](https://github.com/geosensing/{name}/issues)
 - **Source**: [GitHub Repository](https://github.com/geosensing/{name})
-- **PyPI**: [Package Page](https://pypi.org/project/{name}/)'''
+- **PyPI**: [Package Page](https://pypi.org/project/{name}/)"""
 
     return content
+
 
 def get_group_description(group: str) -> str:
     """Get description for an optional dependency group."""
     descriptions = {
-        'algorithms': 'Enhanced algorithms including Christofides TSP',
-        'geo': 'Interactive mapping and route visualization',
-        'dev': 'Development and testing tools',
-        'test': 'Testing framework and coverage tools',
-        'docs': 'Documentation building tools',
+        "algorithms": "Enhanced algorithms including Christofides TSP",
+        "geo": "Interactive mapping and route visualization",
+        "dev": "Development and testing tools",
+        "test": "Testing framework and coverage tools",
+        "docs": "Documentation building tools",
     }
-    return descriptions.get(group, f'{group.title()} features')
+    return descriptions.get(group, f"{group.title()} features")
+
 
 def main():
     """Main function to generate installation documentation."""
@@ -383,6 +375,7 @@ def main():
     except Exception as e:
         print(f"Error generating installation docs: {e}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

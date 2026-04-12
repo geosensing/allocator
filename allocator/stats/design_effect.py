@@ -53,15 +53,15 @@ def compute_design_effect(
     if n_clusters <= 1:
         return 1.0
 
-    cluster_means = []
-    cluster_sizes = []
+    cluster_means_list = []
+    cluster_sizes_list = []
     for cid in unique_clusters:
         mask = cluster_ids == cid
-        cluster_means.append(outcomes[mask].mean())
-        cluster_sizes.append(mask.sum())
+        cluster_means_list.append(outcomes[mask].mean())
+        cluster_sizes_list.append(mask.sum())
 
-    cluster_means = np.array(cluster_means)
-    cluster_sizes = np.array(cluster_sizes)
+    cluster_means = np.array(cluster_means_list)
+    cluster_sizes = np.array(cluster_sizes_list)
 
     grand_mean = outcomes.mean()
     between_var = np.sum(cluster_sizes * (cluster_means - grand_mean) ** 2) / (n_clusters - 1)
@@ -114,15 +114,15 @@ def compute_cluster_robust_se(
     n_clusters = len(unique_clusters)
 
     if n_clusters <= 1:
-        return np.std(outcomes, ddof=1) / np.sqrt(n)
+        return float(np.std(outcomes, ddof=1) / np.sqrt(n))
 
-    cluster_means = []
+    cluster_means_list = []
     for cid in unique_clusters:
         mask = cluster_ids == cid
-        cluster_means.append(outcomes[mask].mean())
+        cluster_means_list.append(outcomes[mask].mean())
 
-    cluster_means = np.array(cluster_means)
+    cluster_means = np.array(cluster_means_list)
     between_cluster_var = np.var(cluster_means, ddof=1)
     cluster_se = np.sqrt(between_cluster_var / n_clusters)
 
-    return cluster_se
+    return float(cluster_se)

@@ -18,7 +18,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath("../.."))
 
 # Read project metadata from pyproject.toml
 import tomllib
@@ -36,7 +36,7 @@ else:
     project_metadata = {
         "name": "allocator",
         "version": "0.2.0",
-        "authors": [{"name": "Suriyan Laohaprapanon, Gaurav Sood"}]
+        "authors": [{"name": "Suriyan Laohaprapanon, Gaurav Sood"}],
     }
 
 
@@ -50,26 +50,26 @@ else:
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.doctest',
-    'sphinx.ext.napoleon',          # Google/NumPy style docstrings
-    'sphinx.ext.viewcode',          # Source code links
-    'myst_parser',                  # Markdown support
+    "sphinx.ext.autodoc",
+    "sphinx.ext.doctest",
+    "sphinx.ext.napoleon",  # Google/NumPy style docstrings
+    "sphinx.ext.viewcode",  # Source code links
+    "myst_parser",  # Markdown support
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-source_suffix = ['.rst', '.md']
+source_suffix = [".rst", ".md"]
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
 project = project_metadata.get("name", "allocator")
-copyright = '2017, Suriyan Laohaprapanon, Gaurav Sood'
+copyright = "2017, Suriyan Laohaprapanon, Gaurav Sood"
 author_list = project_metadata.get("authors", [])
 if author_list:
     if isinstance(author_list[0], dict):
@@ -77,7 +77,7 @@ if author_list:
     else:
         author = ", ".join(author_list)
 else:
-    author = 'Suriyan Laohaprapanon, Gaurav Sood'
+    author = "Suriyan Laohaprapanon, Gaurav Sood"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -93,7 +93,7 @@ release = project_metadata.get("version", "0.2.0")
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = 'en'
+language = "en"
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -101,19 +101,19 @@ language = 'en'
 exclude_patterns = []
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
 
 # MyST parser configuration
 myst_enable_extensions = [
-    "deflist",        # Definition lists
-    "tasklist",       # Task lists
-    "colon_fence",    # ::: code blocks
-    "linkify",        # Auto-link URLs
-    "substitution",   # Variable substitution
-    "attrs_inline",   # Inline attributes
+    "deflist",  # Definition lists
+    "tasklist",  # Task lists
+    "colon_fence",  # ::: code blocks
+    "linkify",  # Auto-link URLs
+    "substitution",  # Variable substitution
+    "attrs_inline",  # Inline attributes
 ]
 
 # MyST heading anchors
@@ -125,7 +125,7 @@ myst_heading_anchors = 3
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'furo'
+html_theme = "furo"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -146,7 +146,7 @@ html_theme_options = {
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # Furo doesn't need custom sidebar configuration
 # html_sidebars = {}
@@ -155,7 +155,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'allocatordoc'
+htmlhelp_basename = "allocatordoc"
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -164,15 +164,12 @@ latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     #
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     #
     # 'preamble': '',
-
     # Latex figure (float) alignment
     #
     # 'figure_align': 'htbp',
@@ -182,8 +179,13 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'allocator.tex', 'allocator Documentation',
-     'Suriyan Laohaprapanon, Gaurav Sood', 'manual'),
+    (
+        master_doc,
+        "allocator.tex",
+        "allocator Documentation",
+        "Suriyan Laohaprapanon, Gaurav Sood",
+        "manual",
+    ),
 ]
 
 
@@ -191,10 +193,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'allocator', 'allocator Documentation',
-     [author], 1)
-]
+man_pages = [(master_doc, "allocator", "allocator Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output -------------------------------------------
@@ -203,10 +202,13 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'allocator', 'allocator Documentation',
-     author, 'allocator', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        "allocator",
+        "allocator Documentation",
+        author,
+        "allocator",
+        "One line description of project.",
+        "Miscellaneous",
+    ),
 ]
-
-
-

@@ -62,3 +62,12 @@ class ItineraryResult:
     distances: list[float]
     data: pd.DataFrame
     metadata: dict[str, Any]
+
+
+@dataclass
+class RandomWalkResult:
+    """Result of random walk itinerary generation on road networks."""
+
+    walks: list[dict[str, Any]]
+    data: pd.DataFrame
+    metadata: dict[str, Any]
