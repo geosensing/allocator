@@ -2,8 +2,6 @@
 Visualization utilities for allocator package.
 """
 
-from __future__ import annotations
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -227,7 +225,7 @@ def plot_clusters_interactive(
     centroids: np.ndarray | None = None,
     title: str = "Interactive Clustering Results",
     save_path: str | None = None,
-) -> folium.Map:
+) -> "folium.Map":
     """
     Create an interactive map visualization of clustering results using folium.
 
@@ -368,7 +366,7 @@ def plot_route_interactive(
     route_geometry: str | None = None,
     title: str = "Interactive Route",
     save_path: str | None = None,
-) -> folium.Map:
+) -> "folium.Map":
     """
     Create an interactive map visualization of TSP/routing results using folium.
 
@@ -490,7 +488,7 @@ def plot_route_interactive(
 
 
 def _add_straight_line_route(
-    m: folium.Map, route_points: np.ndarray, route_order: list[int]
+    m: "folium.Map", route_points: np.ndarray, route_order: list[int]
 ) -> None:
     """Add straight line connections between route points."""
     ordered_points = route_points[route_order]

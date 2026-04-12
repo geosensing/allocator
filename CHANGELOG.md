@@ -2,6 +2,36 @@
 
 All notable changes to the allocator project are documented in this file.
 
+## [1.2.0] - 2025-04-12
+
+### Changed
+
+**Simplified K-Means Implementation:**
+- Removed `CustomKMeans` class - now uses sklearn's `KMeans` directly
+- Removed unused helper functions (`initialize_centroids`, `move_centroids`, `_kmeans_cluster_original`)
+- The `distance` parameter in cluster API is now stored in metadata only (clustering uses Euclidean)
+- Returns sklearn's `inertia_` directly instead of manual calculation
+
+**Exposed Simulation Module:**
+- Added simulation exports to main `allocator` package for discoverability
+- New top-level exports: `InferenceResult`, `SimulationConfig`, `estimate_mean`, `estimate_proportion`, `generate_binary_outcomes`, `generate_survey_points`, `run_simulation`, `summarize_results`
+
+### Fixed
+
+- Removed duplicated Haversine calculation in `simulation/harness.py` - now uses `allocator.distances.haversine_distance_matrix`
+- Fixed import ordering issues flagged by ruff
+- Synced version between `pyproject.toml` and `__init__.py`
+
+### Removed
+
+- `CustomKMeans` class (use sklearn's `KMeans` directly)
+- `initialize_centroids` function
+- `move_centroids` function
+- `_kmeans_cluster_original` function
+- `_compute_distance_matrix_km` function from simulation harness
+
+---
+
 ## [1.1.0] - 2024-12-08 🚀
 
 ### ✨ New Features
