@@ -10,8 +10,6 @@ Provides multiple methods for creating itineraries:
 - kmeans_tsp: K-means clustering with TSP optimization (count-driven)
 """
 
-from __future__ import annotations
-
 import numpy as np
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
 

@@ -2,8 +2,6 @@
 External API integrations for distance calculations (OSRM, Google Maps).
 """
 
-from __future__ import annotations
-
 import logging
 import math
 import time

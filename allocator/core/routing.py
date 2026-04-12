@@ -2,8 +2,6 @@
 Pure routing/TSP algorithm implementations.
 """
 
-from __future__ import annotations
-
 import googlemaps
 import networkx as nx
 import numpy as np

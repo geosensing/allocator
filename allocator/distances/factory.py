@@ -2,8 +2,6 @@
 Factory module for distance calculations - main entry point.
 """
 
-from __future__ import annotations
-
 import numpy as np
 
 from .euclidean import euclidean_distance_matrix

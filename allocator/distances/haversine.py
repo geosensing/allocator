@@ -2,8 +2,6 @@
 Haversine distance calculations for geographic coordinates.
 """
 
-from __future__ import annotations
-
 import numpy as np
 from haversine import haversine
 
