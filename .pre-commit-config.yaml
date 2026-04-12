@@ -1,0 +1,32 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.10
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.15.0
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - types-requests
+          - pandas-stubs
+        args: [--ignore-missing-imports]
+
+  - repo: https://github.com/fpgmaas/deptry
+    rev: 0.23.0
+    hooks:
+      - id: deptry
+        args: [allocator/]
+
+  - repo: local
+    hooks:
+      - id: vulture
+        name: vulture
+        entry: vulture
+        args: [allocator/, allocator/vulture_whitelist.py, --min-confidence, "80"]
+        language: system
+        types: [python]
+        pass_filenames: false

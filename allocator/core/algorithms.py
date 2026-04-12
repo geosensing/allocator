@@ -4,6 +4,8 @@ Pure algorithm implementations without CLI, plotting, or file I/O.
 
 from __future__ import annotations
 
+from typing import Any
+
 import networkx as nx
 import numpy as np
 import pandas as pd
@@ -17,28 +19,32 @@ try:
     HAS_SKLEARN = True
 except ImportError:
     HAS_SKLEARN = False
+    KMeans = object
+
+    def check_array(X: Any, **kwargs: Any) -> np.ndarray:
+        return np.asarray(X)
 
 
-def initialize_centroids(points: np.ndarray, k: int, random_state: int | None = None) -> np.ndarray:
+def initialize_centroids(
+    points: np.ndarray,
+    k: int,
+    rng: np.random.Generator | None = None,
+) -> np.ndarray:
     """
     Initialize k centroids by randomly selecting from points.
 
     Args:
         points: Input points array with shape [n, 2]
         k: Number of centroids
-        random_state: Random seed for reproducibility
+        rng: Random number generator for reproducibility
 
     Returns:
         Array of k initial centroids
     """
-    if random_state is not None:
-        rng = np.random.RandomState(random_state)
-        rng_state = rng.get_state()
-        np.random.set_state(rng_state)
-
-    centroids = points.copy()
-    np.random.shuffle(centroids)
-    return centroids[:k]
+    if rng is None:
+        rng = np.random.default_rng()
+    indices = rng.choice(len(points), size=k, replace=False)
+    return points[indices].copy()
 
 
 def move_centroids(points: np.ndarray, closest: np.ndarray, centroids: np.ndarray) -> np.ndarray:
@@ -63,7 +69,7 @@ def move_centroids(points: np.ndarray, closest: np.ndarray, centroids: np.ndarra
     return np.array(new_centroids)
 
 
-class CustomKMeans(KMeans if HAS_SKLEARN else object):
+class CustomKMeans(KMeans):
     """
     Custom K-means implementation that supports geographic distance metrics.
 
@@ -71,75 +77,74 @@ class CustomKMeans(KMeans if HAS_SKLEARN else object):
     including haversine, OSRM, and Google Maps API distances.
     """
 
+    cluster_centers_: np.ndarray
+    labels_: np.ndarray
+    n_iter_: int
+
     def __init__(
         self,
-        n_clusters=8,
-        distance_method="euclidean",
-        max_iter=300,
-        random_state=None,
-        **distance_kwargs,
-    ):
+        n_clusters: int = 8,
+        distance_method: str = "euclidean",
+        max_iter: int = 300,
+        random_state: int | None = None,
+        **distance_kwargs: Any,
+    ) -> None:
         if HAS_SKLEARN:
-            # Initialize sklearn KMeans with all parameters
             super().__init__(n_clusters=n_clusters, max_iter=max_iter, random_state=random_state)
         self.distance_method = distance_method
         self.distance_kwargs = distance_kwargs
         self.n_clusters = n_clusters
 
-    def _transform(self, X):
+    def _transform(self, X: np.ndarray) -> np.ndarray:
         """Override sklearn's distance calculation to use custom metrics."""
         if not HAS_SKLEARN:
             raise ImportError(
                 "sklearn is required for CustomKMeans. Install with: pip install 'allocator[algorithms]'"
             )
 
-        # Use our custom distance factory instead of sklearn's euclidean
         distances = get_distance_matrix(
             X, self.cluster_centers_, method=self.distance_method, **self.distance_kwargs
         )
         return distances
 
-    def _update_centroids(self, X, labels):
+    def _update_centroids(self, X: np.ndarray, labels: np.ndarray) -> np.ndarray:
         """Update centroids using geographic mean for custom distances."""
         new_centroids = []
         for k in range(self.n_clusters):
             mask = labels == k
             if np.any(mask):
-                # For geographic data, use simple mean of coordinates
-                # This works well for most geographic clustering tasks
                 cluster_points = X[mask]
                 centroid = np.mean(cluster_points, axis=0)
                 new_centroids.append(centroid)
             else:
-                # Keep old centroid if cluster is empty
                 new_centroids.append(self.cluster_centers_[k])
         return np.array(new_centroids)
 
-    def fit(self, X, y=None, sample_weight=None):
+    def fit(
+        self,
+        X: np.ndarray,
+        y: Any = None,
+        sample_weight: Any = None,
+    ) -> "CustomKMeans":
         """Fit the k-means clustering with custom distance metric."""
+        del y, sample_weight
         if not HAS_SKLEARN:
-            # Fallback to original implementation if sklearn not available
             return self._fit_custom_implementation(X)
 
         X = check_array(X, accept_sparse="csr", dtype=[np.float64, np.float32])
 
-        # Initialize using sklearn's initialization logic
         super().fit(X)
 
-        # Now run our custom iterations
+        labels: np.ndarray = np.array([])
         for iteration in range(self.max_iter):
-            # Calculate distances using custom metric
             distances = get_distance_matrix(
                 X, self.cluster_centers_, method=self.distance_method, **self.distance_kwargs
             )
 
-            # Assign points to nearest centroids
             labels = np.argmin(distances, axis=1)
 
-            # Update centroids
             new_centroids = self._update_centroids(X, labels)
 
-            # Check convergence
             if np.allclose(self.cluster_centers_, new_centroids, rtol=1e-4):
                 self.cluster_centers_ = new_centroids
                 self.labels_ = labels
@@ -153,7 +158,7 @@ class CustomKMeans(KMeans if HAS_SKLEARN else object):
 
         return self
 
-    def _fit_custom_implementation(self, X):
+    def _fit_custom_implementation(self, X: np.ndarray) -> "CustomKMeans":
         """Fallback to original implementation when sklearn is not available."""
         result = _kmeans_cluster_original(
             X, self.n_clusters, distance_method=self.distance_method, **self.distance_kwargs
@@ -170,13 +175,26 @@ def kmeans_cluster(
     distance_method: str = "euclidean",
     max_iter: int = 300,
     random_state: int | None = None,
-    **distance_kwargs,
-) -> dict:
+    rng: np.random.Generator | None = None,
+    **distance_kwargs: Any,
+) -> dict[str, Any]:
     """
     K-means clustering with support for custom distance metrics.
 
     This function provides a unified interface that uses sklearn when available
     and falls back to the original implementation otherwise.
+
+    Args:
+        data: Input data as DataFrame or numpy array
+        n_clusters: Number of clusters
+        distance_method: Distance calculation method
+        max_iter: Maximum iterations
+        random_state: Random seed (for sklearn compatibility)
+        rng: Random number generator (preferred over random_state)
+        **distance_kwargs: Additional arguments for distance calculation
+
+    Returns:
+        Dictionary with 'labels', 'centroids', 'iterations', 'converged'
     """
     # Convert DataFrame to numpy array if needed
     if isinstance(data, pd.DataFrame):
@@ -186,6 +204,10 @@ def kmeans_cluster(
             raise ValueError("DataFrame must contain 'longitude' and 'latitude' columns")
     else:
         X = np.asarray(data)
+
+    # Create rng from random_state if rng not provided
+    if rng is None and random_state is not None:
+        rng = np.random.default_rng(random_state)
 
     # Use sklearn-based implementation if available
     if HAS_SKLEARN and distance_method in ["euclidean", "haversine", "osrm", "google"]:
@@ -207,7 +229,7 @@ def kmeans_cluster(
 
     # Fall back to original implementation
     return _kmeans_cluster_original(
-        X, n_clusters, distance_method, max_iter, random_state, **distance_kwargs
+        X, n_clusters, distance_method, max_iter, rng=rng, **distance_kwargs
     )
 
 
@@ -216,9 +238,9 @@ def _kmeans_cluster_original(
     n_clusters: int,
     distance_method: str = "euclidean",
     max_iter: int = 300,
-    random_state: int | None = None,
-    **distance_kwargs,
-) -> dict:
+    rng: np.random.Generator | None = None,
+    **distance_kwargs: Any,
+) -> dict[str, Any]:
     """
     Original pure K-means clustering implementation (fallback).
 
@@ -227,7 +249,7 @@ def _kmeans_cluster_original(
         n_clusters: Number of clusters
         distance_method: Distance calculation method
         max_iter: Maximum iterations
-        random_state: Random seed
+        rng: Random number generator for reproducibility
         **distance_kwargs: Additional arguments for distance calculation
 
     Returns:
@@ -236,7 +258,7 @@ def _kmeans_cluster_original(
     X = data
 
     # Initialize centroids
-    centroids = initialize_centroids(X, n_clusters, random_state)
+    centroids = initialize_centroids(X, n_clusters, rng)
     old_centroids = centroids.copy()
 
     for i in range(max_iter):
@@ -265,7 +287,7 @@ def sort_by_distance_assignment(
     data: pd.DataFrame | np.ndarray,
     centroids: np.ndarray,
     distance_method: str = "euclidean",
-    **distance_kwargs,
+    **distance_kwargs: Any,
 ) -> np.ndarray:
     """
     Assign points to closest centroids (used by sort_by_distance).
@@ -290,14 +312,17 @@ def sort_by_distance_assignment(
 
     # Calculate distances and assign to closest
     distances = get_distance_matrix(X, centroids, method=distance_method, **distance_kwargs)
-    labels = np.argmin(distances, axis=1)
+    labels: np.ndarray = np.argmin(distances, axis=1)
 
     return labels
 
 
 def calculate_cluster_statistics(
-    data: pd.DataFrame, labels: np.ndarray, distance_method: str = "euclidean", **distance_kwargs
-) -> list[dict]:
+    data: pd.DataFrame,
+    labels: np.ndarray,
+    distance_method: str = "euclidean",
+    **distance_kwargs: Any,
+) -> list[dict[str, Any]]:
     """
     Calculate statistics for each cluster (used by comparison functions).
 
@@ -327,11 +352,8 @@ def calculate_cluster_statistics(
             cluster_points, cluster_points, method=distance_method, **distance_kwargs
         )
 
-        if distances is None:
-            continue
-
         # Create graph and calculate MST
-        G = nx.from_numpy_matrix(distances)
+        G = nx.from_numpy_array(distances)
         T = nx.minimum_spanning_tree(G)
 
         graph_weight = int(G.size(weight="weight") / 1000)

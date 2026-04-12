@@ -28,19 +28,27 @@ jobs:
     - name: Install dev dependencies
       run: |
         uv pip install -e ".[dev]"
-        uv pip install types-requests pandas-stubs
-        
+        uv pip install types-requests pandas-stubs deptry vulture
+
     - name: Run ruff linting
       run: |
         uv run ruff check allocator/ tests/
-        
+
     - name: Run ruff formatting check
       run: |
         uv run ruff format --check allocator/ tests/
-        
+
     - name: Run mypy type checking
       run: |
-        uv run mypy allocator/ || echo "Type checking has known issues, continuing..."
+        uv run mypy allocator/
+
+    - name: Run deptry (dependency checks)
+      run: |
+        uv run deptry allocator/
+
+    - name: Run vulture (dead code detection)
+      run: |
+        uv run vulture allocator/ allocator/vulture_whitelist.py --min-confidence 80
         
 
   test:

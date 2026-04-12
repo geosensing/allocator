@@ -44,6 +44,8 @@ dependencies = [
     # Core data processing
     "pandas>=2.0.0",
     "numpy>=1.24.0",
+    # Scientific computing (for simulation)
+    "scipy>=1.10.0",
     # Distance calculations
     "utm>=0.7.0",
     "haversine>=2.8.0",
@@ -212,21 +214,32 @@ module = [
     "googlemaps.*",
     "ortools.*",
     "polyline.*",
+    "sklearn.*",
+    "scipy.*",
+    "Christofides.*",
+    "seaborn.*",
 ]
 ignore_missing_imports = true
 
 # Deptry configuration
 [tool.deptry]
-pep621_dev_dependency_groups = ["dev", "test", "docs"]
+extend_exclude = ["tests/", "benchmarks/", "examples/"]
+optional_dependencies_dev_groups = ["dev", "test", "docs"]
 
 [tool.deptry.per_rule_ignores]
-DEP001 = ["Christofides"]  # Christofides is in optional algorithms group
-DEP002 = ["Christofides"]  # Christofides is correctly used in routing code
+DEP001 = ["Christofides"]
+DEP002 = ["Christofides", "seaborn", "allocator"]
 
 [tool.deptry.package_module_name_map]
 Christofides = "christofides"
 linkify-it-py = "linkify_it_py"
 
+# Vulture configuration (dead code detection)
+[tool.vulture]
+min_confidence = 80
+paths = ["allocator", "allocator/vulture_whitelist.py"]
+exclude = ["tests/"]
+
 [dependency-groups]
-dev = ["pytest>=7.0", "pytest-cov>=4.0", "ruff>=0.7.0", "mypy>=1.0"]
+dev = ["pytest>=7.0", "pytest-cov>=4.0", "ruff>=0.7.0", "mypy>=1.0", "deptry>=0.12.0", "vulture>=2.10"]
 test = ["pytest>=7.0", "pytest-cov>=4.0"]

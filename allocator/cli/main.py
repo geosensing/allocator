@@ -2,12 +2,17 @@
 Modern CLI interface for allocator package using Click.
 """
 
+from __future__ import annotations
+
+import logging
+
 import click
 from rich.console import Console
 from rich.table import Table
 
 from .. import __version__
 from .cluster_cmd import kmeans
+from .itinerary_cmd import itinerary
 from .route_cmd import christofides, ortools, tsp
 
 console = Console()
@@ -17,7 +22,7 @@ console = Console()
 @click.version_option(version=__version__)
 @click.option("--verbose", "-v", is_flag=True, help="Enable verbose output")
 @click.pass_context
-def cli(ctx, verbose):
+def cli(ctx: click.Context, verbose: bool) -> None:
     """
     Allocator v1.0 - Modern geographic task allocation, clustering, and routing.
 
@@ -29,15 +34,18 @@ def cli(ctx, verbose):
     ctx.ensure_object(dict)
     ctx.obj["verbose"] = verbose
 
+    if verbose:
+        logging.getLogger("allocator").setLevel(logging.DEBUG)
+
 
 @cli.group()
-def cluster():
+def cluster() -> None:
     """Cluster geographic data points."""
     pass
 
 
 @cli.group()
-def route():
+def route() -> None:
     """Find shortest paths through points (TSP)."""
     pass
 
@@ -46,6 +54,7 @@ cluster.add_command(kmeans)
 route.add_command(tsp)
 route.add_command(christofides)
 route.add_command(ortools)
+cli.add_command(itinerary)
 
 
 @cli.command()
@@ -68,7 +77,15 @@ route.add_command(ortools)
     help="Output format",
 )
 @click.pass_context
-def sort(ctx, points, workers, by_worker, distance, output, output_format):
+def sort(
+    ctx: click.Context,
+    points: str,
+    workers: str | None,
+    by_worker: bool,
+    distance: str,
+    output: str | None,
+    output_format: str,
+) -> None:
     """Sort points by distance to workers or assign to closest."""
     from ..api import sort_by_distance
     from ..io.data_handler import DataHandler
@@ -115,9 +132,19 @@ def sort(ctx, points, workers, by_worker, distance, output, output_format):
     help="Distance metric to use",
 )
 @click.option("--output", "-o", type=click.Path(), help="Output file for comparison results")
+@click.option("--seed", type=int, help="Random seed for reproducibility")
 @click.pass_context
-def compare(ctx, input_file, algorithms, n_clusters, distance, output):
+def compare(
+    ctx: click.Context,
+    input_file: str,
+    algorithms: str,
+    n_clusters: int,
+    distance: str,
+    output: str | None,
+    seed: int | None,
+) -> None:
     """Compare clustering algorithms."""
+    del ctx
     from ..api import cluster
 
     try:
@@ -127,7 +154,13 @@ def compare(ctx, input_file, algorithms, n_clusters, distance, output):
         for algo in algos:
             if algo in ["kmeans"]:
                 console.print(f"Running {algo} clustering...")
-                result = cluster(input_file, n_clusters=n_clusters, method=algo, distance=distance)
+                result = cluster(
+                    input_file,
+                    n_clusters=n_clusters,
+                    method=algo,
+                    distance=distance,
+                    random_state=seed,
+                )
                 results[algo] = result
             else:
                 console.print(f"[yellow]Warning: Unknown algorithm '{algo}', skipping[/yellow]")

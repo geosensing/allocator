@@ -10,6 +10,10 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+BUDGET_METHODS = ("greedy_nn", "softmax_greedy")
+PARTITION_METHODS = ("random_partition", "stratified", "round_robin", "kmeans_tsp")
+VALID_METHODS = BUDGET_METHODS + PARTITION_METHODS
+
 
 @dataclass
 class ClusterResult:
@@ -49,4 +53,14 @@ class ComparisonResult:
 
     results: dict[str, ClusterResult]
     statistics: pd.DataFrame
+    metadata: dict[str, Any]
+
+
+@dataclass
+class ItineraryResult:
+    """Result of budget-constrained itinerary generation."""
+
+    itineraries: list[list[int]]
+    distances: list[float]
+    data: pd.DataFrame
     metadata: dict[str, Any]

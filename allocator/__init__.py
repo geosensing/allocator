@@ -32,6 +32,12 @@ Quick Start:
 For more examples: https://geosensing.github.io/allocator/
 """
 
+import warnings
+
+warnings.filterwarnings("ignore", message=".*SwigPyPacked.*")
+warnings.filterwarnings("ignore", message=".*SwigPyObject.*")
+warnings.filterwarnings("ignore", message=".*swigvarlink.*")
+
 import logging
 import sys
 
@@ -39,10 +45,12 @@ import sys
 from .api import (
     ClusterResult,
     ComparisonResult,
+    ItineraryResult,
     RouteResult,
     SortResult,
     assign_to_closest,
     cluster,
+    create_itineraries,
     distance_assignment,
     kmeans,
     shortest_path,
@@ -75,11 +83,13 @@ __all__ = [
     # Result types
     "ClusterResult",
     "ComparisonResult",
+    "ItineraryResult",
     "RouteResult",
     "SortResult",
     "assign_to_closest",
     # Main functions
     "cluster",
+    "create_itineraries",
     "distance_assignment",
     "euclidean_distance_matrix",
     # Distance utilities
@@ -108,7 +118,7 @@ __all__ = [
 ]
 
 
-def setup_logging(level=logging.INFO):
+def setup_logging(level: int = logging.INFO) -> logging.Logger:
     """
     Set up logging configuration for the allocator package.
 
@@ -137,7 +147,7 @@ def setup_logging(level=logging.INFO):
     return logger
 
 
-def get_logger(name):
+def get_logger(name: str) -> logging.Logger:
     """
     Get a logger instance for a specific module.
 
