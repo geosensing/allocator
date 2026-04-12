@@ -2,8 +2,6 @@
 Modern clustering API for allocator package.
 """
 
-from __future__ import annotations
-
 from pathlib import Path
 
 import numpy as np
@@ -66,15 +64,16 @@ def kmeans(
     Args:
         data: Input data as DataFrame or numpy array
         n_clusters: Number of clusters
-        distance: Distance metric ('euclidean', 'haversine', 'osrm', 'google')
+        distance: Distance metric (stored in metadata only; clustering uses Euclidean)
         max_iter: Maximum iterations
         random_state: Random seed for reproducibility
-        **kwargs: Additional distance-specific arguments
+        **kwargs: Additional arguments (unused, kept for API compatibility)
 
     Returns:
         ClusterResult with clustering information
     """
-    # Ensure we have a DataFrame for output
+    del kwargs
+
     if isinstance(data, np.ndarray):
         df = DataHandler._from_numpy(data)
     elif isinstance(data, list):
@@ -84,36 +83,21 @@ def kmeans(
     else:
         df = data.copy()
 
-    # Run clustering algorithm
     result = _kmeans_cluster(
         df,
         n_clusters=n_clusters,
-        distance_method=distance,
         max_iter=max_iter,
         random_state=random_state,
-        **kwargs,
     )
 
-    # Add cluster assignments to DataFrame
     df_result = df.copy()
     df_result["cluster"] = result["labels"]
-
-    # Calculate inertia (sum of squared distances to centroids)
-    inertia = None
-    if distance == "euclidean":
-        from ..distances import euclidean_distance_matrix
-
-        coords = df[["longitude", "latitude"]].values
-        distances = euclidean_distance_matrix(coords, result["centroids"])
-        inertia = np.sum(
-            [distances[i, result["labels"][i]] ** 2 for i in range(len(result["labels"]))]
-        )
 
     return ClusterResult(
         labels=result["labels"],
         centroids=result["centroids"],
         n_iter=result["iterations"],
-        inertia=inertia,
+        inertia=result["inertia"],
         data=df_result,
         converged=result["converged"],
         metadata={

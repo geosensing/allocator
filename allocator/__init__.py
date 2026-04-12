@@ -32,16 +32,14 @@ Quick Start:
 For more examples: https://geosensing.github.io/allocator/
 """
 
+import logging
+import sys
 import warnings
 
 warnings.filterwarnings("ignore", message=".*SwigPyPacked.*")
 warnings.filterwarnings("ignore", message=".*SwigPyObject.*")
 warnings.filterwarnings("ignore", message=".*swigvarlink.*")
 
-import logging
-import sys
-
-# Import modern API
 from .api import (
     ClusterResult,
     ComparisonResult,
@@ -60,8 +58,6 @@ from .api import (
     tsp_ortools,
     tsp_osrm,
 )
-
-# Import utilities for advanced users
 from .distances import (
     euclidean_distance_matrix,
     get_distance_matrix,
@@ -71,14 +67,10 @@ from .distances import (
     osrm_distance_matrix,
     xy2latlog,
 )
-
-# Import visualization functions
 from .viz.plotting import plot_assignments, plot_clusters, plot_comparison, plot_route
 
-# Version
-__version__ = "1.0.0"
+__version__ = "1.2.0"
 
-# Export public API
 __all__ = [
     # Result types
     "ClusterResult",
@@ -86,13 +78,13 @@ __all__ = [
     "ItineraryResult",
     "RouteResult",
     "SortResult",
-    "assign_to_closest",
     # Main functions
+    "assign_to_closest",
     "cluster",
     "create_itineraries",
     "distance_assignment",
-    "euclidean_distance_matrix",
     # Distance utilities
+    "euclidean_distance_matrix",
     "get_distance_matrix",
     "get_logger",
     "google_distance_matrix",
@@ -101,8 +93,8 @@ __all__ = [
     "kmeans",
     "latlon2xy",
     "osrm_distance_matrix",
-    "plot_assignments",
     # Visualization
+    "plot_assignments",
     "plot_clusters",
     "plot_comparison",
     "plot_route",
@@ -125,20 +117,16 @@ def setup_logging(level: int = logging.INFO) -> logging.Logger:
     Args:
         level: Logging level (DEBUG, INFO, WARNING, ERROR)
     """
-    # Create formatter
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
     )
 
-    # Get root logger for allocator package
     logger = logging.getLogger("allocator")
     logger.setLevel(level)
 
-    # Remove existing handlers to avoid duplicates
     for handler in logger.handlers[:]:
         logger.removeHandler(handler)
 
-    # Console handler
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setLevel(level)
     console_handler.setFormatter(formatter)
@@ -160,5 +148,4 @@ def get_logger(name: str) -> logging.Logger:
     return logging.getLogger(f"allocator.{name}")
 
 
-# Set up default logging
 setup_logging()

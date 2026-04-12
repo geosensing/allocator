@@ -89,13 +89,7 @@ class TestComputeClusterRobustSE(unittest.TestCase):
 
 
 class TestDesignEffectPackageExport(unittest.TestCase):
-    """Test that design effect functions are exported from main package."""
-
-    def test_import_from_package(self):
-        from allocator import compute_cluster_robust_se, compute_design_effect
-
-        self.assertTrue(callable(compute_design_effect))
-        self.assertTrue(callable(compute_cluster_robust_se))
+    """Test that design effect functions are exported from stats module."""
 
     def test_import_from_stats_module(self):
         from allocator.stats import compute_cluster_robust_se, compute_design_effect

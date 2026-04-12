@@ -2,8 +2,6 @@
 Modern distance-based assignment API for allocator package.
 """
 
-from __future__ import annotations
-
 import numpy as np
 import pandas as pd
 

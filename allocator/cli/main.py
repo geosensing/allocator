@@ -2,8 +2,6 @@
 Modern CLI interface for allocator package using Click.
 """
 
-from __future__ import annotations
-
 import logging
 
 import click

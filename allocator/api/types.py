@@ -2,8 +2,6 @@
 Type definitions and dataclasses for allocator API.
 """
 
-from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Any
 
