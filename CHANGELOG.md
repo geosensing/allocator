@@ -2,6 +2,37 @@
 
 All notable changes to the allocator project are documented in this file.
 
+## [1.3.0] - 2025-04-22
+
+### Added
+
+**Google Routes API Support:**
+- New `google_routes_distance_matrix()` function using official `google-maps-routing` library
+- Service account authentication with proper rate limiting handled by Google's client
+- Support for multiple travel modes: DRIVE, BICYCLE, WALK, TWO_WHEELER, TRANSIT
+- Returns duration (seconds) or distance (meters)
+
+**Progress Reporting:**
+- Added `on_progress` callback to all distance matrix functions
+- Callback signature: `(current: int, total: int, message: str | None) -> None`
+- Useful for progress bars in long-running API requests
+
+**Local OSRM Server:**
+- Added `scripts/osrm/` with Docker setup for running local OSRM
+- `setup.sh` script to download and preprocess OSM data for any region
+- `docker-compose.yml` for easy server management
+
+### Changed
+
+- Legacy `method="google"` now emits `DeprecationWarning` recommending `google_routes`
+- Added `google-maps-routing>=0.6.0` to dependencies
+
+### Dependencies
+
+- Added: `google-maps-routing>=0.6.0` (official Google Routes API client)
+
+---
+
 ## [1.2.0] - 2025-04-12
 
 ### Changed

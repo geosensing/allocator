@@ -268,6 +268,49 @@ docker build -t allocator .
 docker run --rm -v $(pwd):/workspace allocator
 ```
 
+## Local OSRM Server
+
+For production workloads or offline use, run your own OSRM server instead of the public API.
+
+### Setup
+
+```bash
+cd scripts/osrm
+
+# Download and preprocess OSM data (default: California)
+./setup.sh
+
+# Or specify a different region (see https://download.geofabrik.de/)
+./setup.sh europe/germany
+./setup.sh asia/india
+```
+
+### Start Server
+
+```bash
+cd scripts/osrm
+docker compose up -d
+```
+
+### Use with allocator
+
+```python
+from allocator.distances import get_distance_matrix
+
+matrix = get_distance_matrix(
+    points,
+    method="osrm",
+    osrm_base_url="http://localhost:5000"
+)
+```
+
+### Stop Server
+
+```bash
+cd scripts/osrm
+docker compose down
+```
+
 ## Next Steps
 
 - 📖 **Quick Start**: [Quickstart Tutorial](quickstart.md)

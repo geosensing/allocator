@@ -148,6 +148,7 @@ Thumbs.db
 
 # Project specific
 /allocator/kahip/
+allocator/_version.py
 *.csv
 *.png
 *.svg
@@ -159,4 +160,4 @@ Thumbs.db
 *-output.csv
 *-output.png
 *-output.html
-*-output.json
+*-output.jsonscripts/osrm/data/

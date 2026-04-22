@@ -1,9 +1,60 @@
 """
 Haversine distance calculations for geographic coordinates.
+
+Uses Numba JIT compilation for high performance distance matrix calculations.
 """
 
+import numba
 import numpy as np
-from haversine import haversine
+from numba import njit
+
+EARTH_RADIUS_M = 6_371_000.0
+
+
+@njit(cache=True)
+def _haversine_single(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """
+    Compute haversine distance between two points in meters.
+
+    Args:
+        lat1, lon1: First point coordinates in degrees
+        lat2, lon2: Second point coordinates in degrees
+
+    Returns:
+        Distance in meters
+    """
+    lat1_rad = np.radians(lat1)
+    lat2_rad = np.radians(lat2)
+    dlat = np.radians(lat2 - lat1)
+    dlon = np.radians(lon2 - lon1)
+
+    a = np.sin(dlat / 2) ** 2 + np.cos(lat1_rad) * np.cos(lat2_rad) * np.sin(dlon / 2) ** 2
+    return 2 * EARTH_RADIUS_M * np.arcsin(np.sqrt(a))
+
+
+@njit(parallel=True, cache=True)
+def _haversine_matrix_jit(points_from: np.ndarray, points_to: np.ndarray) -> np.ndarray:
+    """
+    Compute haversine distance matrix with JIT compilation.
+
+    Args:
+        points_from: Source points array with shape [n, 2] where columns are [lon, lat]
+        points_to: Destination points array with shape [m, 2] where columns are [lon, lat]
+
+    Returns:
+        Distance matrix with shape [n, m] in meters
+    """
+    n = len(points_from)
+    m = len(points_to)
+    result = np.empty((n, m), dtype=np.float64)
+
+    for i in numba.prange(n):
+        lon1, lat1 = points_from[i, 0], points_from[i, 1]
+        for j in range(m):
+            lon2, lat2 = points_to[j, 0], points_to[j, 1]
+            result[i, j] = _haversine_single(lat1, lon1, lat2, lon2)
+
+    return result
 
 
 def haversine_distance_matrix(
@@ -20,7 +71,6 @@ def haversine_distance_matrix(
         Distance matrix as numpy array with shape [len(points_from), len(points_to)]
         Values are in meters.
     """
-    # Handle empty arrays
     if len(points_from) == 0:
         points_to_len = len(points_to) if points_to is not None else 0
         return np.array([]).reshape(0, points_to_len)
@@ -28,14 +78,7 @@ def haversine_distance_matrix(
     if points_to is None:
         points_to = points_from
 
-    # Calculate haversine distances (returned in km, convert to meters)
-    n_from, n_to = len(points_from), len(points_to)
-    distances = np.zeros((n_from, n_to))
+    points_from_arr = np.ascontiguousarray(points_from, dtype=np.float64)
+    points_to_arr = np.ascontiguousarray(points_to, dtype=np.float64)
 
-    for i, (lon_from, lat_from) in enumerate(points_from):
-        for j, (lon_to, lat_to) in enumerate(points_to):
-            # haversine expects (lat, lon) order and returns km
-            dist_km = haversine((lat_from, lon_from), (lat_to, lon_to))
-            distances[i, j] = dist_km * 1000  # Convert to meters
-
-    return distances
+    return _haversine_matrix_jit(points_from_arr, points_to_arr)

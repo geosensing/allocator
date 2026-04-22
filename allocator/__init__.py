@@ -71,7 +71,10 @@ from .distances import (
 )
 from .viz.plotting import plot_assignments, plot_clusters, plot_comparison, plot_route
 
-__version__ = "1.2.0"
+try:
+    from ._version import __version__
+except ImportError:
+    __version__ = "dev"
 
 __all__ = [
     # Result types

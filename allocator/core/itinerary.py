@@ -11,7 +11,20 @@ Provides multiple methods for creating itineraries:
 """
 
 import numpy as np
+from numba import njit
 from ortools.constraint_solver import pywrapcp, routing_enums_pb2
+
+
+@njit(cache=True)
+def _compute_route_distance_jit(route: np.ndarray, distance_matrix: np.ndarray) -> float:
+    """JIT-compiled route distance computation."""
+    n = len(route)
+    if n <= 1:
+        return 0.0
+    total = 0.0
+    for i in range(n - 1):
+        total += distance_matrix[route[i], route[i + 1]]
+    return total
 
 
 def _ensure_rng(rng: np.random.Generator | None) -> np.random.Generator:
@@ -145,10 +158,8 @@ def compute_route_distance(route: list[int], distance_matrix: np.ndarray) -> flo
     """
     if len(route) <= 1:
         return 0.0
-    total = 0.0
-    for i in range(len(route) - 1):
-        total += distance_matrix[route[i], route[i + 1]]
-    return total
+    route_arr = np.asarray(route, dtype=np.int64)
+    return float(_compute_route_distance_jit(route_arr, distance_matrix))
 
 
 def tsp_optimize_route(

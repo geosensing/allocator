@@ -3,10 +3,11 @@ Tests for distance matrix calculations.
 """
 
 import unittest
+from unittest.mock import MagicMock, patch
 
 import numpy as np
 
-from allocator.distances import get_distance_matrix
+from allocator.distances import get_distance_matrix, google_routes_distance_matrix
 
 
 class TestDistanceMatrix(unittest.TestCase):
@@ -194,6 +195,204 @@ class TestDistanceMatrix(unittest.TestCase):
         dist2 = get_distance_matrix(self.geo_points_a, method="euclidean")
 
         np.testing.assert_array_equal(dist1, dist2)
+
+    def test_google_routes_method_requires_credentials(self):
+        """Test that google_routes method requires credentials."""
+        import os
+
+        old_creds = os.environ.pop("GOOGLE_APPLICATION_CREDENTIALS", None)
+        try:
+            with self.assertRaises(ValueError) as cm:
+                get_distance_matrix(self.geo_points_a, method="google_routes")
+            self.assertIn("authentication", str(cm.exception).lower())
+        finally:
+            if old_creds:
+                os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = old_creds
+
+    def test_google_method_deprecation_warning(self):
+        """Test that google method emits deprecation warning."""
+        import warnings
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            with self.assertRaises(ValueError):
+                get_distance_matrix(self.geo_points_a, method="google")
+
+            self.assertEqual(len(w), 1)
+            self.assertTrue(issubclass(w[0].category, DeprecationWarning))
+            self.assertIn("legacy", str(w[0].message).lower())
+
+
+class TestProgressCallback(unittest.TestCase):
+    """Test progress callback functionality."""
+
+    def setUp(self):
+        self.geo_points = np.array(
+            [
+                [101.0, 13.0],
+                [101.1, 13.1],
+            ]
+        )
+
+    @patch("allocator.distances.external_apis.requests.get")
+    def test_osrm_progress_callback(self, mock_get):
+        """Test OSRM distance matrix calls progress callback."""
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"durations": [[0, 100], [100, 0]]}
+        mock_get.return_value = mock_response
+
+        progress_calls = []
+
+        def on_progress(current, total, message):
+            progress_calls.append((current, total, message))
+
+        get_distance_matrix(
+            self.geo_points, method="osrm", on_progress=on_progress, osrm_max_table_size=100
+        )
+
+        self.assertEqual(len(progress_calls), 1)
+        self.assertEqual(progress_calls[0][0], 1)
+        self.assertEqual(progress_calls[0][1], 1)
+
+
+class TestGoogleRoutesAPI(unittest.TestCase):
+    """Test Google Routes API implementation."""
+
+    def setUp(self):
+        self.geo_points = np.array(
+            [
+                [101.0, 13.0],
+                [101.1, 13.1],
+                [101.2, 13.2],
+            ]
+        )
+
+    def test_google_routes_requires_credentials(self):
+        """Test that google_routes_distance_matrix requires credentials."""
+        import os
+
+        old_creds = os.environ.pop("GOOGLE_APPLICATION_CREDENTIALS", None)
+        try:
+            with self.assertRaises(ValueError) as cm:
+                google_routes_distance_matrix(self.geo_points)
+            self.assertIn("authentication", str(cm.exception).lower())
+        finally:
+            if old_creds:
+                os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = old_creds
+
+    @patch("allocator.distances.external_apis.routing_v2.RoutesClient")
+    def test_google_routes_matrix_construction(self, mock_client_class):
+        """Test that google_routes correctly builds matrix from indexed response."""
+        import os
+        from datetime import timedelta
+
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/fake/path.json"
+
+        mock_client = MagicMock()
+        mock_client_class.return_value = mock_client
+
+        from google.maps import routing_v2
+
+        mock_elements = []
+        for oi in range(3):
+            for di in range(3):
+                element = MagicMock()
+                element.condition = routing_v2.RouteMatrixElementCondition.ROUTE_EXISTS
+                element.origin_index = oi
+                element.destination_index = di
+                element.duration = timedelta(seconds=600 * abs(oi - di))
+                element.distance_meters = 5000 * abs(oi - di)
+                mock_elements.append(element)
+
+        mock_client.compute_route_matrix.return_value = mock_elements
+
+        result = google_routes_distance_matrix(self.geo_points)
+
+        self.assertEqual(result.shape, (3, 3))
+        np.testing.assert_array_almost_equal(np.diag(result), [0, 0, 0])
+        self.assertEqual(result[0, 1], 600.0)
+        self.assertEqual(result[0, 2], 1200.0)
+        self.assertEqual(result[1, 0], 600.0)
+
+    @patch("allocator.distances.external_apis.routing_v2.RoutesClient")
+    def test_google_routes_progress_callback(self, mock_client_class):
+        """Test that google_routes calls progress callback."""
+        import os
+        from datetime import timedelta
+
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/fake/path.json"
+
+        mock_client = MagicMock()
+        mock_client_class.return_value = mock_client
+
+        from google.maps import routing_v2
+
+        element = MagicMock()
+        element.condition = routing_v2.RouteMatrixElementCondition.ROUTE_EXISTS
+        element.origin_index = 0
+        element.destination_index = 0
+        element.duration = timedelta(seconds=0)
+        element.distance_meters = 0
+        mock_client.compute_route_matrix.return_value = [element]
+
+        progress_calls = []
+
+        def on_progress(current, total, message):
+            progress_calls.append((current, total, message))
+
+        small_points = np.array([[101.0, 13.0]])
+        google_routes_distance_matrix(small_points, on_progress=on_progress)
+
+        self.assertEqual(len(progress_calls), 1)
+        self.assertEqual(progress_calls[0][0], 1)
+        self.assertEqual(progress_calls[0][1], 1)
+
+    @patch("allocator.distances.external_apis.routing_v2.RoutesClient")
+    def test_google_routes_distance_meters(self, mock_client_class):
+        """Test that google_routes returns distance when duration=False."""
+        import os
+        from datetime import timedelta
+
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/fake/path.json"
+
+        mock_client = MagicMock()
+        mock_client_class.return_value = mock_client
+
+        from google.maps import routing_v2
+
+        element = MagicMock()
+        element.condition = routing_v2.RouteMatrixElementCondition.ROUTE_EXISTS
+        element.origin_index = 0
+        element.destination_index = 0
+        element.duration = timedelta(seconds=0)
+        element.distance_meters = 5000
+        mock_client.compute_route_matrix.return_value = [element]
+
+        small_points = np.array([[101.0, 13.0]])
+        result = google_routes_distance_matrix(small_points, duration=False)
+
+        self.assertEqual(result[0, 0], 5000)
+
+    @patch("allocator.distances.external_apis.routing_v2.RoutesClient")
+    def test_google_routes_travel_mode(self, mock_client_class):
+        """Test that google_routes passes travel_mode correctly."""
+        import os
+
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/fake/path.json"
+
+        mock_client = MagicMock()
+        mock_client_class.return_value = mock_client
+        mock_client.compute_route_matrix.return_value = []
+
+        small_points = np.array([[101.0, 13.0]])
+        google_routes_distance_matrix(small_points, travel_mode="BICYCLE")
+
+        call_args = mock_client.compute_route_matrix.call_args
+        request = call_args.kwargs["request"]
+        from google.maps import routing_v2
+
+        self.assertEqual(request.travel_mode, routing_v2.RouteTravelMode.BICYCLE)
 
 
 if __name__ == "__main__":

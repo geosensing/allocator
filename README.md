@@ -13,6 +13,7 @@ Field teams, delivery services, and survey organizations waste time and money on
 - **Route**: Find the shortest path through locations (TSP)
 - **Assign**: Match locations to nearest workers or depots
 - **Random Walk**: Generate survey itineraries on road networks
+- **Distance Matrix**: Calculate travel times/distances via OSRM or Google Routes API
 
 ## Install
 
@@ -66,6 +67,31 @@ G = nx.read_graphml("road_network.graphml")
 
 result = allocator.random_walk(G, n_walks=10, walk_length_m=5000)
 print(result.data)  # DataFrame with waypoints
+```
+
+### Calculate distance matrix
+
+```python
+from allocator.distances import get_distance_matrix
+import numpy as np
+
+points = np.array([
+    [-122.4194, 37.7749],  # SF downtown
+    [-122.4089, 37.7855],  # North Beach
+])
+
+# Local calculation (fast, no API)
+dist = get_distance_matrix(points, method="haversine")
+
+# OSRM (free, real driving times)
+dist = get_distance_matrix(points, method="osrm")
+
+# Google Routes API (requires service account)
+dist = get_distance_matrix(
+    points,
+    method="google_routes",
+    credentials_file="/path/to/service-account.json"
+)
 ```
 
 ## CLI

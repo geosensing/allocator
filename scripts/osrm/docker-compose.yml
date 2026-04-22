@@ -1,0 +1,9 @@
+services:
+  osrm:
+    image: osrm/osrm-backend:latest
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data:/data
+    command: osrm-routed --algorithm mld /data/map.osrm
+    restart: unless-stopped
