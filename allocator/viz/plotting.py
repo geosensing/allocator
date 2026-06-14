@@ -225,6 +225,7 @@ def plot_clusters_interactive(
     centroids: np.ndarray | None = None,
     title: str = "Interactive Clustering Results",
     save_path: str | None = None,
+    tiles: str = "CartoDB positron",
 ) -> "folium.Map":
     """
     Create an interactive map visualization of clustering results using folium.
@@ -235,6 +236,8 @@ def plot_clusters_interactive(
         centroids: Optional cluster centers as numpy array [k, 2]
         title: Map title (shown as map title)
         save_path: Path to save HTML file (optional)
+        tiles: Map tile provider. Options: "CartoDB positron" (default, light),
+            "CartoDB dark_matter" (dark), "OpenStreetMap"
 
     Returns:
         Folium map object that can be displayed in Jupyter or saved to HTML
@@ -277,7 +280,7 @@ def plot_clusters_interactive(
         zoom_start = 8
 
     # Create base map
-    m = folium.Map(location=[center_lat, center_lon], zoom_start=zoom_start, tiles="OpenStreetMap")
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=zoom_start, tiles=tiles)
 
     # Color palette for clusters
     n_clusters = len(np.unique(labels))
@@ -366,6 +369,7 @@ def plot_route_interactive(
     route_geometry: str | None = None,
     title: str = "Interactive Route",
     save_path: str | None = None,
+    tiles: str = "CartoDB positron",
 ) -> "folium.Map":
     """
     Create an interactive map visualization of TSP/routing results using folium.
@@ -376,6 +380,8 @@ def plot_route_interactive(
         route_geometry: Optional encoded polyline string from routing API (OSRM/Google)
         title: Map title
         save_path: Path to save HTML file (optional)
+        tiles: Map tile provider. Options: "CartoDB positron" (default, light),
+            "CartoDB dark_matter" (dark), "OpenStreetMap"
 
     Returns:
         Folium map object that can be displayed in Jupyter or saved to HTML
@@ -411,7 +417,7 @@ def plot_route_interactive(
         zoom_start = 8
 
     # Create base map
-    m = folium.Map(location=[center_lat, center_lon], zoom_start=zoom_start, tiles="OpenStreetMap")
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=zoom_start, tiles=tiles)
 
     # Add route line
     if route_geometry and HAS_POLYLINE:

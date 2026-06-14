@@ -22,6 +22,11 @@ All notable changes to the allocator project are documented in this file.
 - `setup.sh` script to download and preprocess OSM data for any region
 - `docker-compose.yml` for easy server management
 
+**Visualization:**
+- Added `tiles` parameter to `plot_clusters_interactive()` and `plot_route_interactive()`
+- Default changed from OpenStreetMap to CartoDB positron (cleaner, less rate limiting)
+- Options: "CartoDB positron", "CartoDB dark_matter", "OpenStreetMap"
+
 ### Changed
 
 - Legacy `method="google"` now emits `DeprecationWarning` recommending `google_routes`
