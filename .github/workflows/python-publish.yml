@@ -27,16 +27,17 @@ jobs:
       uses: astral-sh/setup-uv@v7
       with:
         enable-cache: true
-        cache-dependency-glob: "pyproject.toml"
+        cache-dependency-glob: "uv.lock"
     
     - name: Set up Python 3.11
-      run: |
-        uv python install 3.11
-        uv venv
-    
+      run: uv python install 3.11
+
+    # From the lock, like ci.yml and docs.yml. A release gate resolving fresh can
+    # pass or fail on what PyPI published that morning, which is the last place
+    # you want that.
     - name: Install and test package
       run: |
-        uv pip install -e .[test]
+        uv sync --locked --extra test --all-groups
         uv run pytest tests/ --tb=short -q
 
   publish:

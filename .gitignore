@@ -129,7 +129,16 @@ dmypy.json
 .pyre/
 
 # uv
-uv.lock
+#
+# uv.lock is committed, as it is in every other repo in the fleet. It constrains
+# nobody who installs allocator -- pip resolves from the ranges in pyproject.toml
+# and never reads this file -- it only fixes what CI and a developer's machine
+# install, so that the two agree.
+#
+# Ignoring it is what let numba 0.66.0 sit red on master for two months: everyone
+# local had a lock pinning 0.65.0, CI had none and resolved 0.66.0 fresh on every
+# run, so nobody could reproduce the failure. Two further failures were queued up
+# behind that one, each hidden by the step before it.
 
 # IDEs
 .vscode/

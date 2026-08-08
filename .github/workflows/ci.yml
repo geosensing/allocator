@@ -4,6 +4,9 @@ on:
     branches: [ "master", "main" ]
   pull_request:
     branches: [ "master", "main" ]
+  schedule:
+    - cron: "23 5 * * 1"  # weekly, to surface upstream releases deliberately
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -18,17 +21,14 @@ jobs:
       uses: astral-sh/setup-uv@v7
       with:
         enable-cache: true
-        cache-dependency-glob: "pyproject.toml"
+        cache-dependency-glob: "uv.lock"
     
     - name: Set up Python 3.11
       run: |
         uv python install 3.11
-        uv venv
     
-    - name: Install dev dependencies
-      run: |
-        uv pip install -e ".[dev]"
-        uv pip install types-requests pandas-stubs deptry vulture
+    - name: Install dependencies
+      run: uv sync --locked --extra dev --all-groups
 
     - name: Run ruff linting
       run: |
@@ -63,20 +63,14 @@ jobs:
       uses: astral-sh/setup-uv@v7
       with:
         enable-cache: true
-        cache-dependency-glob: "pyproject.toml"
+        cache-dependency-glob: "uv.lock"
     
     - name: Set up Python ${{ matrix.python-version }}
       run: |
         uv python install ${{ matrix.python-version }}
-        uv venv
     
-    - name: Install core dependencies
-      run: |
-        uv pip install -e ".[test]"
-        
-    - name: Install optional dependencies for comprehensive testing
-      run: |
-        uv pip install ortools scipy
+    - name: Install dependencies
+      run: uv sync --locked --extra test --all-groups
         
     - name: Test with pytest (core functionality)
       run: |
@@ -99,21 +93,61 @@ jobs:
       uses: astral-sh/setup-uv@v7
       with:
         enable-cache: true
-        cache-dependency-glob: "pyproject.toml"
+        cache-dependency-glob: "uv.lock"
     
     - name: Set up Python 3.11
       run: |
         uv python install 3.11
-        uv venv
     
-    - name: Install all optional dependencies
-      run: |
-        uv pip install -e ".[test,algorithms,geo]"
+    - name: Install dependencies
+      run: uv sync --locked --extra test --extra algorithms --extra geo --all-groups
         
     - name: Test advanced algorithms
       run: |
         uv run pytest tests/api/ -k "ortools or google" -v --tb=short
         
+  # Every other job installs from uv.lock, so CI and a developer's machine agree.
+  # That is the point, and it has a cost: CI stops noticing when a new release
+  # upstream breaks us. numba 0.66.0 changed prange's annotation and left the lint
+  # job red on master for two months, invisible to everyone because uv.lock pinned
+  # 0.65.0 and every local run was green. Two more failures were queued up behind
+  # that one, each hidden by the step before it.
+  #
+  # So resolve the latest of everything on a schedule. Upstream breakage then
+  # arrives as a run named "resolve-latest", on a Monday, instead of ambushing
+  # whoever opens the next unrelated pull request.
+  resolve-latest:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v7
+
+    - name: Set up Python 3.11
+      run: uv python install 3.11
+
+    # The same extras the lint and test jobs use, deliberately not --all-extras:
+    # tests/api/test_route_api.py::test_christofides_import_error_handling
+    # asserts that tsp_christofides *raises* ImportError, so installing the
+    # algorithms extra here would fail it for reasons that have nothing to do
+    # with upstream drift.
+    - name: Resolve the latest of everything, ignoring the lock
+      run: uv sync --upgrade --extra dev --extra test --all-groups
+
+    - name: Show what changed against the lock
+      run: uv pip list
+
+    - name: Lint
+      run: |
+        uv run ruff check allocator/ tests/
+        uv run mypy allocator/
+        uv run deptry allocator/
+
+    - name: Test
+      run: uv run pytest tests/ -q --no-header
+
   build:
     runs-on: ubuntu-latest
     needs: [lint, test]
@@ -126,7 +160,6 @@ jobs:
     - name: Set up Python 3.11
       run: |
         uv python install 3.11
-        uv venv
         
     - name: Build package
       run: |

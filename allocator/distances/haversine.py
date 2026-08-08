@@ -4,9 +4,22 @@ Haversine distance calculations for geographic coordinates.
 Uses Numba JIT compilation for high performance distance matrix calculations.
 """
 
+from typing import TYPE_CHECKING
+
 import numba
 import numpy as np
 from numba import njit
+
+if TYPE_CHECKING:
+    # prange is range, with a licence for the compiler to parallelise the loop.
+    # Saying so is what keeps this file checkable across numba releases: 0.66.0
+    # changed prange's annotation so mypy stopped seeing it as iterable, which
+    # turned CI red while every developer's lock-pinned 0.65.0 stayed green. A
+    # `# type: ignore` cannot fix that, because warn_unused_ignores is on and the
+    # ignore would itself become an error under 0.65.
+    prange = range
+else:
+    prange = numba.prange
 
 EARTH_RADIUS_M = 6_371_000.0
 
@@ -48,7 +61,7 @@ def _haversine_matrix_jit(points_from: np.ndarray, points_to: np.ndarray) -> np.
     m = len(points_to)
     result = np.empty((n, m), dtype=np.float64)
 
-    for i in numba.prange(n):
+    for i in prange(n):
         lon1, lat1 = points_from[i, 0], points_from[i, 1]
         for j in range(m):
             lon2, lat2 = points_to[j, 0], points_to[j, 1]

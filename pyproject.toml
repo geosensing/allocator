@@ -48,7 +48,6 @@ dependencies = [
     "scipy>=1.10.0",
     # Distance calculations
     "utm>=0.7.0",
-    "haversine>=2.8.0",
     # Graph operations
     "networkx>=3.0",
     # CLI interface
@@ -86,6 +85,10 @@ dev = [
     "black>=23.0.0",            # Code formatting
     "isort>=5.12.0",            # Import sorting
     "pre-commit>=3.0.0",        # Git hooks
+    # Only benchmarks/benchmark_jit.py uses this, as the reference implementation
+    # to time allocator's own numba haversine against. Nothing under allocator/
+    # imports it, so it has no business being a runtime dependency.
+    "haversine>=2.8.0",
 ]
 test = [
     "pytest>=7.4.0",
@@ -281,5 +284,23 @@ source = "vcs"
 version-file = "allocator/_version.py"
 
 [dependency-groups]
-dev = ["pytest>=7.0", "pytest-cov>=4.0", "ruff>=0.7.0", "mypy>=1.0", "deptry>=0.12.0", "vulture>=2.10"]
-test = ["pytest>=7.0", "pytest-cov>=4.0"]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.7.0",
+    "mypy>=1.0",
+    "deptry>=0.12.0",
+    "vulture>=2.10",
+    # Stubs mypy needs. These used to be installed ad hoc in the lint job, which
+    # meant the versions CI type-checked against were whatever resolved that
+    # morning and were recorded nowhere.
+    "types-requests",
+    "pandas-stubs",
+]
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    # A git reference, so it stays in dependency-groups and out of the published
+    # extras: PyPI rejects direct URL references in project metadata.
+    "simcheck @ git+https://github.com/finite-sample/simcheck",
+]
