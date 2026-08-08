@@ -48,7 +48,6 @@ dependencies = [
     "scipy>=1.10.0",
     # Distance calculations
     "utm>=0.7.0",
-    "haversine>=2.8.0",
     # Graph operations
     "networkx>=3.0",
     # CLI interface
@@ -86,6 +85,10 @@ dev = [
     "black>=23.0.0",            # Code formatting
     "isort>=5.12.0",            # Import sorting
     "pre-commit>=3.0.0",        # Git hooks
+    # Only benchmarks/benchmark_jit.py uses this, as the reference implementation
+    # to time allocator's own numba haversine against. Nothing under allocator/
+    # imports it, so it has no business being a runtime dependency.
+    "haversine>=2.8.0",
 ]
 test = [
     "pytest>=7.4.0",
