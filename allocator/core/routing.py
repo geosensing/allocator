@@ -131,9 +131,12 @@ def solve_tsp_christofides(
     for i in range(len(cycle) - 1):
         total_distance += distances[cycle[i], cycle[i + 1]]
 
-    # Callers index rows with this (`df.iloc[route]`), so it is a visiting order
-    # with one entry per point rather than the closed cycle.
-    return float(total_distance), list(cycle[:-1])
+    # Return the closed cycle, first node repeated at the end, matching
+    # solve_tsp_ortools. The two solvers are interchangeable through
+    # shortest_path(), so a caller switching methods must not silently get a
+    # different route convention -- and tests/api/test_route_api.py pins the
+    # ortools one at len(points) + 1.
+    return float(total_distance), list(cycle)
 
 
 def solve_tsp_osrm(

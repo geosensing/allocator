@@ -10,6 +10,7 @@ import pandas as pd
 
 from allocator.api import shortest_path, tsp_christofides, tsp_ortools
 from allocator.api.types import RouteResult
+from allocator.distances import get_distance_matrix
 
 
 class TestRouteAPI(unittest.TestCase):
@@ -100,9 +101,15 @@ class TestRouteAPI(unittest.TestCase):
         hard dependency already, so there is no optional import left to test.
         """
         result = tsp_christofides(self.test_points)
+        n_points = len(self.test_points)
 
         self.assertIsInstance(result, RouteResult)
-        self.assertEqual(sorted(result.route), list(range(len(self.test_points))))
+        # Closed tour, matching tsp_ortools: every point once, then back to the
+        # start. The two solvers are interchangeable through shortest_path(), so
+        # they must agree on what a route is.
+        self.assertEqual(len(result.route), n_points + 1)
+        self.assertEqual(result.route[0], result.route[-1])
+        self.assertEqual(sorted(result.route[:-1]), list(range(n_points)))
         self.assertGreater(result.total_distance, 0)
 
     def test_christofides_stays_within_its_approximation_guarantee(self):
