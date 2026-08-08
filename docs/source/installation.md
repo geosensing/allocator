@@ -2,7 +2,7 @@
 
 ## Requirements
 
-**Python Version**: >=3.11  
+**Python Version**: >=3.11
 **Operating System**: Windows, macOS, Linux
 
 ## Basic Installation
@@ -40,7 +40,6 @@ pip install "allocator[algorithms]"
 ```
 
 Includes:
-- `scipy` ≥1.10.0 - Enhanced mathematical algorithms
 - `Christofides` ≥1.0.0 - Christofides TSP algorithm for optimal routing
 
 ### Geo
@@ -67,6 +66,7 @@ Includes:
 - `black` ≥23.0.0 - Code formatting
 - `isort` ≥5.12.0 - Import sorting
 - `pre-commit` ≥3.0.0 - Git hooks for code quality
+- `haversine` ≥2.8.0 - Geographic distance calculations
 
 ### Test
 
@@ -134,7 +134,7 @@ data = pd.DataFrame({
 result = allocator.cluster(data, n_clusters=2)
 print(f"✓ Clustering: Created {result['n_clusters']} clusters")
 
-# Test routing  
+# Test routing
 route = allocator.shortest_path(data)
 print(f"✓ Routing: {route['total_distance']:.1f}km route")
 
@@ -190,22 +190,24 @@ allocator requires these core packages:
 
 - **pandas ≥2.0.0** - Data manipulation and analysis
 - **numpy ≥1.24.0** - Numerical computations
+- **numba ≥0.58.0** - Additional functionality
 - **scikit-learn ≥1.3.0** - Machine learning algorithms
+- **scipy ≥1.10.0** - Enhanced mathematical algorithms
 - **utm ≥0.7.0** - Coordinate system transformations
-- **haversine ≥2.8.0** - Geographic distance calculations
 - **networkx ≥3.0** - Graph algorithms
 - **click ≥8.0.0** - Command-line interface framework
 - **rich ≥13.0.0** - Rich terminal output and formatting
 - **requests ≥2.28.0** - HTTP library for API calls
 - **googlemaps ≥4.6.0** - Google Maps API integration
+- **google-maps-routing ≥0.6.0** - Additional functionality
 - **ortools ≥9.5.0** - High-performance optimization algorithms
 - **matplotlib ≥3.6.0** - Basic plotting and visualization
 - **seaborn ≥0.13.2** - Statistical data visualization
 
 ### System Requirements
 
-**Memory**: 2GB+ recommended for large datasets (1000+ points)  
-**Storage**: 100MB for package + 50MB per analysis run  
+**Memory**: 2GB+ recommended for large datasets (1000+ points)
+**Storage**: 100MB for package + 50MB per analysis run
 **Network**: Optional for OSRM/Google Maps API features
 
 ## Development Installation
@@ -266,49 +268,6 @@ Build and run:
 ```bash
 docker build -t allocator .
 docker run --rm -v $(pwd):/workspace allocator
-```
-
-## Local OSRM Server
-
-For production workloads or offline use, run your own OSRM server instead of the public API.
-
-### Setup
-
-```bash
-cd scripts/osrm
-
-# Download and preprocess OSM data (default: California)
-./setup.sh
-
-# Or specify a different region (see https://download.geofabrik.de/)
-./setup.sh europe/germany
-./setup.sh asia/india
-```
-
-### Start Server
-
-```bash
-cd scripts/osrm
-docker compose up -d
-```
-
-### Use with allocator
-
-```python
-from allocator.distances import get_distance_matrix
-
-matrix = get_distance_matrix(
-    points,
-    method="osrm",
-    osrm_base_url="http://localhost:5000"
-)
-```
-
-### Stop Server
-
-```bash
-cd scripts/osrm
-docker compose down
 ```
 
 ## Next Steps
