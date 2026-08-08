@@ -99,13 +99,15 @@ def solve_tsp_christofides(
     Returns:
         (total_distance, route) tuple
     """
-    try:
-        from Christofides import christofides
-    except ImportError as e:
-        raise ImportError(
-            "Christofides algorithm requires the 'Christofides' package. "
-            "Install it with: pip install Christofides"
-        ) from e
+    # networkx's own approximation, not the Christofides package on PyPI. That
+    # package is Python 2 source -- importing it raises SyntaxError on `print
+    # 'Testing...'` -- so this function had never once run on Python 3. Nothing
+    # noticed because the only test asserted the package was *absent*, and the
+    # CI job that installed it filtered the christofides tests out.
+    #
+    # networkx is already a hard dependency and has provided this since 2.6, so
+    # there is no optional import to guard.
+    from networkx.algorithms.approximation import christofides
 
     # Get distance matrix
     distances = get_distance_matrix(points, points, method=distance_method, **distance_kwargs)
@@ -121,15 +123,17 @@ def solve_tsp_christofides(
         for j in range(i + 1, n):
             G.add_edge(i, j, weight=distances[i, j])
 
-    # Solve using Christofides algorithm
-    tour = christofides(G, 0)  # Start from node 0
+    # A Hamiltonian cycle, so the last node repeats the first.
+    cycle = christofides(G, weight="weight")
 
-    # Calculate total distance
+    # Length of the closed tour, including the leg back to the start.
     total_distance = 0.0
-    for i in range(len(tour) - 1):
-        total_distance += distances[tour[i], tour[i + 1]]
+    for i in range(len(cycle) - 1):
+        total_distance += distances[cycle[i], cycle[i + 1]]
 
-    return total_distance, tour
+    # Callers index rows with this (`df.iloc[route]`), so it is a visiting order
+    # with one entry per point rather than the closed cycle.
+    return float(total_distance), list(cycle[:-1])
 
 
 def solve_tsp_osrm(
