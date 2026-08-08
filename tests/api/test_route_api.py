@@ -123,19 +123,26 @@ class TestRouteAPI(unittest.TestCase):
         """
         result = tsp_christofides(self.test_points)
 
+        # Score the tour in the metric the solver actually optimised in.
+        # `euclidean` projects lon/lat to UTM metres before measuring
+        # (allocator/distances/euclidean.py, utm.from_latlon), so scoring with
+        # distances computed from raw degrees would compare a UTM-optimal tour
+        # against a degree-optimal one. That is a different problem, and its
+        # ratio can exceed 3/2 through projection distortion alone.
         points = self.test_points[["longitude", "latitude"]].to_numpy()
         n = len(points)
-        deltas = points[:, None, :] - points[None, :, :]
-        distances = np.sqrt((deltas**2).sum(axis=-1))
+        distances = get_distance_matrix(points, points, method="euclidean")
 
         optimal = min(
             sum(distances[order[i], order[i + 1]] for i in range(n - 1))
             + distances[order[-1], order[0]]
             for order in itertools.permutations(range(n))
         )
+        # result.route is the closed tour; drop the repeated start to iterate.
+        route = result.route[:-1]
         tour = (
-            sum(distances[result.route[i], result.route[i + 1]] for i in range(n - 1))
-            + distances[result.route[-1], result.route[0]]
+            sum(distances[route[i], route[i + 1]] for i in range(n - 1))
+            + distances[route[-1], route[0]]
         )
 
         self.assertLessEqual(
