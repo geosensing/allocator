@@ -73,7 +73,12 @@ jobs:
     - name: Install core dependencies
       run: |
         uv pip install -e ".[test]"
-        
+        # simcheck lives in [dependency-groups], which `uv pip install -e .[test]`
+        # does not read. It cannot move into [project.optional-dependencies]:
+        # it is a git reference, and PyPI rejects direct URL references in the
+        # metadata of an uploaded distribution.
+        uv pip install --group test
+
     - name: Install optional dependencies for comprehensive testing
       run: |
         uv pip install ortools scipy
@@ -109,6 +114,7 @@ jobs:
     - name: Install all optional dependencies
       run: |
         uv pip install -e ".[test,algorithms,geo]"
+        uv pip install --group test
         
     - name: Test advanced algorithms
       run: |
