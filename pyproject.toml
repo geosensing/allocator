@@ -282,4 +282,10 @@ version-file = "allocator/_version.py"
 
 [dependency-groups]
 dev = ["pytest>=7.0", "pytest-cov>=4.0", "ruff>=0.7.0", "mypy>=1.0", "deptry>=0.12.0", "vulture>=2.10"]
-test = ["pytest>=7.0", "pytest-cov>=4.0"]
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    # A git reference, so it stays in dependency-groups and out of the published
+    # extras: PyPI rejects direct URL references in project metadata.
+    "simcheck @ git+https://github.com/finite-sample/simcheck",
+]
