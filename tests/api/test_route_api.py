@@ -2,6 +2,7 @@
 Tests for the modern routing API.
 """
 
+import itertools
 import unittest
 
 import numpy as np
@@ -9,6 +10,7 @@ import pandas as pd
 
 from allocator.api import shortest_path, tsp_christofides, tsp_ortools
 from allocator.api.types import RouteResult
+from allocator.distances import get_distance_matrix
 
 
 class TestRouteAPI(unittest.TestCase):
@@ -84,12 +86,70 @@ class TestRouteAPI(unittest.TestCase):
         except ImportError:
             self.skipTest("OR-Tools not available")
 
-    def test_christofides_import_error_handling(self):
-        """Test Christofides handles missing dependencies gracefully."""
-        with self.assertRaises(ImportError) as cm:
-            tsp_christofides(self.test_points)
+    def test_christofides_solves_a_tour(self):
+        """Christofides returns a tour that visits every point exactly once.
 
-        self.assertIn("Christofides", str(cm.exception))
+        This replaces ``test_christofides_import_error_handling``, which asserted
+        that ``tsp_christofides`` *raises* ImportError. That only happens when the
+        ``algorithms`` extra is absent, so the test meant one thing in the plain
+        test job and the opposite in test-algorithms -- and it passed only
+        because nobody had installed the extra on that runner.
+
+        Running it the other way is what showed the function had never worked on
+        Python 3: the Christofides package on PyPI is Python 2 source and raises
+        SyntaxError on import. It now uses networkx's approximation, which is a
+        hard dependency already, so there is no optional import left to test.
+        """
+        result = tsp_christofides(self.test_points)
+        n_points = len(self.test_points)
+
+        self.assertIsInstance(result, RouteResult)
+        # Closed tour, matching tsp_ortools: every point once, then back to the
+        # start. The two solvers are interchangeable through shortest_path(), so
+        # they must agree on what a route is.
+        self.assertEqual(len(result.route), n_points + 1)
+        self.assertEqual(result.route[0], result.route[-1])
+        self.assertEqual(sorted(result.route[:-1]), list(range(n_points)))
+        self.assertGreater(result.total_distance, 0)
+
+    def test_christofides_stays_within_its_approximation_guarantee(self):
+        """The property that makes Christofides worth using over any other tour.
+
+        It is a 3/2-approximation on a metric instance, so on a problem small
+        enough to solve exactly the tour must be no worse than 1.5x optimal. A
+        merely "valid" tour -- every point once, positive length -- would also be
+        produced by visiting the points in input order, so without this the test
+        above does not distinguish the algorithm from doing nothing.
+        """
+        result = tsp_christofides(self.test_points)
+
+        # Score the tour in the metric the solver actually optimised in.
+        # `euclidean` projects lon/lat to UTM metres before measuring
+        # (allocator/distances/euclidean.py, utm.from_latlon), so scoring with
+        # distances computed from raw degrees would compare a UTM-optimal tour
+        # against a degree-optimal one. That is a different problem, and its
+        # ratio can exceed 3/2 through projection distortion alone.
+        points = self.test_points[["longitude", "latitude"]].to_numpy()
+        n = len(points)
+        distances = get_distance_matrix(points, points, method="euclidean")
+
+        optimal = min(
+            sum(distances[order[i], order[i + 1]] for i in range(n - 1))
+            + distances[order[-1], order[0]]
+            for order in itertools.permutations(range(n))
+        )
+        # result.route is the closed tour; drop the repeated start to iterate.
+        route = result.route[:-1]
+        tour = (
+            sum(distances[route[i], route[i + 1]] for i in range(n - 1))
+            + distances[route[-1], route[0]]
+        )
+
+        self.assertLessEqual(
+            tour,
+            1.5 * optimal,
+            f"tour {tour:.4f} exceeds 1.5x the optimum {optimal:.4f}",
+        )
 
     def test_invalid_method(self):
         """Test error handling for invalid TSP method."""

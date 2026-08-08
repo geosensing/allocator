@@ -15,10 +15,10 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     
     - name: Install uv
-      uses: astral-sh/setup-uv@v7
+      uses: astral-sh/setup-uv@v9.0.0
       with:
         enable-cache: true
         cache-dependency-glob: "uv.lock"
@@ -57,10 +57,10 @@ jobs:
       matrix:
         python-version: ["3.11", "3.12", "3.13"]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     
     - name: Install uv
-      uses: astral-sh/setup-uv@v7
+      uses: astral-sh/setup-uv@v9.0.0
       with:
         enable-cache: true
         cache-dependency-glob: "uv.lock"
@@ -77,7 +77,7 @@ jobs:
         uv run pytest tests/ --cov=allocator --cov-report=xml --cov-report=term-missing -v --tb=short
         
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
+      uses: codecov/codecov-action@v7
       if: matrix.python-version == '3.11'
       with:
         file: ./coverage.xml
@@ -87,10 +87,10 @@ jobs:
   test-algorithms:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     
     - name: Install uv
-      uses: astral-sh/setup-uv@v7
+      uses: astral-sh/setup-uv@v9.0.0
       with:
         enable-cache: true
         cache-dependency-glob: "uv.lock"
@@ -104,7 +104,7 @@ jobs:
         
     - name: Test advanced algorithms
       run: |
-        uv run pytest tests/api/ -k "ortools or google" -v --tb=short
+        uv run pytest tests/api/ -k "ortools or google or christofides" -v --tb=short
         
   # Every other job installs from uv.lock, so CI and a developer's machine agree.
   # That is the point, and it has a cost: CI stops noticing when a new release
@@ -120,19 +120,17 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Install uv
-      uses: astral-sh/setup-uv@v7
+      uses: astral-sh/setup-uv@v9.0.0
 
     - name: Set up Python 3.11
       run: uv python install 3.11
 
-    # The same extras the lint and test jobs use, deliberately not --all-extras:
-    # tests/api/test_route_api.py::test_christofides_import_error_handling
-    # asserts that tsp_christofides *raises* ImportError, so installing the
-    # algorithms extra here would fail it for reasons that have nothing to do
-    # with upstream drift.
+    # The same extras the lint and test jobs use, deliberately not --all-extras,
+    # so this job checks the install most people actually have rather than the
+    # maximal one.
     - name: Resolve the latest of everything, ignoring the lock
       run: uv sync --upgrade --extra dev --extra test --all-groups
 
@@ -152,10 +150,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: [lint, test]
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
     
     - name: Install uv  
-      uses: astral-sh/setup-uv@v7
+      uses: astral-sh/setup-uv@v9.0.0
       
     - name: Set up Python 3.11
       run: |
