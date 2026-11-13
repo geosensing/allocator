@@ -336,7 +336,7 @@ def plot_clusters_interactive(
     legend_html = f"""
     <div style="position: fixed;
                 top: 10px; left: 50px; width: 200px; height: auto;
-                background-color: white; border:2px solid grey; z-index:9999;
+                background-color: white; border:2px solid gray; z-index:9999;
                 font-size:14px; padding: 10px">
     <h4>{title}</h4>
     <p><strong>Clusters:</strong> {n_clusters}</p>
@@ -469,7 +469,7 @@ def plot_route_interactive(
     info_html = f"""
     <div style="position: fixed;
                 top: 10px; right: 10px; width: 250px; height: auto;
-                background-color: white; border:2px solid grey; z-index:9999;
+                background-color: white; border:2px solid gray; z-index:9999;
                 font-size:14px; padding: 10px">
     <h4>{title}</h4>
     <p><strong>Points:</strong> {len(route_points)}</p>

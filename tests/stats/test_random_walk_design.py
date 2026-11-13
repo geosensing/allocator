@@ -4,11 +4,11 @@ A walk down a street network is only a *sample* of that network if you know how
 often it visits each part. The useful case is when it visits in proportion to
 length, because then points spaced evenly along the walk are a uniform sample of
 the road network and need no weights. That is the self-weighting property, and it
-is what lets a walk-based survey be analysed without an inclusion-probability
+is what lets a walk-based survey be analyzed without an inclusion-probability
 correction.
 
 It holds here, and provably. ``generate_walk`` picks uniformly among a node's
-neighbours, which is a simple random walk, and for a simple random walk the
+neighbors, which is a simple random walk, and for a simple random walk the
 stationary distribution over nodes is ``pi(v) = deg(v) / 2|E|``. The rate of
 traversing any particular directed edge ``(u, v)`` is then
 
@@ -146,12 +146,12 @@ def _length_proportional_walk(
     traversals: list[tuple[Any, Any, float]] = []
 
     while walked < walk_length_m:
-        neighbours = adj.get(current, [])
-        if not neighbours:
+        neighbors = adj.get(current, [])
+        if not neighbors:
             break
-        lengths = np.array([length for _, length in neighbours])
-        choice = rng.choice(len(neighbours), p=lengths / lengths.sum())
-        next_node, edge_length = neighbours[choice]
+        lengths = np.array([length for _, length in neighbors])
+        choice = rng.choice(len(neighbors), p=lengths / lengths.sum())
+        next_node, edge_length = neighbors[choice]
         traversals.append((current, next_node, edge_length))
         walked += edge_length
         current = next_node
@@ -248,7 +248,7 @@ class TestSelfWeighting(unittest.TestCase):
 
         Choosing the next edge with probability proportional to its length is the
         obvious-looking alternative, and it breaks self-weighting badly: long
-        edges are favoured in the *number* of traversals on top of costing more
+        edges are favored in the *number* of traversals on top of costing more
         distance each. If this ever stops failing, the gate above has stopped
         measuring anything.
         """

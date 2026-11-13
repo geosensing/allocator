@@ -304,3 +304,7 @@ test = [
     # extras: PyPI rejects direct URL references in project metadata.
     "simcheck @ git+https://github.com/finite-sample/simcheck",
 ]
+
+[tool.codespell]
+builtin = "clear,rare,en-GB_to_en-US"
+skip = "*.pdf,*.png,*.jpg,*.jpeg,*.csv,*.tsv,*.json,*.geojson,*.graphml,*.ipynb,*.html,*.svg,*.bib,*.bbl,*.lock,*.parquet"
