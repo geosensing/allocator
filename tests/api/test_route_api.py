@@ -123,8 +123,8 @@ class TestRouteAPI(unittest.TestCase):
         """
         result = tsp_christofides(self.test_points)
 
-        # Score the tour in the metric the solver actually optimised in.
-        # `euclidean` projects lon/lat to UTM metres before measuring
+        # Score the tour in the metric the solver actually optimized in.
+        # `euclidean` projects lon/lat to UTM meters before measuring
         # (allocator/distances/euclidean.py, utm.from_latlon), so scoring with
         # distances computed from raw degrees would compare a UTM-optimal tour
         # against a degree-optimal one. That is a different problem, and its

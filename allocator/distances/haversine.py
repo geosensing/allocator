@@ -11,7 +11,7 @@ import numpy as np
 from numba import njit
 
 if TYPE_CHECKING:
-    # prange is range, with a licence for the compiler to parallelise the loop.
+    # prange is range, with a license for the compiler to parallelize the loop.
     # Saying so is what keeps this file checkable across numba releases: 0.66.0
     # changed prange's annotation so mypy stopped seeing it as iterable, which
     # turned CI red while every developer's lock-pinned 0.65.0 stayed green. A

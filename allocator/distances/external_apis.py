@@ -100,7 +100,7 @@ def google_distance_matrix(
     * 100 elements per second, calculated as the sum of client-side and
       server-side queries.
 
-    For more informaton:-
+    For more information:-
     https://developers.google.com/maps/documentation/distance-matrix/usage-limits
     """
     gmaps = googlemaps.Client(key=api_key, queries_per_second=1)
